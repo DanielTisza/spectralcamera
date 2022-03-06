@@ -1,0 +1,6 @@
+Argument count:  2
+123456 
+Exposure time given as argument:  123456
+Using exposure time:  123456
+Exposure time converted to string:  123456
+Please enter the number in front of the listed device followed by [ENTER] to open it: 
