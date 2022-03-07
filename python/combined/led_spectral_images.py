@@ -591,27 +591,108 @@ def daniel_set_leds(ledsetnum):
 
     if ledsetnum == 1:
         # Led set A
+        # VIS
+        #  
+        # 542,8327583
+        # 552,8525817
+        #
+        # 701,3626464
+        # 710,1310492
+        #
+        # 111000000111000000111000000
+        # * Reverse for LED control:
+        # 000000111000000111000000111
+        #
         led.L(0b000000111000000111000000111)
     elif ledsetnum == 2:
         # Led set B
+        # VIS
+        #  
+        # 533.8275323
+        # 568.2446615
+        #
+        # 687.9319591
+        # 696.8895468
+        #
+        # 110000000110000000110000000
+        # * Reverse for LED control:
+        # 000000011000000011000000011
+        #
         led.L(0b000000011000000011000000011)
     elif ledsetnum == 3:
         # Led set C
+        # VIS
+        #  
+        # 504.5181438
+        # 612.2236991
+        #
+        # 587.2723752
+        # 658.6319132
+        #
+        # 100000000100000000100000000
+        # * Reverse for LED control:
+        # 000000001000000001000000001
+        #
         led.L(0b000000001000000001000000001)
     elif ledsetnum == 4:
         # Led set D
+        # VNIR1
+        #  
+        # 695.9738452
+        # 738.7581953
+        #
+        # 011110000011110000011110000
+        # * Reverse for LED control:
+        # 000011110000011110000011110
+        #
         led.L(0b000011110000011110000011110)
     elif ledsetnum == 5:
         # Led set E
+        # VNIR1 and VNIR2
+        #  
+        # 740.2281587
+        # 778.9766281
+        #
+        # 001111000001111000001111000
+        # * Reverse for LED control:
+        # 000111100000111100000111100
+        #
         led.L(0b000111100000111100000111100)
     elif ledsetnum == 6:
         # Led set F
+        # VNIR1 and VNIR2
+        #  
+        # 775.054537
+        # 818.8148698
+        #
+        # 000111100000111100000111100
+        # * Reverse for LED control:
+        # 001111000001111000001111000
+        #
         led.L(0b001111000001111000001111000)
     elif ledsetnum == 7:
         # Led set G
+        # VNIR1 and VNIR2
+        #  
+        # 810.0078184
+        # 848.0322309
+        #
+        # 000011110000011110000011110
+        # * Reverse for LED control:
+        # 011110000011110000011110000
+        #
         led.L(0b011110000011110000011110000)
     elif ledsetnum == 8:
         # Led set H
+        # VNIR1 and VNIR2
+        #  
+        # 851.0365439
+        # 939.6902201
+        #
+        # 000001111000001111000001111
+        # * Reverse for LED control:
+        # 111100000111100000111100000
+        #
         led.L(0b111100000111100000111100000)
 
     time.sleep(0.1)
@@ -718,6 +799,9 @@ class HSI:
                 #frame['ledset'] = ledsetnum
                 frames.append(frame)
 
+                print('Turning off LEDs')
+                led.L(0)
+
 #       else:
 #            with self.camera:
 #                self.create_fpi_taskfile(dataset)
@@ -737,48 +821,37 @@ class HSI:
         raise NotImplementedError()
 
 
+# ------------------------------------------
+#  Capturing spectral image cube
+# ------------------------------------------
+
+print('Creating camera device object')
 danielCam = DanielCamera(pDev)
 print(danielCam)
 
 hsi = HSI(danielCam, fpi)
 print(hsi)
-hsi.read_calibration_file('led_calib_test1.txt')
 
-input("Put the lens cap on")
+print('Reading calibration and image configuration file')
+hsi.read_calibration_file('images_calib1.txt')
+
+input("Set dark reference and press a key to take images")
+print('Capturing dark reference')
 hsi.take_dark_reference()
 print(hsi.dataset.dark)
 
-input("Take the lens cap off and set white reference")
-
-print('Turning on LEDs')
-
-# VIS
-#  
-# 542,8327583
-# 552,8525817
-#
-# 701,3626464
-# 710,1310492
-#
-# 111000000111000000111000000
-# * Reverse for LED control:
-# 000000111000000111000000111
-#
-led.L(0b000000111000000111000000111)
+input("Set white reference and press a key to take images")
 print('Capturing white reference')
 white_raw = hsi.capture_cube()
 
-print('Turning off LEDs')
-led.L(0)
-
-input("Set image (only for radiance)")
-
+input("Set image and press a key to start taking images")
 print('Capturing cube')
 raw = hsi.capture_cube()
 print(raw)
 
-print('Turning off LEDs')
-led.L(0)
+# ------------------------------------------
+#  Spectral image calculations
+# ------------------------------------------
 
 print('Calculating radiance')
 rad = fp.raw_to_radiance(raw, keep_variables=['dark'])
@@ -793,8 +866,9 @@ print('Calculating reflectance')
 rad['reflectance'] = rad.radiance / rad.white
 print(rad['reflectance'])
 
-# reflectance = fp.radiance_to_reflectance(rad, white_raw, keep_variables=[])
-# print(reflectance)
+# ------------------------------------------
+#  Saving image files
+# ------------------------------------------
 
 print('Extracting single frame from cube and saving to PNG')
 test = rad["radiance"]
@@ -832,7 +906,6 @@ print('')
 print ("Calibration file indexes")
 calibfileindexes = rad["index"].data
 print(calibfileindexes)
-
 
 # Multiple peaks result in multiple of single calib file row count
 imagelastindex = wavelengthCount
