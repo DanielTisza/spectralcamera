@@ -589,7 +589,31 @@ def daniel_set_leds(ledsetnum):
     print('')
     print('Setting ledset: ' + str(ledsetnum))
 
-    led.L(0b000000111000000111000000111)
+    if ledsetnum == 1:
+        # Led set A
+        led.L(0b000000111000000111000000111)
+    elif ledsetnum == 2:
+        # Led set B
+        led.L(0b000000011000000011000000011)
+    elif ledsetnum == 3:
+        # Led set C
+        led.L(0b000000001000000001000000001)
+    elif ledsetnum == 4:
+        # Led set D
+        led.L(0b000011110000011110000011110)
+    elif ledsetnum == 5:
+        # Led set E
+        led.L(0b000111100000111100000111100)
+    elif ledsetnum == 6:
+        # Led set F
+        led.L(0b001111000001111000001111000)
+    elif ledsetnum == 7:
+        # Led set G
+        led.L(0b011110000011110000011110000)
+    elif ledsetnum == 8:
+        # Led set H
+        led.L(0b111100000111100000111100000)
+
     time.sleep(0.1)
 
 
@@ -680,7 +704,9 @@ class HSI:
                 
                 ledsetnumarray = dataset['ledset'].isel(index=idx)
                 print(ledsetnumarray)
-                ledsetnum = ledsetnumarray.values
+                # ledsetnum = ledsetnumarray.values
+                ledsetnum = ledsetnumarray.data
+                print(ledsetnum)
                 
                 daniel_set_leds(ledsetnum)
                 
