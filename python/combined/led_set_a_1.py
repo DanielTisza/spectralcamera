@@ -21,6 +21,7 @@ import fpipy.conventions as c
 import xarray as xr
 from tqdm.autonotebook import tqdm, trange
 import pandas as pd
+import time
 
 # Argument count
 argc = len(sys.argv)
@@ -69,6 +70,9 @@ def daniel_read_calibration(calibfile, wavelength_unit='nm'):
 
     ds = xr.Dataset()
     ds.coords[c.image_index] = xr.DataArray(df.index, dims=(c.image_index))
+
+    # Add 'ledset' column data with 'index' label based indexing
+    ds['ledset'] = xr.DataArray(df['ledset'], dims=(c.image_index))
 
     ds[c.number_of_peaks] = xr.DataArray(df['Npeaks'], dims=(c.image_index))
 
@@ -576,6 +580,18 @@ class DanielCamera:
         return self._get_frame_with_meta()
 		
 
+# ------------------------------------------
+#  Setting correct led set
+# ------------------------------------------
+
+def daniel_set_leds(ledsetnum):
+
+    print('')
+    print('Setting ledset: ' + str(ledsetnum))
+
+    led.L(0b000000111000000111000000111)
+    time.sleep(0.1)
+
 
 # ------------------------------------------
 #  HSI
@@ -595,8 +611,7 @@ class HSI:
         self.calibration_file = None
 
     def read_calibration_file(self, calibration_file):
-        self.dataset = fp.io.read_calibration(calibration_file)
-		# self.dataset = daniel_read_calibration(calibration_file)
+        self.dataset = daniel_read_calibration(calibration_file)
         self.calibration_file = calibration_file
 
     def take_dark_reference(self, number_of_frames=40, method="median"):
@@ -636,15 +651,47 @@ class HSI:
         frames = []
  #      if self.camera["TriggerSource"].value == "Software":
         with self.camera:
+
+            #
+            # Start taking images
+            # Each image index results in taking one image
+            #
+            # But from one image it is possible that multiple spectral images
+            # will be calculated
+            #
             for idx in tqdm(dataset[c.image_index].values):
+
+                # Setpoint is always in column "SP1"
+                # The other columns "SP2", "SP3" are unused and have zero values
                 setpoint = dataset[c.setpoint_data].sel(
                     **{c.setpoint_coord: "SP1",
                        c.image_index: idx,
                        }).values
+
+                # Set setpoint for taking image
+                print('')
+                print('Handling calibration file image index: ' + str(idx))
+                print('Setting setpoint: ' + str(setpoint))
                 self.fpi.set_setpoint(setpoint, wait=True)
+
+                # Add here setting correct LED lighting for taking image
+                # Later the correct white image need to be used with this image
+                # for calculating reflectance
+                
+                ledsetnumarray = dataset['ledset'].isel(index=idx)
+                print(ledsetnumarray)
+                ledsetnum = ledsetnumarray.values
+                
+                daniel_set_leds(ledsetnum)
+                
+                # Take one image with camera
                 frame = self.camera.get_frame()
+
+                # Add image from camera to data structure
                 frame.coords[c.image_index] = idx
+                #frame['ledset'] = ledsetnum
                 frames.append(frame)
+
 #       else:
 #            with self.camera:
 #                self.create_fpi_taskfile(dataset)
@@ -669,7 +716,7 @@ print(danielCam)
 
 hsi = HSI(danielCam, fpi)
 print(hsi)
-hsi.read_calibration_file('led_set_a_calib_1.txt')
+hsi.read_calibration_file('led_calib_test1.txt')
 
 input("Put the lens cap on")
 hsi.take_dark_reference()
@@ -694,6 +741,9 @@ print('Turning on LEDs')
 led.L(0b000000111000000111000000111)
 print('Capturing white reference')
 white_raw = hsi.capture_cube()
+
+print('Turning off LEDs')
+led.L(0)
 
 input("Set image (only for radiance)")
 
@@ -723,18 +773,22 @@ print(rad['reflectance'])
 print('Extracting single frame from cube and saving to PNG')
 test = rad["radiance"]
 
+print('')
 print('Radiance data')
 testdata = test.data
 print(testdata)
 
+print('')
 print('White data')
 whitedata = rad['white'].data
 print(whitedata)
 
+print('')
 print('Reflectance data')
 reflectdata = rad['reflectance'].data
 print(reflectdata)
 
+print('')
 print ("Wavelengths")
 wavelengths = rad["wavelength"].data
 print(wavelengths)
@@ -742,6 +796,17 @@ print(wavelengths)
 print ("Wavelengths count")
 wavelengthCount = len(wavelengths)
 print(wavelengthCount)
+
+print('')
+print ("Ledsets")
+ledsets = rad["ledset"].data
+print(ledsets)
+
+print('')
+print ("Calibration file indexes")
+calibfileindexes = rad["index"].data
+print(calibfileindexes)
+
 
 # Multiple peaks result in multiple of single calib file row count
 imagelastindex = wavelengthCount
@@ -755,16 +820,23 @@ for x in range(0, imagelastindex):
 	wavelengthValue = wavelengths[x]
 	wavelengthStr = str(wavelengthValue)
 	wavelengthReplacedStr = wavelengthStr.replace(".", "p")
+
+	ledsetValue = ledsets[x]
+	ledsetStr = str(ledsetValue)
+
+	calibfileindexValue = calibfileindexes[x]
+	calibfileIndexStr = str(calibfileindexValue)
+
 	print('Saving wavelength: ' + wavelengthStr)
 	
 	rad1 = testdata[:,:,x]
-	matplotlib.image.imsave('rad_' + wavelengthReplacedStr + 'nm_' + str(x) + '_exp_' + exposureTime + '.png', rad1, cmap='gray')
+	matplotlib.image.imsave('rad_' + wavelengthReplacedStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', rad1, cmap='gray')
 
 	white1 = whitedata[:,:,x]
-	matplotlib.image.imsave('white_' + wavelengthReplacedStr + 'nm_' + str(x) + '_exp_' + exposureTime + '.png', white1, cmap='gray')
+	matplotlib.image.imsave('white_' + wavelengthReplacedStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', white1, cmap='gray')
 	
 	ref1 = reflectdata[:,:,x]
-	matplotlib.image.imsave('refl_' + wavelengthReplacedStr + 'nm_' + str(x) + '_exp_' + exposureTime + '.png', ref1, cmap='gray', vmin=0,vmax=1)
+	matplotlib.image.imsave('refl_' + wavelengthReplacedStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', ref1, cmap='gray', vmin=0,vmax=1)
 
 
 
