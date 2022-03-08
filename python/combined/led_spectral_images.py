@@ -305,10 +305,10 @@ LED_HWIDS = [
 ledportdevice = detect_LED_devices()
 
 # Linux (Zybo, Genesys, Ubuntu)
-ledportstring = '/dev/ttyACM0'
+# ledportstring = '/dev/ttyACM0'
 
 # Windows
-# ledportstring = 'COM10'
+ledportstring = 'COM10'
 
 print('Trying to use ' + ledportstring + ' for LED control')
 led = LEDDriver(ledportstring)
@@ -560,7 +560,8 @@ class DanielCamera:
 
         # Replace these hard-coded values by reading from camera!
         coords['Gain'] = "1.9382002601"
-        coords['ExposureTime'] = 150000
+        # coords['ExposureTime'] = 150000
+        coords['ExposureTime'] = int(exposureTime)
         coords['PixelFormat'] = "BayerGB12"
         coords['PixelColorFilter'] = "BayerGB"
 
@@ -847,12 +848,18 @@ white_raw = hsi.capture_cube()
 input("Set image and press a key to start taking images")
 print('Capturing cube')
 raw = hsi.capture_cube()
+print('')
 print(raw)
+
+print('')
+print('Number of images captured:')
+print(len(raw.index))
 
 # ------------------------------------------
 #  Spectral image calculations
 # ------------------------------------------
 
+print('')
 print('Calculating radiance')
 rad = fp.raw_to_radiance(raw, keep_variables=['dark'])
 print(rad)
@@ -911,14 +918,42 @@ print(calibfileindexes)
 imagelastindex = wavelengthCount
 
 #
+# Save dark reference CFA image
+#
+print('')
+print('Start saving raw CFA dark reference image')
+dark1 = raw.dark
+matplotlib.image.imsave('darkcfa_' + 'exp_' + exposureTime + '.png', dark1, cmap='gray')
+
+#
+# Save raw CFA data values
+#
+print('')
+print('Start saving raw CFA images')
+for x in range(0, len(raw.index)):
+
+	ledsetValue = ledsets[x]
+	ledsetStr = str(ledsetValue)
+
+	calibfileindexValue = calibfileindexes[x]
+	calibfileIndexStr = str(calibfileindexValue)
+
+	# Raw CFA data values
+	dn1 = raw.dn.isel(index=x)
+	matplotlib.image.imsave('rawcfa_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', dn1, cmap='gray')
+
+#
 # Save radiance images
 #
-print('Start saving radiance images')
+print('')
+print('Start saving radiance, white reference and reflectance images')
 for x in range(0, imagelastindex):
 
 	wavelengthValue = wavelengths[x]
-	wavelengthStr = str(wavelengthValue)
-	wavelengthReplacedStr = wavelengthStr.replace(".", "p")
+	# wavelengthValueRounded = round(wavelengthValue, 0)
+	wavelengthValueRounded = int(wavelengthValue)
+	wavelengthStr = str(wavelengthValueRounded)
+	# wavelengthReplacedStr = wavelengthStr.replace(".", "p")
 
 	ledsetValue = ledsets[x]
 	ledsetStr = str(ledsetValue)
@@ -928,14 +963,17 @@ for x in range(0, imagelastindex):
 
 	print('Saving wavelength: ' + wavelengthStr)
 	
+	# Radiance calculated from raw CFA and calibration coefficients
 	rad1 = testdata[:,:,x]
-	matplotlib.image.imsave('rad_' + wavelengthReplacedStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', rad1, cmap='gray')
+	matplotlib.image.imsave('rad_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', rad1, cmap='gray')
 
+	# White reference calculated from raw CFA and calibration coefficients
 	white1 = whitedata[:,:,x]
-	matplotlib.image.imsave('white_' + wavelengthReplacedStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', white1, cmap='gray')
+	matplotlib.image.imsave('white_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', white1, cmap='gray')
 	
+	# Reflectance calculated from radiance and white reference
 	ref1 = reflectdata[:,:,x]
-	matplotlib.image.imsave('refl_' + wavelengthReplacedStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', ref1, cmap='gray', vmin=0,vmax=1)
+	matplotlib.image.imsave('refl_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', ref1, cmap='gray', vmin=0,vmax=1)
 
 
 
@@ -961,12 +999,3 @@ for x in range(0, imagelastindex):
 	# matplotlib.image.imsave('raw_' + str(x) + '_demosaic_red.png', dm1_red)
 	# matplotlib.image.imsave('raw_' + str(x) + '_demosaic_green.png', dm1_green)
 	# matplotlib.image.imsave('raw_' + str(x) + '_demosaic_blue.png', dm1_blue)
-
-
-
-# fi.acquisitionStart()
-# self["TriggerSoftware"].execute()
-# acquire.TriggerControl.triggerSoftware()
-# fi.acquisitionStop()
-
-
