@@ -305,10 +305,10 @@ LED_HWIDS = [
 ledportdevice = detect_LED_devices()
 
 # Linux (Zybo, Genesys, Ubuntu)
-# ledportstring = '/dev/ttyACM0'
+ledportstring = '/dev/ttyACM0'
 
 # Windows
-ledportstring = 'COM10'
+# ledportstring = 'COM10'
 
 print('Trying to use ' + ledportstring + ' for LED control')
 led = LEDDriver(ledportstring)
@@ -833,7 +833,7 @@ hsi = HSI(danielCam, fpi)
 print(hsi)
 
 print('Reading calibration and image configuration file')
-hsi.read_calibration_file('images_calib1.txt')
+hsi.read_calibration_file('images_calib1_genesys.txt')
 
 input("Set dark reference and press a key to take images")
 print('Capturing dark reference')

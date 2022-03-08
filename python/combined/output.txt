@@ -1,0 +1,2538 @@
+Microsoft Windows [Version 10.0.19043.1526]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\tldati>cd C:\tldati\zyboz7\github\spectralcamera\python\combined
+
+C:\tldati\zyboz7\github\spectralcamera\python\combined>dir
+ Volume in drive C has no label.
+ Volume Serial Number is 5092-12DB
+
+ Directory of C:\tldati\zyboz7\github\spectralcamera\python\combined
+
+07.03.2022  21.19    <DIR>          .
+07.03.2022  21.19    <DIR>          ..
+07.03.2022  05.29             1 260 images_calib1.txt
+07.03.2022  05.33            26 990 led_spectral_images.py
+               2 File(s)         28 250 bytes
+               2 Dir(s)  29 884 452 864 bytes free
+
+C:\tldati\zyboz7\github\spectralcamera\python\combined>git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        ../../fixed_package_files/
+        ../test_modules/test_fpi_module2.py
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+C:\tldati\zyboz7\github\spectralcamera\python\combined>git pull
+Already up to date.
+
+C:\tldati\zyboz7\github\spectralcamera\python\combined>python led_spectral_images.py
+Argument count:  1
+
+No exposure time argument given! Using default 60000
+Using exposure time:  60000
+Exposure time converted to string:  60000
+Property 'InterfaceLayout' set to 'GenICam'.
+Property 'AcquisitionStartStopBehaviour' set to 'User'.
+[0]: 22994216(daA2500-14uc, USB3VisionDevice, interface layout: GenICam, acquisition start/stop behaviour: User)
+Please enter the number in front of the listed device followed by [ENTER] to open it: 0
+Old ExposureAuto:
+Continuous
+New ExposureAuto:
+Off
+Old pixelformat:
+YCbCr422_8
+New pixelformat:
+BayerGB12
+Old pixelColorFilter:
+BayerGB
+Old colorProcessing:
+Auto
+New colorProcessing:
+Raw
+Old ExposureTime:
+20000.000
+New ExposureTime:
+60000.000
+Old BalanceWhiteAuto:
+Continuous
+New BalanceWhiteAuto:
+Off
+Old Gamma:
+1.000
+New Gamma:
+1.000
+Old Gain:
+0.000
+New Gain:
+1.938
+Old GainAuto:
+Continuous
+New GainAuto:
+Off
+Request number valid!
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B3ECC00> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B3ECA80> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+<__main__.c_char_Array_10077696 object at 0x000002906B3FAA48>
+led_spectral_images.py:277: DeprecationWarning: The binary mode of fromstring is deprecated, as it behaves surprisingly on unicode inputs. Use frombuffer instead
+  arr = np.fromstring(cbuf, dtype = channelType)
+[[[ 2]
+  [ 2]
+  [ 2]
+  ...,
+  [ 2]
+  [ 5]
+  [ 2]]
+
+ [[ 1]
+  [ 5]
+  [ 1]
+  ...,
+  [ 2]
+  [ 6]
+  [ 2]]
+
+ [[ 3]
+  [ 1]
+  [ 3]
+  ...,
+  [ 4]
+  [10]
+  [ 2]]
+
+ ...,
+ [[ 0]
+  [ 4]
+  [ 0]
+  ...,
+  [ 2]
+  [ 5]
+  [ 0]]
+
+ [[ 5]
+  [ 6]
+  [ 2]
+  ...,
+  [ 6]
+  [ 8]
+  [ 4]]
+
+ [[ 0]
+  [ 3]
+  [ 1]
+  ...,
+  [ 1]
+  [ 0]
+  [ 0]]]
+d02b012 af380065 5b5bbeab f50019c1
+10025018 af28a028 5a66a511 f5001983
+Trying to use COM10 for LED control
+<LEDDriver.led_driver.LEDDriver object at 0x0000029064737848>
+Turning off LEDs
+Trying to create FPI device
+<spectracular.mfpi_driver.MFPIDriver object at 0x000002906B42FB48>
+Creating camera device object
+<__main__.DanielCamera object at 0x000002906B613408>
+<__main__.HSI object at 0x000002906B613448>
+Reading calibration and image configuration file
+Set dark reference and press a key to take images
+Capturing dark reference
+  0%|                                                                                           | 0/40 [00:00<?, ?it/s]Request number valid! 1
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6615A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[3 6 3 ..., 6 1 3]
+ [0 0 1 ..., 1 6 6]
+ [6 6 8 ..., 1 4 6]
+ ...,
+ [0 0 0 ..., 3 0 3]
+ [4 0 2 ..., 2 0 2]
+ [4 3 0 ..., 1 1 3]]
+Data from _get_frame():
+[[3 6 3 ..., 6 1 3]
+ [0 0 1 ..., 1 6 6]
+ [6 6 8 ..., 1 4 6]
+ ...,
+ [0 0 0 ..., 3 0 3]
+ [4 0 2 ..., 2 0 2]
+ [4 3 0 ..., 1 1 3]]
+  2%|██                                                                                 | 1/40 [00:00<00:19,  1.97it/s]Request number valid! 2
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661510> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661660> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 3  1  3 ...,  0  4  0]
+ [ 2  6  5 ...,  0 13  4]
+ [ 3  0  6 ...,  2  8  0]
+ ...,
+ [ 2  4  5 ...,  2  6  8]
+ [ 5  6  2 ...,  5  3  9]
+ [ 7  2  3 ...,  1  0  8]]
+Data from _get_frame():
+[[ 3  1  3 ...,  0  4  0]
+ [ 2  6  5 ...,  0 13  4]
+ [ 3  0  6 ...,  2  8  0]
+ ...,
+ [ 2  4  5 ...,  2  6  8]
+ [ 5  6  2 ...,  5  3  9]
+ [ 7  2  3 ...,  1  0  8]]
+  5%|████▏                                                                              | 2/40 [00:01<00:19,  1.98it/s]Request number valid! 3
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6615A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 4  3  1 ...,  3  5  9]
+ [ 3  0  9 ...,  0 13  1]
+ [ 1  9  4 ...,  5  8  3]
+ ...,
+ [ 6  5  4 ...,  2  0  5]
+ [ 0  6  1 ...,  5  6  3]
+ [ 3  3  5 ...,  2  2  5]]
+Data from _get_frame():
+[[ 4  3  1 ...,  3  5  9]
+ [ 3  0  9 ...,  0 13  1]
+ [ 1  9  4 ...,  5  8  3]
+ ...,
+ [ 6  5  4 ...,  2  0  5]
+ [ 0  6  1 ...,  5  6  3]
+ [ 3  3  5 ...,  2  2  5]]
+  8%|██████▏                                                                            | 3/40 [00:01<00:18,  1.99it/s]Request number valid! 4
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6617B0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661600> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[1 1 1 ..., 4 2 3]
+ [3 0 8 ..., 3 3 5]
+ [2 0 0 ..., 8 5 6]
+ ...,
+ [4 5 1 ..., 8 0 8]
+ [8 8 4 ..., 4 2 6]
+ [2 4 2 ..., 3 0 8]]
+Data from _get_frame():
+[[1 1 1 ..., 4 2 3]
+ [3 0 8 ..., 3 3 5]
+ [2 0 0 ..., 8 5 6]
+ ...,
+ [4 5 1 ..., 8 0 8]
+ [8 8 4 ..., 4 2 6]
+ [2 4 2 ..., 3 0 8]]
+ 10%|████████▎                                                                          | 4/40 [00:01<00:17,  2.00it/s]Request number valid! 5
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6615A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[3 0 4 ..., 0 2 0]
+ [3 2 6 ..., 2 0 4]
+ [4 0 2 ..., 1 0 0]
+ ...,
+ [2 2 3 ..., 3 4 1]
+ [6 4 2 ..., 2 7 6]
+ [2 5 5 ..., 1 0 1]]
+Data from _get_frame():
+[[3 0 4 ..., 0 2 0]
+ [3 2 6 ..., 2 0 4]
+ [4 0 2 ..., 1 0 0]
+ ...,
+ [2 2 3 ..., 3 4 1]
+ [6 4 2 ..., 2 7 6]
+ [2 5 5 ..., 1 0 1]]
+ 12%|██████████▍                                                                        | 5/40 [00:02<00:17,  2.00it/s]Request number valid! 6
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661930> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661660> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[4 0 4 ..., 2 2 2]
+ [0 2 4 ..., 2 0 8]
+ [2 1 3 ..., 1 0 7]
+ ...,
+ [4 0 4 ..., 6 4 4]
+ [3 2 3 ..., 4 2 9]
+ [3 1 8 ..., 3 7 4]]
+Data from _get_frame():
+[[4 0 4 ..., 2 2 2]
+ [0 2 4 ..., 2 0 8]
+ [2 1 3 ..., 1 0 7]
+ ...,
+ [4 0 4 ..., 6 4 4]
+ [3 2 3 ..., 4 2 9]
+ [3 1 8 ..., 3 7 4]]
+ 15%|████████████▍                                                                      | 6/40 [00:02<00:16,  2.00it/s]Request number valid! 7
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6615A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 4  2  2 ..., 13  8  9]
+ [ 6  0  2 ..., 10 16  4]
+ [ 1  2  3 ...,  5 15 12]
+ ...,
+ [ 7  3  1 ...,  0  0  0]
+ [ 0  4  1 ...,  0  5  0]
+ [ 7  9  7 ...,  0  0  0]]
+Data from _get_frame():
+[[ 4  2  2 ..., 13  8  9]
+ [ 6  0  2 ..., 10 16  4]
+ [ 1  2  3 ...,  5 15 12]
+ ...,
+ [ 7  3  1 ...,  0  0  0]
+ [ 0  4  1 ...,  0  5  0]
+ [ 7  9  7 ...,  0  0  0]]
+ 18%|██████████████▌                                                                    | 7/40 [00:03<00:16,  2.01it/s]Request number valid! 8
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661AB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661600> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  2  5 ...,  4 11 10]
+ [ 3  0  6 ...,  1  4  2]
+ [ 3  1  6 ...,  3  1  0]
+ ...,
+ [ 5  1  2 ...,  4  0  3]
+ [ 3  5  2 ...,  0  0  0]
+ [ 3  6  5 ...,  4  2  3]]
+Data from _get_frame():
+[[ 2  2  5 ...,  4 11 10]
+ [ 3  0  6 ...,  1  4  2]
+ [ 3  1  6 ...,  3  1  0]
+ ...,
+ [ 5  1  2 ...,  4  0  3]
+ [ 3  5  2 ...,  0  0  0]
+ [ 3  6  5 ...,  4  2  3]]
+ 20%|████████████████▌                                                                  | 8/40 [00:03<00:15,  2.00it/s]Request number valid! 9
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6615A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 4  7  4 ...,  5  4  3]
+ [ 1  0  0 ...,  0  9  4]
+ [ 7 14  7 ...,  0  4  2]
+ ...,
+ [ 6  8  0 ...,  1  3  4]
+ [ 0  4  3 ..., 10  8  4]
+ [ 5 13  5 ...,  0  3  4]]
+Data from _get_frame():
+[[ 4  7  4 ...,  5  4  3]
+ [ 1  0  0 ...,  0  9  4]
+ [ 7 14  7 ...,  0  4  2]
+ ...,
+ [ 6  8  0 ...,  1  3  4]
+ [ 0  4  3 ..., 10  8  4]
+ [ 5 13  5 ...,  0  3  4]]
+ 22%|██████████████████▋                                                                | 9/40 [00:04<00:16,  1.93it/s]Request number valid! 0
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661C30> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661660> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[1 6 0 ..., 0 1 0]
+ [2 4 4 ..., 0 1 1]
+ [1 2 3 ..., 2 3 7]
+ ...,
+ [4 1 5 ..., 1 2 1]
+ [2 1 5 ..., 2 2 2]
+ [2 6 2 ..., 1 6 1]]
+Data from _get_frame():
+[[1 6 0 ..., 0 1 0]
+ [2 4 4 ..., 0 1 1]
+ [1 2 3 ..., 2 3 7]
+ ...,
+ [4 1 5 ..., 1 2 1]
+ [2 1 5 ..., 2 2 2]
+ [2 6 2 ..., 1 6 1]]
+ 25%|████████████████████▌                                                             | 10/40 [00:05<00:15,  1.95it/s]Request number valid! 1
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6615A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 3  6  5 ...,  5  4 16]
+ [ 8  1  4 ...,  0  0  2]
+ [ 5  8  2 ...,  4  1  6]
+ ...,
+ [ 2  4  3 ...,  3  5  6]
+ [ 4  6  1 ...,  0  5  4]
+ [ 3  4  2 ...,  3  9  6]]
+Data from _get_frame():
+[[ 3  6  5 ...,  5  4 16]
+ [ 8  1  4 ...,  0  0  2]
+ [ 5  8  2 ...,  4  1  6]
+ ...,
+ [ 2  4  3 ...,  3  5  6]
+ [ 4  6  1 ...,  0  5  4]
+ [ 3  4  2 ...,  3  9  6]]
+ 28%|██████████████████████▌                                                           | 11/40 [00:05<00:14,  1.97it/s]Request number valid! 2
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661600> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[2 2 1 ..., 6 1 5]
+ [8 0 1 ..., 0 6 3]
+ [0 0 3 ..., 2 2 5]
+ ...,
+ [2 1 4 ..., 2 1 2]
+ [0 6 3 ..., 3 1 1]
+ [6 4 6 ..., 2 2 2]]
+Data from _get_frame():
+[[2 2 1 ..., 6 1 5]
+ [8 0 1 ..., 0 6 3]
+ [0 0 3 ..., 2 2 5]
+ ...,
+ [2 1 4 ..., 2 1 2]
+ [0 6 3 ..., 3 1 1]
+ [6 4 6 ..., 2 2 2]]
+ 30%|████████████████████████▌                                                         | 12/40 [00:06<00:14,  1.99it/s]Request number valid! 3
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6615A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 0  8  0 ...,  2  4 17]
+ [ 9  1  8 ...,  1  5  3]
+ [ 1  6  1 ...,  8 10  6]
+ ...,
+ [ 3  6  3 ...,  2  2  3]
+ [10 20  2 ...,  2  4  9]
+ [ 3  2  6 ...,  1  5  3]]
+Data from _get_frame():
+[[ 0  8  0 ...,  2  4 17]
+ [ 9  1  8 ...,  1  5  3]
+ [ 1  6  1 ...,  8 10  6]
+ ...,
+ [ 3  6  3 ...,  2  2  3]
+ [10 20  2 ...,  2  4  9]
+ [ 3  2  6 ...,  1  5  3]]
+ 32%|██████████████████████████▋                                                       | 13/40 [00:06<00:13,  1.99it/s]Request number valid! 4
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661F30> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661DB0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 3  0  3 ...,  2  6  3]
+ [ 0  0  0 ...,  0  5  5]
+ [ 2  3  4 ...,  7  4  3]
+ ...,
+ [ 7 10  9 ...,  1 12  4]
+ [ 5  4  4 ...,  6  3  4]
+ [ 8  4  8 ...,  1 12  4]]
+Data from _get_frame():
+[[ 3  0  3 ...,  2  6  3]
+ [ 0  0  0 ...,  0  5  5]
+ [ 2  3  4 ...,  7  4  3]
+ ...,
+ [ 7 10  9 ...,  1 12  4]
+ [ 5  4  4 ...,  6  3  4]
+ [ 8  4  8 ...,  1 12  4]]
+ 35%|████████████████████████████▋                                                     | 14/40 [00:07<00:12,  2.00it/s]Request number valid! 5
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6105A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661D20> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 3  8  5 ...,  1  6  1]
+ [ 2  3  6 ...,  3  2  1]
+ [ 4  6  3 ...,  1  4  6]
+ ...,
+ [ 9  9 12 ...,  2  4  6]
+ [ 6  0  1 ...,  3  4  3]
+ [ 8  6  5 ...,  0  6  6]]
+Data from _get_frame():
+[[ 3  8  5 ...,  1  6  1]
+ [ 2  3  6 ...,  3  2  1]
+ [ 4  6  3 ...,  1  4  6]
+ ...,
+ [ 9  9 12 ...,  2  4  6]
+ [ 6  0  1 ...,  3  4  3]
+ [ 8  6  5 ...,  0  6  6]]
+ 38%|██████████████████████████████▊                                                   | 15/40 [00:07<00:12,  2.00it/s]Request number valid! 6
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6615A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B661D20> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 4  0  5 ...,  9  4 13]
+ [11  1  3 ...,  1  5  2]
+ [ 8  0  0 ...,  3  5  9]
+ ...,
+ [ 7  3  3 ...,  4  7  6]
+ [ 0  1  0 ...,  0  4  6]
+ [ 6  1  3 ...,  4 13  6]]
+Data from _get_frame():
+[[ 4  0  5 ...,  9  4 13]
+ [11  1  3 ...,  1  5  2]
+ [ 8  0  0 ...,  3  5  9]
+ ...,
+ [ 7  3  3 ...,  4  7  6]
+ [ 0  1  0 ...,  0  4  6]
+ [ 6  1  3 ...,  4 13  6]]
+ 40%|████████████████████████████████▊                                                 | 16/40 [00:08<00:12,  2.00it/s]Request number valid! 7
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6900C0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[1 1 2 ..., 3 0 8]
+ [8 0 3 ..., 1 1 2]
+ [1 0 1 ..., 1 1 4]
+ ...,
+ [5 2 0 ..., 1 2 1]
+ [0 0 2 ..., 1 5 3]
+ [3 5 3 ..., 0 6 1]]
+Data from _get_frame():
+[[1 1 2 ..., 3 0 8]
+ [8 0 3 ..., 1 1 2]
+ [1 0 1 ..., 1 1 4]
+ ...,
+ [5 2 0 ..., 1 2 1]
+ [0 0 2 ..., 1 5 3]
+ [3 5 3 ..., 0 6 1]]
+ 42%|██████████████████████████████████▊                                               | 17/40 [00:08<00:11,  2.01it/s]Request number valid! 8
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6901E0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  6  4 ...,  6 10  2]
+ [ 2  4  5 ...,  2  0  3]
+ [ 5  2  2 ...,  4  9  2]
+ ...,
+ [ 7  4  9 ...,  2  5  2]
+ [ 1  2  4 ...,  6  1  2]
+ [ 6  2  3 ...,  0  4  2]]
+Data from _get_frame():
+[[ 2  6  4 ...,  6 10  2]
+ [ 2  4  5 ...,  2  0  3]
+ [ 5  2  2 ...,  4  9  2]
+ ...,
+ [ 7  4  9 ...,  2  5  2]
+ [ 1  2  4 ...,  6  1  2]
+ [ 6  2  3 ...,  0  4  2]]
+ 45%|████████████████████████████████████▉                                             | 18/40 [00:09<00:10,  2.02it/s]Request number valid! 9
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690030> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 5  3  3 ...,  2  5  2]
+ [11  8  2 ...,  0  0  1]
+ [ 5  4  2 ...,  5  8  4]
+ ...,
+ [ 4  1  6 ...,  2  1  5]
+ [ 4  4  1 ...,  1  2  8]
+ [ 2  4  2 ...,  2 15  5]]
+Data from _get_frame():
+[[ 5  3  3 ...,  2  5  2]
+ [11  8  2 ...,  0  0  1]
+ [ 5  4  2 ...,  5  8  4]
+ ...,
+ [ 4  1  6 ...,  2  1  5]
+ [ 4  4  1 ...,  1  2  8]
+ [ 2  4  2 ...,  2 15  5]]
+ 48%|██████████████████████████████████████▉                                           | 19/40 [00:09<00:10,  2.01it/s]Request number valid! 0
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690270> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 3  2  1 ...,  5  6  7]
+ [11  4  2 ...,  1  0  2]
+ [ 5  1  4 ..., 13  4 11]
+ ...,
+ [ 9 10  4 ...,  2  8 10]
+ [ 2  1  0 ...,  0  7  0]
+ [ 9  7  7 ...,  2  2 10]]
+Data from _get_frame():
+[[ 3  2  1 ...,  5  6  7]
+ [11  4  2 ...,  1  0  2]
+ [ 5  1  4 ..., 13  4 11]
+ ...,
+ [ 9 10  4 ...,  2  8 10]
+ [ 2  1  0 ...,  0  7  0]
+ [ 9  7  7 ...,  2  2 10]]
+ 50%|█████████████████████████████████████████                                         | 20/40 [00:10<00:09,  2.00it/s]Request number valid! 1
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6902A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  8  5 ...,  0  5  0]
+ [ 0  2  0 ...,  1 15  5]
+ [ 2  2  2 ...,  0  4  3]
+ ...,
+ [ 6  1  1 ...,  6  2  3]
+ [ 7  8  3 ...,  8  2  8]
+ [ 5 11  4 ...,  2  5  3]]
+Data from _get_frame():
+[[ 2  8  5 ...,  0  5  0]
+ [ 0  2  0 ...,  1 15  5]
+ [ 2  2  2 ...,  0  4  3]
+ ...,
+ [ 6  1  1 ...,  6  2  3]
+ [ 7  8  3 ...,  8  2  8]
+ [ 5 11  4 ...,  2  5  3]]
+ 52%|███████████████████████████████████████████                                       | 21/40 [00:10<00:09,  2.01it/s]Request number valid! 2
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6901B0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2 10  2 ...,  2  3  2]
+ [ 4  2  3 ...,  0  5  7]
+ [ 4  1  1 ...,  1  5  2]
+ ...,
+ [ 4  7  3 ...,  2  3  7]
+ [ 2  0  1 ..., 14  6  6]
+ [ 4  4  2 ...,  2  5  7]]
+Data from _get_frame():
+[[ 2 10  2 ...,  2  3  2]
+ [ 4  2  3 ...,  0  5  7]
+ [ 4  1  1 ...,  1  5  2]
+ ...,
+ [ 4  7  3 ...,  2  3  7]
+ [ 2  0  1 ..., 14  6  6]
+ [ 4  4  2 ...,  2  5  7]]
+ 55%|█████████████████████████████████████████████                                     | 22/40 [00:11<00:08,  2.01it/s]Request number valid! 3
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690120> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  4  1 ...,  0  5  0]
+ [ 8  0  3 ...,  0 13  3]
+ [ 1  0  2 ...,  1  1  1]
+ ...,
+ [ 3  6  6 ...,  2  8  5]
+ [ 3  0  3 ...,  2  4  2]
+ [ 3  2  9 ...,  2  4  5]]
+Data from _get_frame():
+[[ 2  4  1 ...,  0  5  0]
+ [ 8  0  3 ...,  0 13  3]
+ [ 1  0  2 ...,  1  1  1]
+ ...,
+ [ 3  6  6 ...,  2  8  5]
+ [ 3  0  3 ...,  2  4  2]
+ [ 3  2  9 ...,  2  4  5]]
+ 57%|███████████████████████████████████████████████▏                                  | 23/40 [00:11<00:08,  2.01it/s]Request number valid! 4
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6900C0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  8  2 ...,  8  6  5]
+ [ 3  1  9 ...,  6  0  6]
+ [ 2  8  5 ..., 10  2  9]
+ ...,
+ [ 2  1  2 ...,  2  5  3]
+ [ 0  6  1 ...,  0  0  0]
+ [ 2  8  1 ...,  6  5  3]]
+Data from _get_frame():
+[[ 2  8  2 ...,  8  6  5]
+ [ 3  1  9 ...,  6  0  6]
+ [ 2  8  5 ..., 10  2  9]
+ ...,
+ [ 2  1  2 ...,  2  5  3]
+ [ 0  6  1 ...,  0  0  0]
+ [ 2  8  1 ...,  6  5  3]]
+ 60%|█████████████████████████████████████████████████▏                                | 24/40 [00:12<00:07,  2.01it/s]Request number valid! 5
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6901E0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  6  5 ...,  4  2  1]
+ [ 8 10  4 ...,  6  0  2]
+ [ 5  1  3 ...,  1  3  5]
+ ...,
+ [ 4  2  5 ...,  4  2  5]
+ [ 4  0  7 ..., 10  4  4]
+ [ 9  1  9 ...,  6  2  5]]
+Data from _get_frame():
+[[ 2  6  5 ...,  4  2  1]
+ [ 8 10  4 ...,  6  0  2]
+ [ 5  1  3 ...,  1  3  5]
+ ...,
+ [ 4  2  5 ...,  4  2  5]
+ [ 4  0  7 ..., 10  4  4]
+ [ 9  1  9 ...,  6  2  5]]
+ 62%|███████████████████████████████████████████████████▎                              | 25/40 [00:12<00:07,  2.01it/s]Request number valid! 6
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690030> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 6 14  6 ...,  1  5  4]
+ [ 2  0  0 ...,  2  1  7]
+ [ 6  2  2 ...,  2  2  5]
+ ...,
+ [ 2  5  1 ...,  1  4  2]
+ [ 5  3  1 ...,  2  1  7]
+ [ 3  4  5 ...,  0  0  2]]
+Data from _get_frame():
+[[ 6 14  6 ...,  1  5  4]
+ [ 2  0  0 ...,  2  1  7]
+ [ 6  2  2 ...,  2  2  5]
+ ...,
+ [ 2  5  1 ...,  1  4  2]
+ [ 5  3  1 ...,  2  1  7]
+ [ 3  4  5 ...,  0  0  2]]
+ 65%|█████████████████████████████████████████████████████▎                            | 26/40 [00:13<00:06,  2.02it/s]Request number valid! 7
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690270> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 1  2  1 ...,  3  3  8]
+ [ 6  0  2 ...,  6  1  2]
+ [ 4  3  1 ...,  3  9  9]
+ ...,
+ [ 7  5  3 ...,  1  2  2]
+ [ 0  0  2 ...,  0 13  5]
+ [ 6  2  5 ...,  0  2  2]]
+Data from _get_frame():
+[[ 1  2  1 ...,  3  3  8]
+ [ 6  0  2 ...,  6  1  2]
+ [ 4  3  1 ...,  3  9  9]
+ ...,
+ [ 7  5  3 ...,  1  2  2]
+ [ 0  0  2 ...,  0 13  5]
+ [ 6  2  5 ...,  0  2  2]]
+ 68%|███████████████████████████████████████████████████████▎                          | 27/40 [00:13<00:06,  2.01it/s]Request number valid! 8
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6902A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[1 2 4 ..., 6 2 4]
+ [0 2 2 ..., 3 4 8]
+ [3 0 4 ..., 5 4 6]
+ ...,
+ [6 1 5 ..., 3 1 6]
+ [3 2 2 ..., 4 1 4]
+ [8 3 2 ..., 3 0 6]]
+Data from _get_frame():
+[[1 2 4 ..., 6 2 4]
+ [0 2 2 ..., 3 4 8]
+ [3 0 4 ..., 5 4 6]
+ ...,
+ [6 1 5 ..., 3 1 6]
+ [3 2 2 ..., 4 1 4]
+ [8 3 2 ..., 3 0 6]]
+ 70%|█████████████████████████████████████████████████████████▍                        | 28/40 [00:13<00:05,  2.02it/s]Request number valid! 9
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6901B0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 5  0  5 ...,  2  8  8]
+ [16  0  3 ...,  3 12  3]
+ [ 3  0  2 ...,  5  5  5]
+ ...,
+ [ 3  5  8 ...,  1  0  4]
+ [ 2 10  1 ...,  0  8  1]
+ [ 4  6  3 ...,  3  0  4]]
+Data from _get_frame():
+[[ 5  0  5 ...,  2  8  8]
+ [16  0  3 ...,  3 12  3]
+ [ 3  0  2 ...,  5  5  5]
+ ...,
+ [ 3  5  8 ...,  1  0  4]
+ [ 2 10  1 ...,  0  8  1]
+ [ 4  6  3 ...,  3  0  4]]
+ 72%|███████████████████████████████████████████████████████████▍                      | 29/40 [00:14<00:05,  2.01it/s]Request number valid! 0
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690120> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 0  2  0 ...,  3  4 13]
+ [ 0  1  2 ...,  3  3  2]
+ [ 1  0  1 ...,  6  3  9]
+ ...,
+ [12  4  4 ...,  2  0  7]
+ [ 1  2  4 ...,  8  3  5]
+ [ 6  2  5 ...,  0  0  7]]
+Data from _get_frame():
+[[ 0  2  0 ...,  3  4 13]
+ [ 0  1  2 ...,  3  3  2]
+ [ 1  0  1 ...,  6  3  9]
+ ...,
+ [12  4  4 ...,  2  0  7]
+ [ 1  2  4 ...,  8  3  5]
+ [ 6  2  5 ...,  0  0  7]]
+ 75%|█████████████████████████████████████████████████████████████▌                    | 30/40 [00:15<00:04,  2.01it/s]Request number valid! 1
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6900C0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 6  6  3 ...,  1  0  1]
+ [ 1  0  4 ...,  0  0  4]
+ [ 4 14  2 ...,  2  1  6]
+ ...,
+ [ 7  0  2 ...,  2  2  6]
+ [ 4  0  1 ...,  4  0 11]
+ [ 9  1 11 ...,  8  3  6]]
+Data from _get_frame():
+[[ 6  6  3 ...,  1  0  1]
+ [ 1  0  4 ...,  0  0  4]
+ [ 4 14  2 ...,  2  1  6]
+ ...,
+ [ 7  0  2 ...,  2  2  6]
+ [ 4  0  1 ...,  4  0 11]
+ [ 9  1 11 ...,  8  3  6]]
+ 78%|███████████████████████████████████████████████████████████████▌                  | 31/40 [00:15<00:04,  2.01it/s]Request number valid! 2
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6901E0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 6  0  7 ..., 11 11  5]
+ [ 7  6  9 ...,  6  2  2]
+ [ 6  0  3 ...,  5  1  8]
+ ...,
+ [ 2  3  5 ...,  5  2  5]
+ [ 5  0  2 ...,  2  2  6]
+ [ 8  5  2 ...,  2 12  5]]
+Data from _get_frame():
+[[ 6  0  7 ..., 11 11  5]
+ [ 7  6  9 ...,  6  2  2]
+ [ 6  0  3 ...,  5  1  8]
+ ...,
+ [ 2  3  5 ...,  5  2  5]
+ [ 5  0  2 ...,  2  2  6]
+ [ 8  5  2 ...,  2 12  5]]
+ 80%|█████████████████████████████████████████████████████████████████▌                | 32/40 [00:15<00:03,  2.01it/s]Request number valid! 3
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690030> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 9  0  8 ...,  2  7 13]
+ [ 4  8  5 ...,  3  4  8]
+ [ 6  0  6 ...,  5  4  6]
+ ...,
+ [ 2  6  5 ...,  2  0  3]
+ [ 6  4  4 ...,  0  6  4]
+ [ 2  4  2 ...,  0  1  3]]
+Data from _get_frame():
+[[ 9  0  8 ...,  2  7 13]
+ [ 4  8  5 ...,  3  4  8]
+ [ 6  0  6 ...,  5  4  6]
+ ...,
+ [ 2  6  5 ...,  2  0  3]
+ [ 6  4  4 ...,  0  6  4]
+ [ 2  4  2 ...,  0  1  3]]
+ 82%|███████████████████████████████████████████████████████████████████▋              | 33/40 [00:16<00:03,  2.02it/s]Request number valid! 4
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661D20> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690270> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 0  8  2 ...,  0  1  0]
+ [ 5  0  5 ...,  0  6  1]
+ [ 2  2  1 ...,  0  4  6]
+ ...,
+ [ 0  2  2 ...,  1  5  4]
+ [ 2  0  2 ...,  0  4  3]
+ [ 6 11  1 ...,  1  2  4]]
+Data from _get_frame():
+[[ 0  8  2 ...,  0  1  0]
+ [ 5  0  5 ...,  0  6  1]
+ [ 2  2  1 ...,  0  4  6]
+ ...,
+ [ 0  2  2 ...,  1  5  4]
+ [ 2  0  2 ...,  0  4  3]
+ [ 6 11  1 ...,  1  2  4]]
+ 85%|█████████████████████████████████████████████████████████████████████▋            | 34/40 [00:16<00:02,  2.01it/s]Request number valid! 5
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B661DB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690EA0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 0  0  0 ...,  2  2  5]
+ [ 3  1  9 ...,  0  2  3]
+ [ 0  2  0 ...,  2  2  6]
+ ...,
+ [ 6  9  2 ...,  2  2  4]
+ [ 6  2 10 ...,  3  5  3]
+ [ 4  6  6 ...,  3  5  4]]
+Data from _get_frame():
+[[ 0  0  0 ...,  2  2  5]
+ [ 3  1  9 ...,  0  2  3]
+ [ 0  2  0 ...,  2  2  6]
+ ...,
+ [ 6  9  2 ...,  2  2  4]
+ [ 6  2 10 ...,  3  5  3]
+ [ 4  6  6 ...,  3  5  4]]
+ 88%|███████████████████████████████████████████████████████████████████████▊          | 35/40 [00:17<00:02,  2.01it/s]Request number valid! 6
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6902A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690EA0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  0  2 ...,  6 11  2]
+ [16  5  3 ...,  2  0  2]
+ [ 2  0  5 ...,  2  3  6]
+ ...,
+ [ 4  1  4 ...,  3  0  6]
+ [ 5  0  9 ...,  4  2 10]
+ [ 4  5  1 ...,  1  0  6]]
+Data from _get_frame():
+[[ 2  0  2 ...,  6 11  2]
+ [16  5  3 ...,  2  0  2]
+ [ 2  0  5 ...,  2  3  6]
+ ...,
+ [ 4  1  4 ...,  3  0  6]
+ [ 5  0  9 ...,  4  2 10]
+ [ 4  5  1 ...,  1  0  6]]
+ 90%|█████████████████████████████████████████████████████████████████████████▊        | 36/40 [00:17<00:01,  2.01it/s]Request number valid! 7
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690270> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6902A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 3  4  2 ...,  4  5  2]
+ [ 6  4  2 ...,  3  1  5]
+ [ 3  2  1 ...,  4  3  4]
+ ...,
+ [ 2  0  0 ...,  2  0  8]
+ [ 2 10  6 ...,  4  3  1]
+ [ 5  1  0 ...,  2  0  8]]
+Data from _get_frame():
+[[ 3  4  2 ...,  4  5  2]
+ [ 6  4  2 ...,  3  1  5]
+ [ 3  2  1 ...,  4  3  4]
+ ...,
+ [ 2  0  0 ...,  2  0  8]
+ [ 2 10  6 ...,  4  3  1]
+ [ 5  1  0 ...,  2  0  8]]
+ 92%|███████████████████████████████████████████████████████████████████████████▊      | 37/40 [00:18<00:01,  2.02it/s]Request number valid! 8
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690030> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6AA060> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 1  4  1 ...,  2  4  6]
+ [ 5  6 12 ...,  2  4  0]
+ [ 5  2  1 ...,  5  5  2]
+ ...,
+ [ 3  1  6 ...,  4  1  2]
+ [ 5  0  2 ...,  8  3  3]
+ [ 8  4  5 ...,  1  4  2]]
+Data from _get_frame():
+[[ 1  4  1 ...,  2  4  6]
+ [ 5  6 12 ...,  2  4  0]
+ [ 5  2  1 ...,  5  5  2]
+ ...,
+ [ 3  1  6 ...,  4  1  2]
+ [ 5  0  2 ...,  8  3  3]
+ [ 8  4  5 ...,  1  4  2]]
+ 95%|█████████████████████████████████████████████████████████████████████████████▉    | 38/40 [00:18<00:00,  2.01it/s]Request number valid! 9
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6902A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6AA1E0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 2  5  2 ...,  4  5  3]
+ [ 2  2  4 ...,  1  0  0]
+ [ 2  2  5 ...,  1  1  3]
+ ...,
+ [ 8  0  5 ...,  3  0  6]
+ [ 4  1  1 ...,  0  4  3]
+ [10  2 10 ...,  0  0  6]]
+Data from _get_frame():
+[[ 2  5  2 ...,  4  5  3]
+ [ 2  2  4 ...,  1  0  0]
+ [ 2  2  5 ...,  1  1  3]
+ ...,
+ [ 8  0  5 ...,  3  0  6]
+ [ 4  1  1 ...,  0  4  3]
+ [10  2 10 ...,  0  0  6]]
+ 98%|███████████████████████████████████████████████████████████████████████████████▉  | 39/40 [00:19<00:00,  2.01it/s]Request number valid! 0
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690030> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6AA030> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 3  2  2 ...,  5  9  8]
+ [ 6  2  2 ...,  1 11  6]
+ [ 3  2  4 ...,  8  9  6]
+ ...,
+ [ 2 10  2 ...,  4  0  3]
+ [ 0  4  1 ...,  2  6  7]
+ [ 0  8  0 ...,  3  0  3]]
+Data from _get_frame():
+[[ 3  2  2 ...,  5  9  8]
+ [ 6  2  2 ...,  1 11  6]
+ [ 3  2  4 ...,  8  9  6]
+ ...,
+ [ 2 10  2 ...,  4  0  3]
+ [ 0  4  1 ...,  2  6  7]
+ [ 0  8  0 ...,  3  0  3]]
+100%|██████████████████████████████████████████████████████████████████████████████████| 40/40 [00:19<00:00,  2.00it/s]
+Exit DanielCamera
+<xarray.DataArray 'dark' (y: 1944, x: 2592)>
+array([[ 2.5,  2.5,  2.5, ...,  3. ,  4. ,  3.5],
+       [ 3.5,  1. ,  3.5, ...,  1. ,  3. ,  3. ],
+       [ 3. ,  2. ,  2.5, ...,  3. ,  4. ,  6. ],
+       ...,
+       [ 4. ,  3. ,  3.5, ...,  2. ,  2. ,  4. ],
+       [ 3. ,  2. ,  2. , ...,  2. ,  3.5,  4. ],
+       [ 4.5,  4. ,  4.5, ...,  2. ,  2. ,  4. ]])
+Coordinates:
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+  * y                 (y) float64 0.5 1.5 2.5 ... 1.942e+03 1.942e+03 1.944e+03
+  * x                 (x) float64 0.5 1.5 2.5 ... 2.59e+03 2.59e+03 2.592e+03
+Set white reference and press a key to take images
+Capturing white reference
+  0%|                                                                                           | 0/10 [00:00<?, ?it/s]
+Handling calibration file image index: 0
+Setting setpoint: 53204
+<xarray.DataArray 'ledset' ()>
+array(1, dtype=int64)
+Coordinates:
+    index             int64 0
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+1
+
+Setting ledset: 1
+Request number valid! 1
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6902A0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6903F0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 9  8 10 ..., 10 12 10]
+ [21  7 21 ...,  6 11 18]
+ [ 9 14  9 ..., 10 10 10]
+ ...,
+ [ 2 10  3 ..., 19 15 21]
+ [13  9  4 ...,  6 14 11]
+ [ 0  5  2 ..., 12 13 21]]
+Data from _get_frame():
+[[ 9  8 10 ..., 10 12 10]
+ [21  7 21 ...,  6 11 18]
+ [ 9 14  9 ..., 10 10 10]
+ ...,
+ [ 2 10  3 ..., 19 15 21]
+ [13  9  4 ...,  6 14 11]
+ [ 0  5  2 ..., 12 13 21]]
+Turning off LEDs
+ 10%|████████▎                                                                          | 1/10 [00:00<00:05,  1.64it/s]
+Handling calibration file image index: 1
+Setting setpoint: 53895
+<xarray.DataArray 'ledset' ()>
+array(2, dtype=int64)
+Coordinates:
+    index             int64 1
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+2
+
+Setting ledset: 2
+Request number valid! 2
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690420> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6905D0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[15 10 16 ...,  7 22  3]
+ [16  9 13 ...,  9 29  7]
+ [21  9 11 ...,  6 15  6]
+ ...,
+ [13  9 13 ..., 13 11 15]
+ [ 6 12  3 ...,  9  9  9]
+ [14  5  5 ...,  9 20 15]]
+Data from _get_frame():
+[[15 10 16 ...,  7 22  3]
+ [16  9 13 ...,  9 29  7]
+ [21  9 11 ...,  6 15  6]
+ ...,
+ [13  9 13 ..., 13 11 15]
+ [ 6 12  3 ...,  9  9  9]
+ [14  5  5 ...,  9 20 15]]
+Turning off LEDs
+ 20%|████████████████▌                                                                  | 2/10 [00:01<00:04,  1.63it/s]
+Handling calibration file image index: 2
+Setting setpoint: 44748
+<xarray.DataArray 'ledset' ()>
+array(3, dtype=int64)
+Coordinates:
+    index             int64 2
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+3
+
+Setting ledset: 3
+Request number valid! 3
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690630> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690570> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[11 20 16 ..., 15  8 15]
+ [14 12 19 ..., 11 11 14]
+ [15  8 15 ..., 12 16  9]
+ ...,
+ [13  7 12 ...,  8 12 16]
+ [ 2  4  8 ...,  8 12 10]
+ [11  9 11 ...,  6 11 16]]
+Data from _get_frame():
+[[11 20 16 ..., 15  8 15]
+ [14 12 19 ..., 11 11 14]
+ [15  8 15 ..., 12 16  9]
+ ...,
+ [13  7 12 ...,  8 12 16]
+ [ 2  4  8 ...,  8 12 10]
+ [11  9 11 ...,  6 11 16]]
+Turning off LEDs
+ 30%|████████████████████████▉                                                          | 3/10 [00:01<00:04,  1.60it/s]
+Handling calibration file image index: 3
+Setting setpoint: 51053
+<xarray.DataArray 'ledset' ()>
+array(3, dtype=int64)
+Coordinates:
+    index             int64 3
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+3
+
+Setting ledset: 3
+Request number valid! 4
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6906F0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690360> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 8  5 17 ...,  8 18  6]
+ [17  7 25 ..., 21 22 21]
+ [18  7 12 ...,  9 23  9]
+ ...,
+ [16 11 11 ...,  3  5 17]
+ [ 6  1  3 ...,  8  5 12]
+ [ 9  8  8 ..., 10 20 17]]
+Data from _get_frame():
+[[ 8  5 17 ...,  8 18  6]
+ [17  7 25 ..., 21 22 21]
+ [18  7 12 ...,  9 23  9]
+ ...,
+ [16 11 11 ...,  3  5 17]
+ [ 6  1  3 ...,  8  5 12]
+ [ 9  8  8 ..., 10 20 17]]
+Turning off LEDs
+ 40%|█████████████████████████████████▏                                                 | 4/10 [00:02<00:03,  1.60it/s]
+Handling calibration file image index: 4
+Setting setpoint: 53443
+<xarray.DataArray 'ledset' ()>
+array(4, dtype=int64)
+Coordinates:
+    index             int64 4
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+4
+
+Setting ledset: 4
+Request number valid! 5
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6907B0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6904E0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[20 13 13 ..., 21 14 19]
+ [16  8 15 ..., 17 24 10]
+ [14  8 18 ..., 15 16  9]
+ ...,
+ [ 9  9 13 ...,  6 18  5]
+ [ 5  9  7 ..., 14  7 10]
+ [ 8  5 12 ...,  5 25  5]]
+Data from _get_frame():
+[[20 13 13 ..., 21 14 19]
+ [16  8 15 ..., 17 24 10]
+ [14  8 18 ..., 15 16  9]
+ ...,
+ [ 9  9 13 ...,  6 18  5]
+ [ 5  9  7 ..., 14  7 10]
+ [ 8  5 12 ...,  5 25  5]]
+Turning off LEDs
+ 50%|█████████████████████████████████████████▌                                         | 5/10 [00:03<00:03,  1.58it/s]
+Handling calibration file image index: 5
+Setting setpoint: 50362
+<xarray.DataArray 'ledset' ()>
+array(5, dtype=int64)
+Coordinates:
+    index             int64 5
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+5
+
+Setting ledset: 5
+Request number valid! 6
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690870> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690750> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[19 14 17 ...,  8 14 10]
+ [14  8 23 ..., 13 23  9]
+ [13  3 15 ..., 12 13  4]
+ ...,
+ [12  4 12 ..., 15 16 12]
+ [11  4  4 ...,  7 23  8]
+ [ 8 11 10 ..., 12 11 12]]
+Data from _get_frame():
+[[19 14 17 ...,  8 14 10]
+ [14  8 23 ..., 13 23  9]
+ [13  3 15 ..., 12 13  4]
+ ...,
+ [12  4 12 ..., 15 16 12]
+ [11  4  4 ...,  7 23  8]
+ [ 8 11 10 ..., 12 11 12]]
+Turning off LEDs
+ 60%|█████████████████████████████████████████████████▊                                 | 6/10 [00:03<00:02,  1.58it/s]
+Handling calibration file image index: 6
+Setting setpoint: 47210
+<xarray.DataArray 'ledset' ()>
+array(6, dtype=int64)
+Coordinates:
+    index             int64 6
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+6
+
+Setting ledset: 6
+Request number valid! 7
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690930> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690810> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[10  4  7 ...,  7 15 12]
+ [15  6 16 ..., 15 30 12]
+ [12 10 11 ..., 10 13 14]
+ ...,
+ [ 6  8 11 ..., 13 12 11]
+ [ 1  6  1 ...,  8 16 10]
+ [ 3  7 11 ..., 15  7 11]]
+Data from _get_frame():
+[[10  4  7 ...,  7 15 12]
+ [15  6 16 ..., 15 30 12]
+ [12 10 11 ..., 10 13 14]
+ ...,
+ [ 6  8 11 ..., 13 12 11]
+ [ 1  6  1 ...,  8 16 10]
+ [ 3  7 11 ..., 15  7 11]]
+Turning off LEDs
+ 70%|██████████████████████████████████████████████████████████                         | 7/10 [00:04<00:01,  1.59it/s]
+Handling calibration file image index: 7
+Setting setpoint: 43048
+<xarray.DataArray 'ledset' ()>
+array(7, dtype=int64)
+Coordinates:
+    index             int64 7
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+7
+
+Setting ledset: 7
+Request number valid! 8
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6909F0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6908D0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[11 13  7 ..., 14 12  6]
+ [30 18 40 ...,  9 13 17]
+ [11  8  8 ...,  4 19 11]
+ ...,
+ [ 5  1 13 ..., 10 13  5]
+ [ 2  6  4 ...,  5 20  9]
+ [13 11  8 ...,  6 13  5]]
+Data from _get_frame():
+[[11 13  7 ..., 14 12  6]
+ [30 18 40 ...,  9 13 17]
+ [11  8  8 ...,  4 19 11]
+ ...,
+ [ 5  1 13 ..., 10 13  5]
+ [ 2  6  4 ...,  5 20  9]
+ [13 11  8 ...,  6 13  5]]
+Turning off LEDs
+ 80%|██████████████████████████████████████████████████████████████████▍                | 8/10 [00:05<00:01,  1.56it/s]
+Handling calibration file image index: 8
+Setting setpoint: 36316
+<xarray.DataArray 'ledset' ()>
+array(8, dtype=int64)
+Coordinates:
+    index             int64 8
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+8
+
+Setting ledset: 8
+Request number valid! 9
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690AB0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690990> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[12 16  7 ...,  8 23 10]
+ [19 17 18 ..., 16 20 13]
+ [10 12  6 ..., 14 13 12]
+ ...,
+ [ 8 11  5 ..., 12  9 16]
+ [ 3 13  4 ..., 18 13 13]
+ [ 7  9  6 ...,  9 20 16]]
+Data from _get_frame():
+[[12 16  7 ...,  8 23 10]
+ [19 17 18 ..., 16 20 13]
+ [10 12  6 ..., 14 13 12]
+ ...,
+ [ 8 11  5 ..., 12  9 16]
+ [ 3 13  4 ..., 18 13 13]
+ [ 7  9  6 ...,  9 20 16]]
+Turning off LEDs
+ 90%|██████████████████████████████████████████████████████████████████████████▋        | 9/10 [00:05<00:00,  1.57it/s]
+Handling calibration file image index: 9
+Setting setpoint: 11127
+<xarray.DataArray 'ledset' ()>
+array(8, dtype=int64)
+Coordinates:
+    index             int64 9
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+8
+
+Setting ledset: 8
+Request number valid! 0
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690B70> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690A50> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[13 21 14 ..., 13 12  5]
+ [30 11 21 ..., 15 19 13]
+ [11  5  4 ...,  5 14 17]
+ ...,
+ [12  1 10 ..., 14 16 20]
+ [ 8  4  6 ..., 10 13  4]
+ [ 7  2 11 ...,  5 14 20]]
+Data from _get_frame():
+[[13 21 14 ..., 13 12  5]
+ [30 11 21 ..., 15 19 13]
+ [11  5  4 ...,  5 14 17]
+ ...,
+ [12  1 10 ..., 14 16 20]
+ [ 8  4  6 ..., 10 13  4]
+ [ 7  2 11 ...,  5 14 20]]
+Turning off LEDs
+100%|██████████████████████████████████████████████████████████████████████████████████| 10/10 [00:06<00:00,  1.57it/s]
+Exit DanielCamera
+Set image and press a key to start taking images
+Capturing cube
+  0%|                                                                                           | 0/10 [00:00<?, ?it/s]
+Handling calibration file image index: 0
+Setting setpoint: 53204
+<xarray.DataArray 'ledset' ()>
+array(1, dtype=int64)
+Coordinates:
+    index             int64 0
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+1
+
+Setting ledset: 1
+Request number valid! 1
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690C30> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6909C0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 9 10 11 ...,  9 12  3]
+ [12 12 13 ...,  3  2  7]
+ [13 13 14 ...,  3  5 11]
+ ...,
+ [10  2  7 ...,  6  5  9]
+ [ 5  2  1 ...,  5 11  1]
+ [ 8  6  8 ...,  6 13  9]]
+Data from _get_frame():
+[[ 9 10 11 ...,  9 12  3]
+ [12 12 13 ...,  3  2  7]
+ [13 13 14 ...,  3  5 11]
+ ...,
+ [10  2  7 ...,  6  5  9]
+ [ 5  2  1 ...,  5 11  1]
+ [ 8  6  8 ...,  6 13  9]]
+Turning off LEDs
+ 10%|████████▎                                                                          | 1/10 [00:00<00:05,  1.53it/s]
+Handling calibration file image index: 1
+Setting setpoint: 53895
+<xarray.DataArray 'ledset' ()>
+array(2, dtype=int64)
+Coordinates:
+    index             int64 1
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+2
+
+Setting ledset: 2
+Request number valid! 2
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690570> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690630> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[16 25 16 ...,  6  7  6]
+ [19 14 13 ...,  7  9  5]
+ [13  4 13 ...,  7  8  5]
+ ...,
+ [ 0  7  1 ...,  7 25 14]
+ [ 6  1  2 ...,  6 19  2]
+ [ 1  3  6 ..., 12 19 14]]
+Data from _get_frame():
+[[16 25 16 ...,  6  7  6]
+ [19 14 13 ...,  7  9  5]
+ [13  4 13 ...,  7  8  5]
+ ...,
+ [ 0  7  1 ...,  7 25 14]
+ [ 6  1  2 ...,  6 19  2]
+ [ 1  3  6 ..., 12 19 14]]
+Turning off LEDs
+ 20%|████████████████▌                                                                  | 2/10 [00:01<00:05,  1.54it/s]
+Handling calibration file image index: 2
+Setting setpoint: 44748
+<xarray.DataArray 'ledset' ()>
+array(3, dtype=int64)
+Coordinates:
+    index             int64 2
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+3
+
+Setting ledset: 3
+Request number valid! 3
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690B40> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6906F0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[12 14  6 ..., 12  9  8]
+ [15 11 21 ...,  2  9  9]
+ [13 10 11 ...,  5  6  6]
+ ...,
+ [11  3  4 ...,  5 22  9]
+ [12  1  3 ...,  9  7  5]
+ [11  8  7 ...,  6 23  9]]
+Data from _get_frame():
+[[12 14  6 ..., 12  9  8]
+ [15 11 21 ...,  2  9  9]
+ [13 10 11 ...,  5  6  6]
+ ...,
+ [11  3  4 ...,  5 22  9]
+ [12  1  3 ...,  9  7  5]
+ [11  8  7 ...,  6 23  9]]
+Turning off LEDs
+ 30%|████████████████████████▉                                                          | 3/10 [00:01<00:04,  1.54it/s]
+Handling calibration file image index: 3
+Setting setpoint: 51053
+<xarray.DataArray 'ledset' ()>
+array(3, dtype=int64)
+Coordinates:
+    index             int64 3
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+3
+
+Setting ledset: 3
+Request number valid! 4
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690C00> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B6908A0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[12  6 13 ..., 10 10  8]
+ [20 18 22 ...,  6 16 16]
+ [20  2 12 ..., 12 16  8]
+ ...,
+ [11  5 11 ...,  4 16  8]
+ [ 3  0  7 ...,  8 11  6]
+ [ 7  3  8 ...,  5  6  8]]
+Data from _get_frame():
+[[12  6 13 ..., 10 10  8]
+ [20 18 22 ...,  6 16 16]
+ [20  2 12 ..., 12 16  8]
+ ...,
+ [11  5 11 ...,  4 16  8]
+ [ 3  0  7 ...,  8 11  6]
+ [ 7  3  8 ...,  5  6  8]]
+Turning off LEDs
+ 40%|█████████████████████████████████▏                                                 | 4/10 [00:02<00:03,  1.57it/s]
+Handling calibration file image index: 4
+Setting setpoint: 53443
+<xarray.DataArray 'ledset' ()>
+array(4, dtype=int64)
+Coordinates:
+    index             int64 4
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+4
+
+Setting ledset: 4
+Request number valid! 5
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690CC0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690360> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[14  8  9 ..., 10  8  7]
+ [29  9 16 ...,  3  4  5]
+ [12  5  7 ...,  8  7  5]
+ ...,
+ [ 5  5  5 ...,  7 15 13]
+ [ 5  0  2 ...,  8  6  6]
+ [ 6  8 12 ...,  6 18 13]]
+Data from _get_frame():
+[[14  8  9 ..., 10  8  7]
+ [29  9 16 ...,  3  4  5]
+ [12  5  7 ...,  8  7  5]
+ ...,
+ [ 5  5  5 ...,  7 15 13]
+ [ 5  0  2 ...,  8  6  6]
+ [ 6  8 12 ...,  6 18 13]]
+Turning off LEDs
+ 50%|█████████████████████████████████████████▌                                         | 5/10 [00:03<00:03,  1.55it/s]
+Handling calibration file image index: 5
+Setting setpoint: 50362
+<xarray.DataArray 'ledset' ()>
+array(5, dtype=int64)
+Coordinates:
+    index             int64 5
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+5
+
+Setting ledset: 5
+Request number valid! 6
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690D80> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690960> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[12  7 11 ...,  8 14  5]
+ [27 11 30 ..., 10 16  8]
+ [15 16 12 ..., 13 17 14]
+ ...,
+ [10  8  7 ...,  4 10 11]
+ [13  3  2 ...,  5  6  9]
+ [ 6  5  7 ...,  9  4 11]]
+Data from _get_frame():
+[[12  7 11 ...,  8 14  5]
+ [27 11 30 ..., 10 16  8]
+ [15 16 12 ..., 13 17 14]
+ ...,
+ [10  8  7 ...,  4 10 11]
+ [13  3  2 ...,  5  6  9]
+ [ 6  5  7 ...,  9  4 11]]
+Turning off LEDs
+ 60%|█████████████████████████████████████████████████▊                                 | 6/10 [00:03<00:02,  1.55it/s]
+Handling calibration file image index: 6
+Setting setpoint: 47210
+<xarray.DataArray 'ledset' ()>
+array(6, dtype=int64)
+Coordinates:
+    index             int64 6
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+6
+
+Setting ledset: 6
+Request number valid! 7
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690DE0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690A20> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[12 14 11 ..., 11 10  8]
+ [16 13 34 ...,  7 18 16]
+ [ 7 10 12 ..., 10 14 10]
+ ...,
+ [12  1 12 ...,  4 16 10]
+ [ 6  0 10 ...,  1 12  3]
+ [ 5  1  5 ...,  7 18 10]]
+Data from _get_frame():
+[[12 14 11 ..., 11 10  8]
+ [16 13 34 ...,  7 18 16]
+ [ 7 10 12 ..., 10 14 10]
+ ...,
+ [12  1 12 ...,  4 16 10]
+ [ 6  0 10 ...,  1 12  3]
+ [ 5  1  5 ...,  7 18 10]]
+Turning off LEDs
+ 70%|██████████████████████████████████████████████████████████                         | 7/10 [00:04<00:01,  1.55it/s]
+Handling calibration file image index: 7
+Setting setpoint: 43048
+<xarray.DataArray 'ledset' ()>
+array(7, dtype=int64)
+Coordinates:
+    index             int64 7
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+7
+
+Setting ledset: 7
+Request number valid! 8
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690480> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690AE0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[11 14  9 ..., 11 15 10]
+ [13 13 19 ..., 21 23 21]
+ [14 13 11 ...,  3 12  7]
+ ...,
+ [13  7 10 ...,  8 17  9]
+ [ 7  0 10 ...,  2 11  6]
+ [ 8  3  5 ...,  7 15  9]]
+Data from _get_frame():
+[[11 14  9 ..., 11 15 10]
+ [13 13 19 ..., 21 23 21]
+ [14 13 11 ...,  3 12  7]
+ ...,
+ [13  7 10 ...,  8 17  9]
+ [ 7  0 10 ...,  2 11  6]
+ [ 8  3  5 ...,  7 15  9]]
+Turning off LEDs
+ 80%|██████████████████████████████████████████████████████████████████▍                | 8/10 [00:05<00:01,  1.56it/s]
+Handling calibration file image index: 8
+Setting setpoint: 36316
+<xarray.DataArray 'ledset' ()>
+array(8, dtype=int64)
+Coordinates:
+    index             int64 8
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+8
+
+Setting ledset: 8
+Request number valid! 9
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B6906C0> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690BA0> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[ 8  4  6 ..., 13 10  9]
+ [27 10 27 ..., 10 12 15]
+ [12  6  9 ...,  8  8 11]
+ ...,
+ [ 7 12 13 ...,  5 12 15]
+ [ 4  9  1 ...,  0  6  1]
+ [12  7  7 ...,  5 12 15]]
+Data from _get_frame():
+[[ 8  4  6 ..., 13 10  9]
+ [27 10 27 ..., 10 12 15]
+ [12  6  9 ...,  8  8 11]
+ ...,
+ [ 7 12 13 ...,  5 12 15]
+ [ 4  9  1 ...,  0  6  1]
+ [12  7  7 ...,  5 12 15]]
+Turning off LEDs
+ 90%|██████████████████████████████████████████████████████████████████████████▋        | 9/10 [00:05<00:00,  1.56it/s]
+Handling calibration file image index: 9
+Setting setpoint: 11127
+<xarray.DataArray 'ledset' ()>
+array(8, dtype=int64)
+Coordinates:
+    index             int64 9
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+8
+
+Setting ledset: 8
+Request number valid! 0
+Print request: <mvIMPACT.acquire.Request; proxy of <Swig Object of type 'mvIMPACT::acquire::Request *' at 0x000002906B690D50> >
+Print request result: <mvIMPACT.acquire.PropertyIRequestResult; proxy of <Swig Object of type 'mvIMPACT::acquire::EnumPropertyI< mvIMPACT::acquire::TRequestResult > *' at 0x000002906B690E70> >
+Print request result readS: OK
+Request OK!
+Image height: 1944
+Image width: 2592
+Image channel count: 1
+Image channel bit depth: 12
+Image size: 10077696
+Data from buffer_decoder()
+[[12 17 12 ...,  8 11  4]
+ [18 10 22 ..., 10 22  7]
+ [12  8 14 ...,  7  9  8]
+ ...,
+ [ 6  8  9 ...,  7 15  4]
+ [ 0  5  1 ...,  5  7  5]
+ [ 5  3  4 ...,  6 20  4]]
+Data from _get_frame():
+[[12 17 12 ...,  8 11  4]
+ [18 10 22 ..., 10 22  7]
+ [12  8 14 ...,  7  9  8]
+ ...,
+ [ 6  8  9 ...,  7 15  4]
+ [ 0  5  1 ...,  5  7  5]
+ [ 5  3  4 ...,  6 20  4]]
+Turning off LEDs
+100%|██████████████████████████████████████████████████████████████████████████████████| 10/10 [00:06<00:00,  1.56it/s]
+Exit DanielCamera
+<xarray.Dataset>
+Dimensions:           (colour: 3, index: 10, peak: 3, setpoint_index: 3, x: 2592, y: 1944)
+Coordinates:
+  * index             (index) int64 0 1 2 3 4 5 6 7 8 9
+  * setpoint_index    (setpoint_index) object 'SP1' 'SP2' 'SP3'
+  * peak              (peak) int32 1 2 3
+  * colour            (colour) <U1 'R' 'G' 'B'
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+  * y                 (y) float64 0.5 1.5 2.5 ... 1.942e+03 1.942e+03 1.944e+03
+  * x                 (x) float64 0.5 1.5 2.5 ... 2.59e+03 2.59e+03 2.592e+03
+    timestamp         (index) float64 1.647e+09 1.647e+09 ... 1.647e+09
+Data variables:
+    ledset            (index) int64 1 2 3 3 4 5 6 7 8 8
+    npeaks            (index) int64 2 2 2 1 1 1 1 1 1 1
+    setpoint          (index, setpoint_index) int64 53204 0 0 ... 11127 0 0
+    wavelength        (index, peak) float64 542.8 701.4 0.0 ... 933.3 0.0 0.0
+    fwhm              (index, peak) float64 22.03 28.74 0.0 ... 22.93 0.0 0.0
+    sinvs             (index, peak, colour) float64 -0.4206 0.6118 ... 0.0 0.0
+    dark              (y, x) float64 2.5 2.5 2.5 5.0 4.0 ... 3.0 3.0 2.0 2.0 4.0
+    dn                (index, y, x) uint16 9 10 11 11 16 14 ... 18 12 8 6 20 4
+Calculating radiance
+<xarray.Dataset>
+Dimensions:           (band: 13, colour: 3, setpoint_index: 3, x: 2592, y: 1944)
+Coordinates:
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+  * y                 (y) float64 0.5 1.5 2.5 ... 1.942e+03 1.942e+03 1.944e+03
+  * setpoint_index    (setpoint_index) object 'SP1' 'SP2' 'SP3'
+  * x                 (x) float64 0.5 1.5 2.5 ... 2.59e+03 2.59e+03 2.592e+03
+  * colour            (colour) <U1 'R' 'G' 'B'
+    timestamp         (band) float64 1.647e+09 1.647e+09 ... 1.647e+09 1.647e+09
+    index             (band) int64 2 1 0 3 2 1 4 0 5 6 7 8 9
+    peak              (band) int64 1 1 1 1 2 2 1 2 1 1 1 1 1
+  * band              (band) int64 1 2 3 4 5 6 7 8 9 10 11 12 13
+Data variables:
+    ledset            (band) int64 3 2 1 3 3 2 4 1 5 6 7 8 8
+    npeaks            (band) int64 2 2 2 1 2 2 1 2 1 1 1 1 1
+    setpoint          (setpoint_index, band) int64 44748 53895 53204 ... 0 0 0
+    wavelength        (band) float64 505.9 533.8 542.8 ... 810.0 853.2 933.3
+    fwhm              (band) float64 14.26 23.64 22.03 ... 26.08 25.62 22.93
+    sinvs             (colour, band) float64 -0.3984 -0.3243 ... 1.286 3.53
+    dark              (y, x, band) float64 2.5 2.5 2.5 2.5 ... 4.0 4.0 4.0 4.0
+    radiance          (y, x, band) float64 0.1558 0.08981 ... 0.2057 0.3353
+<xarray.DataArray 'radiance' (y: 1944, x: 2592, band: 13)>
+array([[[  1.55772101e-01,   8.98088845e-02,   2.91826724e-02, ...,
+           1.74193612e-01,   2.31396813e-01,   8.47118821e-01],
+        [  1.47019588e-01,   9.57818100e-02,   2.84774665e-02, ...,
+           1.84889711e-01,   1.58549668e-01,   8.70649899e-01],
+        [  8.78851126e-02,   9.90795280e-02,   4.31421674e-02, ...,
+           1.54329428e-01,   1.79975299e-01,   8.76532669e-01],
+        ...,
+        [  1.06582467e-01,   1.31472062e-02,   2.31390507e-02, ...,
+           2.04753895e-01,   2.14256308e-01,   5.41214802e-01],
+        [  1.13776789e-01,   1.68664222e-02,   4.66200576e-02, ...,
+           2.11629959e-01,   2.02472211e-01,   5.26507878e-01],
+        [  8.83631534e-02,   1.33252969e-02,   1.22358088e-02, ...,
+           1.64261520e-01,   1.63906076e-01,   2.02955551e-01]],
+
+       [[  4.94700688e-02,  -1.52928113e-03,  -1.71600327e-03, ...,
+           1.69609570e-01,   3.64235724e-01,   7.94173894e-01],
+        [  1.12164720e-01,   4.96929404e-02,   3.16197547e-02, ...,
+           2.18506022e-01,   3.02101395e-01,   8.41236051e-01],
+        [  7.41838942e-02,   5.21686907e-02,   2.57475499e-02, ...,
+           1.99405845e-01,   2.96744987e-01,   8.61825745e-01],
+...
+        [  4.62177374e-02,   2.64906428e-03,   1.27582516e-03, ...,
+           1.13837054e-01,   1.25339940e-01,   4.73562952e-01],
+        [  2.30582611e-03,   2.21768593e-02,   1.29053838e-02, ...,
+           1.37521273e-01,   1.07128154e-01,   4.94152645e-01],
+        [  1.13821632e-02,   1.34695726e-02,   8.02948066e-03, ...,
+           8.78608131e-02,   9.53440572e-02,   2.38252168e-01]],
+
+       [[ -1.15472075e-02,   2.96533750e-03,  -1.80038131e-02, ...,
+           5.42445020e-02,   1.68191202e-01,   4.41207719e-02],
+        [  2.40682702e-02,  -2.43227863e-03,  -4.52510338e-03, ...,
+           1.83361697e-02,   1.26411222e-01,   4.41207719e-02],
+        [  6.05845457e-03,   1.67643525e-04,  -1.26823092e-02, ...,
+           1.83361697e-02,   6.85620187e-02,   4.11793871e-02],
+        ...,
+        [  1.01571184e-02,   6.53196476e-03,  -2.39302285e-02, ...,
+           1.75721626e-01,   2.05686056e-01,   5.58863111e-01],
+        [ -4.37395961e-02,  -1.79749585e-02,  -2.84713442e-02, ...,
+           1.48981379e-01,   1.63906076e-01,   7.02990966e-01],
+        [  2.62915332e-02,   3.17409256e-02,   7.45556226e-03, ...,
+           1.14601061e-01,   2.05686056e-01,   3.35317867e-01]]])
+Coordinates:
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+  * y                 (y) float64 0.5 1.5 2.5 ... 1.942e+03 1.942e+03 1.944e+03
+  * x                 (x) float64 0.5 1.5 2.5 ... 2.59e+03 2.59e+03 2.592e+03
+    timestamp         (band) float64 1.647e+09 1.647e+09 ... 1.647e+09 1.647e+09
+    index             (band) int64 2 1 0 3 2 1 4 0 5 6 7 8 9
+    peak              (band) int64 1 1 1 1 2 2 1 2 1 1 1 1 1
+  * band              (band) int64 1 2 3 4 5 6 7 8 9 10 11 12 13
+Attributes:
+    long_name:  radiance per unit wavelength
+    units:      W sr-1 m-2 nm-1
+Calculating white radiance
+<xarray.DataArray 'white' (y: 1944, x: 2592, band: 13)>
+array([[[  1.75942472e-01,   6.54905549e-02,   8.31021113e-03, ...,
+           2.47538291e-01,   3.08529084e-01,   1.16478838e+00],
+        [  2.31564737e-01,   4.49682303e-02,   6.55271552e-03, ...,
+           2.38370206e-01,   3.02101395e-01,   1.10007791e+00],
+        [  2.26310505e-01,   8.20279060e-02,   2.48827723e-02, ...,
+           2.16978008e-01,   2.74248075e-01,   8.70649899e-01],
+        ...,
+        [  1.51592909e-01,   3.78709526e-02,   2.61030703e-02, ...,
+           1.81833683e-01,   2.37824502e-01,   7.35346199e-01],
+        [  1.51917098e-01,   6.70543840e-02,   4.26961278e-02, ...,
+           1.53565421e-01,   3.50309064e-01,   6.26514961e-01],
+        [  2.03155194e-01,   7.69264293e-03,   3.68043264e-02, ...,
+           8.32767707e-02,   2.23897842e-01,   2.79431555e-01]],
+
+       [[  6.44932731e-02,   5.00956685e-03,  -4.90725428e-02, ...,
+           3.19354956e-01,   3.19241899e-01,   1.22949884e+00],
+        [  1.38227014e-01,   2.28327455e-02,  -1.32564740e-02, ...,
+           3.46859210e-01,   3.66378287e-01,   1.00595360e+00],
+        [  1.24672459e-01,   3.49383673e-02,  -1.21220796e-02, ...,
+           3.33871090e-01,   2.88174735e-01,   7.02990966e-01],
+...
+        [  6.45937258e-02,   9.76042804e-03,   1.73570579e-02, ...,
+           1.42869322e-01,   3.50309064e-01,   6.50046040e-01],
+        [  8.71982759e-02,   4.95964448e-03,   1.63064140e-02, ...,
+           1.92529782e-01,   2.95673705e-01,   6.23573576e-01],
+        [  1.17183113e-01,   2.80900633e-02,   4.21624925e-02, ...,
+           1.07724997e-01,   2.41038347e-01,   3.97086947e-01]],
+
+       [[ -2.49262166e-02,  -3.70923524e-02,   1.34849468e-02, ...,
+           1.33701237e-01,   8.24886787e-02,   1.73541703e-01],
+        [  3.34386483e-02,  -9.38645283e-04,   9.63583129e-03, ...,
+           1.20713117e-01,   1.26411222e-01,   1.82365857e-01],
+        [  2.72103157e-03,   5.52253078e-03,   1.24652961e-02, ...,
+           5.65365232e-02,   7.71322710e-02,   2.82372940e-01],
+        ...,
+        [  1.86897571e-02,  -1.49235423e-02,   1.99260422e-02, ...,
+           1.54329428e-01,   3.42810093e-01,   5.52980341e-01],
+        [  3.61072636e-02,  -2.89456201e-02,  -4.46577733e-03, ...,
+           1.45925351e-01,   3.46023938e-01,   6.38280500e-01],
+        [  1.64037264e-01,   4.38008188e-02,   8.76767813e-02, ...,
+           8.25127637e-02,   3.27812152e-01,   7.76525586e-01]]])
+Coordinates:
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+  * y                 (y) float64 0.5 1.5 2.5 ... 1.942e+03 1.942e+03 1.944e+03
+  * x                 (x) float64 0.5 1.5 2.5 ... 2.59e+03 2.59e+03 2.592e+03
+    timestamp         (band) float64 1.647e+09 1.647e+09 ... 1.647e+09 1.647e+09
+    index             (band) int64 2 1 0 3 2 1 4 0 5 6 7 8 9
+    peak              (band) int64 1 1 1 1 2 2 1 2 1 1 1 1 1
+  * band              (band) int64 1 2 3 4 5 6 7 8 9 10 11 12 13
+Attributes:
+    long_name:  radiance per unit wavelength
+    units:      W sr-1 m-2 nm-1
+Calculating reflectance
+<xarray.DataArray 'reflectance' (y: 1944, x: 2592, band: 13)>
+array([[[  8.85358149e-01,   1.37132575e+00,   3.51166438e+00, ...,
+           7.03703704e-01,   7.50000000e-01,   7.27272727e-01],
+        [  6.34896272e-01,   2.12998843e+00,   4.34590308e+00, ...,
+           7.75641026e-01,   5.24822695e-01,   7.91443850e-01],
+        [  3.88338636e-01,   1.20787587e+00,   1.73381675e+00, ...,
+           7.11267606e-01,   6.56250000e-01,   1.00675676e+00],
+        ...,
+        [  7.03083462e-01,   3.47158054e-01,   8.86449388e-01, ...,
+           1.12605042e+00,   9.00900901e-01,   7.36000000e-01],
+        [  7.48939986e-01,   2.51533474e-01,   1.09190365e+00, ...,
+           1.37810945e+00,   5.77981651e-01,   8.40375587e-01],
+        [  4.34953946e-01,   1.73221311e+00,   3.32455718e-01, ...,
+           1.97247706e+00,   7.32057416e-01,   7.26315789e-01]],
+
+       [[  7.67057810e-01,  -3.05272127e-01,   3.49687049e-02, ...,
+           5.31100478e-01,   1.14093960e+00,   6.45933014e-01],
+        [  8.11452964e-01,   2.17638918e+00,  -2.38523115e+00, ...,
+           6.29955947e-01,   8.24561404e-01,   8.36257310e-01],
+        [  5.95030329e-01,   1.49316338e+00,  -2.12402086e+00, ...,
+           5.97254005e-01,   1.02973978e+00,   1.22594142e+00],
+...
+        [  7.15514345e-01,   2.71408617e-01,   7.35046898e-02, ...,
+           7.96791444e-01,   3.57798165e-01,   7.28506787e-01],
+        [  2.64434829e-02,   4.47146149e+00,   7.91429913e-01, ...,
+           7.14285714e-01,   3.62318841e-01,   7.92452830e-01],
+        [  9.71314290e-02,   4.79513787e-01,   1.90441318e-01, ...,
+           8.15602837e-01,   3.95555556e-01,   6.00000000e-01]],
+
+       [[  4.63255521e-01,  -7.99447139e-02,  -1.33510449e+00, ...,
+           4.05714286e-01,   2.03896104e+00,   2.54237288e-01],
+        [  7.19774017e-01,   2.59126495e+00,  -4.69612143e-01, ...,
+           1.51898734e-01,   1.00000000e+00,   2.41935484e-01],
+        [  2.22652859e+00,   3.03562862e-02,  -1.01740938e+00, ...,
+           3.24324324e-01,   8.88888889e-01,   1.45833333e-01],
+        ...,
+        [  5.43459088e-01,  -4.37695328e-01,  -1.20095242e+00, ...,
+           1.13861386e+00,   6.00000000e-01,   1.01063830e+00],
+        [ -1.21137942e+00,   6.20990618e-01,   6.37545091e+00, ...,
+           1.02094241e+00,   4.73684211e-01,   1.10138249e+00],
+        [  1.60277808e-01,   7.24665119e-01,   8.50346255e-02, ...,
+           1.38888889e+00,   6.27450980e-01,   4.31818182e-01]]])
+Coordinates:
+    PixelFormat       <U9 'BayerGB12'
+    PixelColorFilter  <U7 'BayerGB'
+    Gain              <U12 '1.9382002601'
+    ExposureTime      int32 150000
+  * y                 (y) float64 0.5 1.5 2.5 ... 1.942e+03 1.942e+03 1.944e+03
+  * x                 (x) float64 0.5 1.5 2.5 ... 2.59e+03 2.59e+03 2.592e+03
+    timestamp         (band) float64 1.647e+09 1.647e+09 ... 1.647e+09 1.647e+09
+    index             (band) int64 2 1 0 3 2 1 4 0 5 6 7 8 9
+    peak              (band) int64 1 1 1 1 2 2 1 2 1 1 1 1 1
+  * band              (band) int64 1 2 3 4 5 6 7 8 9 10 11 12 13
+Extracting single frame from cube and saving to PNG
+
+Radiance data
+[[[  1.55772101e-01   8.98088845e-02   2.91826724e-02 ...,   1.74193612e-01
+     2.31396813e-01   8.47118821e-01]
+  [  1.47019588e-01   9.57818100e-02   2.84774665e-02 ...,   1.84889711e-01
+     1.58549668e-01   8.70649899e-01]
+  [  8.78851126e-02   9.90795280e-02   4.31421674e-02 ...,   1.54329428e-01
+     1.79975299e-01   8.76532669e-01]
+  ...,
+  [  1.06582467e-01   1.31472062e-02   2.31390507e-02 ...,   2.04753895e-01
+     2.14256308e-01   5.41214802e-01]
+  [  1.13776789e-01   1.68664222e-02   4.66200576e-02 ...,   2.11629959e-01
+     2.02472211e-01   5.26507878e-01]
+  [  8.83631534e-02   1.33252969e-02   1.22358088e-02 ...,   1.64261520e-01
+     1.63906076e-01   2.02955551e-01]]
+
+ [[  4.94700688e-02  -1.52928113e-03  -1.71600327e-03 ...,   1.69609570e-01
+     3.64235724e-01   7.94173894e-01]
+  [  1.12164720e-01   4.96929404e-02   3.16197547e-02 ...,   2.18506022e-01
+     3.02101395e-01   8.41236051e-01]
+  [  7.41838942e-02   5.21686907e-02   2.57475499e-02 ...,   1.99405845e-01
+     2.96744987e-01   8.61825745e-01]
+  ...,
+  [  3.67198496e-02   1.69035561e-02   6.43832546e-03 ...,   2.81154602e-01
+     2.48537318e-01   7.29463429e-01]
+  [  3.99640089e-02   6.76333511e-03   1.88600005e-02 ...,   2.33022157e-01
+     1.98187085e-01   6.61811579e-01]
+  [  7.81099622e-02   7.27375064e-03   2.52547049e-02 ...,   2.33022157e-01
+     2.34610658e-01   3.85321408e-01]]
+
+ [[  5.36633439e-02   4.11303769e-04   1.71028145e-02 ...,   2.25382086e-01
+     3.80304947e-01   8.91239593e-01]
+  [  8.83059617e-02   1.46081717e-02   3.31873608e-02 ...,   2.07045916e-01
+     2.86032172e-01   7.32404814e-01]
+  [  9.51001453e-02   1.68112901e-02   2.15230565e-02 ...,   1.81833683e-01
+     2.97816269e-01   7.11815120e-01]
+  ...,
+  [  1.12296456e-02   1.93808205e-02   1.14709939e-02 ...,   1.99405845e-01
+     2.13185027e-01   6.73577118e-01]
+  [  1.03577431e-02   6.97670721e-03   7.31972980e-03 ...,   1.74193612e-01
+     2.18541434e-01   5.05918185e-01]
+  [  2.27575593e-02   1.42149033e-03   1.99198879e-02 ...,   1.22241131e-01
+     1.92830678e-01   3.35317867e-01]]
+
+ ...,
+ [[  2.03173274e-02   9.88445833e-03  -2.31977454e-02 ...,   1.22241131e-01
+     7.49897079e-02   1.17655392e-01]
+  [  2.76564732e-02   1.58151333e-02  -1.33195525e-02 ...,   1.08489004e-01
+     1.60692231e-01   2.41193553e-01]
+  [  4.06535275e-02   7.00909245e-03  -7.38356196e-03 ...,   8.09847495e-02
+     1.33910193e-01   2.00014166e-01]
+  ...,
+  [  2.24092753e-02  -1.82568530e-02   3.23317300e-05 ...,   1.06960990e-01
+     9.42727757e-02   4.94152645e-01]
+  [  3.75390449e-03  -6.07751828e-03   1.34628291e-02 ...,   1.42869322e-01
+     1.44623008e-01   4.61797413e-01]
+  [  3.10647764e-02   2.92094414e-02   2.12850938e-02 ...,   9.32088626e-02
+     1.99258367e-01   2.05896936e-01]]
+
+ [[  6.75999952e-02   1.48266875e-02  -9.78282148e-03 ...,   8.78608131e-02
+     1.08199436e-01   7.94173894e-02]
+  [  1.84414350e-02   6.10836129e-03  -7.48837690e-03 ...,   5.42445020e-02
+     1.36052756e-01   1.47069240e-01]
+  [  1.12546535e-02   2.51220748e-03  -9.81440712e-03 ...,   7.02886505e-02
+     1.02843028e-01   1.47069240e-01]
+  ...,
+  [  4.62177374e-02   2.64906428e-03   1.27582516e-03 ...,   1.13837054e-01
+     1.25339940e-01   4.73562952e-01]
+  [  2.30582611e-03   2.21768593e-02   1.29053838e-02 ...,   1.37521273e-01
+     1.07128154e-01   4.94152645e-01]
+  [  1.13821632e-02   1.34695726e-02   8.02948066e-03 ...,   8.78608131e-02
+     9.53440572e-02   2.38252168e-01]]
+
+ [[ -1.15472075e-02   2.96533750e-03  -1.80038131e-02 ...,   5.42445020e-02
+     1.68191202e-01   4.41207719e-02]
+  [  2.40682702e-02  -2.43227863e-03  -4.52510338e-03 ...,   1.83361697e-02
+     1.26411222e-01   4.41207719e-02]
+  [  6.05845457e-03   1.67643525e-04  -1.26823092e-02 ...,   1.83361697e-02
+     6.85620187e-02   4.11793871e-02]
+  ...,
+  [  1.01571184e-02   6.53196476e-03  -2.39302285e-02 ...,   1.75721626e-01
+     2.05686056e-01   5.58863111e-01]
+  [ -4.37395961e-02  -1.79749585e-02  -2.84713442e-02 ...,   1.48981379e-01
+     1.63906076e-01   7.02990966e-01]
+  [  2.62915332e-02   3.17409256e-02   7.45556226e-03 ...,   1.14601061e-01
+     2.05686056e-01   3.35317867e-01]]]
+
+White data
+[[[  1.75942472e-01   6.54905549e-02   8.31021113e-03 ...,   2.47538291e-01
+     3.08529084e-01   1.16478838e+00]
+  [  2.31564737e-01   4.49682303e-02   6.55271552e-03 ...,   2.38370206e-01
+     3.02101395e-01   1.10007791e+00]
+  [  2.26310505e-01   8.20279060e-02   2.48827723e-02 ...,   2.16978008e-01
+     2.74248075e-01   8.70649899e-01]
+  ...,
+  [  1.51592909e-01   3.78709526e-02   2.61030703e-02 ...,   1.81833683e-01
+     2.37824502e-01   7.35346199e-01]
+  [  1.51917098e-01   6.70543840e-02   4.26961278e-02 ...,   1.53565421e-01
+     3.50309064e-01   6.26514961e-01]
+  [  2.03155194e-01   7.69264293e-03   3.68043264e-02 ...,   8.32767707e-02
+     2.23897842e-01   2.79431555e-01]]
+
+ [[  6.44932731e-02   5.00956685e-03  -4.90725428e-02 ...,   3.19354956e-01
+     3.19241899e-01   1.22949884e+00]
+  [  1.38227014e-01   2.28327455e-02  -1.32564740e-02 ...,   3.46859210e-01
+     3.66378287e-01   1.00595360e+00]
+  [  1.24672459e-01   3.49383673e-02  -1.21220796e-02 ...,   3.33871090e-01
+     2.88174735e-01   7.02990966e-01]
+  ...,
+  [  1.11982126e-01  -1.13318262e-03   1.42700667e-03 ...,   1.65025527e-01
+     3.77091103e-01   8.58884360e-01]
+  [  1.17145215e-01  -1.20693717e-02   2.01759551e-02 ...,   1.59677478e-01
+     3.20313181e-01   7.67701431e-01]
+  [  1.79245451e-01  -8.33741414e-03   7.54668892e-02 ...,   1.71901591e-01
+     2.60321415e-01   7.02990966e-01]]
+
+ [[  1.03679359e-01   5.80884480e-02  -2.57759344e-02 ...,   2.92614708e-01
+     2.88174735e-01   1.10890207e+00]
+  [  9.54272966e-02   3.66484943e-02  -6.81250386e-03 ...,   2.68166482e-01
+     2.86032172e-01   6.73577118e-01]
+  [  1.44833253e-01   3.41818936e-02  -9.96623501e-03 ...,   2.67402475e-01
+     2.24969124e-01   4.29442180e-01]
+  ...,
+  [  1.09467011e-01   8.52860362e-03  -3.38482547e-03 ...,   1.42869322e-01
+     3.48166501e-01   6.73577118e-01]
+  [  1.11283873e-01   1.18937721e-03  -1.18617063e-02 ...,   1.58913471e-01
+     2.87103453e-01   7.17697890e-01]
+  [  1.01598322e-01   5.96366198e-03   2.17345786e-02 ...,   1.29881202e-01
+     2.09971182e-01   7.52994507e-01]]
+
+ ...,
+ [[ -5.13941596e-03  -9.10352622e-03   1.96028512e-02 ...,   3.51443253e-02
+     1.07128154e-01   3.82380023e-01]
+  [  1.71961708e-02   1.81920076e-02   3.30877981e-02 ...,   6.87606364e-02
+     1.69262484e-01   2.64724631e-01]
+  [  2.72643800e-02  -2.64568820e-03   1.96028512e-02 ...,   9.55008839e-02
+     1.36052756e-01   3.44142021e-01]
+  ...,
+  [  7.51309608e-02   2.89150593e-02   3.47218062e-02 ...,   1.46689358e-01
+     2.95673705e-01   7.88291125e-01]
+  [  9.16597289e-02   2.55841561e-02   2.84291712e-02 ...,   1.38285280e-01
+     2.53893725e-01   7.14756505e-01]
+  [  1.79394234e-01   6.63374708e-02   7.62222605e-02 ...,   7.33446788e-02
+     3.19241899e-01   7.58877277e-01]]
+
+ [[ -2.40374783e-02  -4.83709917e-03   5.55201141e-02 ...,   5.57725162e-02
+     8.89163680e-02   3.55907560e-01]
+  [  2.49238285e-02   1.61371057e-02   2.94681699e-02 ...,   7.25806717e-02
+     1.46765571e-01   2.38252168e-01]
+  [  3.73149811e-02   3.47797250e-03   1.26947835e-02 ...,   6.41765939e-02
+     1.07128154e-01   2.82372940e-01]
+  ...,
+  [  6.45937258e-02   9.76042804e-03   1.73570579e-02 ...,   1.42869322e-01
+     3.50309064e-01   6.50046040e-01]
+  [  8.71982759e-02   4.95964448e-03   1.63064140e-02 ...,   1.92529782e-01
+     2.95673705e-01   6.23573576e-01]
+  [  1.17183113e-01   2.80900633e-02   4.21624925e-02 ...,   1.07724997e-01
+     2.41038347e-01   3.97086947e-01]]
+
+ [[ -2.49262166e-02  -3.70923524e-02   1.34849468e-02 ...,   1.33701237e-01
+     8.24886787e-02   1.73541703e-01]
+  [  3.34386483e-02  -9.38645283e-04   9.63583129e-03 ...,   1.20713117e-01
+     1.26411222e-01   1.82365857e-01]
+  [  2.72103157e-03   5.52253078e-03   1.24652961e-02 ...,   5.65365232e-02
+     7.71322710e-02   2.82372940e-01]
+  ...,
+  [  1.86897571e-02  -1.49235423e-02   1.99260422e-02 ...,   1.54329428e-01
+     3.42810093e-01   5.52980341e-01]
+  [  3.61072636e-02  -2.89456201e-02  -4.46577733e-03 ...,   1.45925351e-01
+     3.46023938e-01   6.38280500e-01]
+  [  1.64037264e-01   4.38008188e-02   8.76767813e-02 ...,   8.25127637e-02
+     3.27812152e-01   7.76525586e-01]]]
+
+Reflectance data
+[[[  8.85358149e-01   1.37132575e+00   3.51166438e+00 ...,   7.03703704e-01
+     7.50000000e-01   7.27272727e-01]
+  [  6.34896272e-01   2.12998843e+00   4.34590308e+00 ...,   7.75641026e-01
+     5.24822695e-01   7.91443850e-01]
+  [  3.88338636e-01   1.20787587e+00   1.73381675e+00 ...,   7.11267606e-01
+     6.56250000e-01   1.00675676e+00]
+  ...,
+  [  7.03083462e-01   3.47158054e-01   8.86449388e-01 ...,   1.12605042e+00
+     9.00900901e-01   7.36000000e-01]
+  [  7.48939986e-01   2.51533474e-01   1.09190365e+00 ...,   1.37810945e+00
+     5.77981651e-01   8.40375587e-01]
+  [  4.34953946e-01   1.73221311e+00   3.32455718e-01 ...,   1.97247706e+00
+     7.32057416e-01   7.26315789e-01]]
+
+ [[  7.67057810e-01  -3.05272127e-01   3.49687049e-02 ...,   5.31100478e-01
+     1.14093960e+00   6.45933014e-01]
+  [  8.11452964e-01   2.17638918e+00  -2.38523115e+00 ...,   6.29955947e-01
+     8.24561404e-01   8.36257310e-01]
+  [  5.95030329e-01   1.49316338e+00  -2.12402086e+00 ...,   5.97254005e-01
+     1.02973978e+00   1.22594142e+00]
+  ...,
+  [  3.27908132e-01  -1.49168861e+01   4.51176969e+00 ...,   1.70370370e+00
+     6.59090909e-01   8.49315068e-01]
+  [  3.41149307e-01  -5.60371764e-01   9.34776094e-01 ...,   1.45933014e+00
+     6.18729097e-01   8.62068966e-01]
+  [  4.35770960e-01  -8.72422855e-01   3.34646163e-01 ...,   1.35555556e+00
+     9.01234568e-01   5.48117155e-01]]
+
+ [[  5.17589465e-01   7.08064656e-03  -6.63518699e-01 ...,   7.70234987e-01
+     1.31970260e+00   8.03713528e-01]
+  [  9.25374236e-01   3.98602235e-01  -4.87153644e+00 ...,   7.72079772e-01
+     1.00000000e+00   1.08733624e+00]
+  [  6.56618168e-01   4.91818571e-01  -2.15959753e+00 ...,   6.80000000e-01
+     1.32380952e+00   1.65753425e+00]
+  ...,
+  [  1.02584746e-01   2.27244944e+00  -3.38894694e+00 ...,   1.39572193e+00
+     6.12307692e-01   1.00000000e+00]
+  [  9.30749689e-02   5.86584910e+00  -6.17089112e-01 ...,   1.09615385e+00
+     7.61194030e-01   7.04918033e-01]
+  [  2.23995426e-01   2.38358635e-01   9.16506748e-01 ...,   9.41176471e-01
+     9.18367347e-01   4.45312500e-01]]
+
+ ...,
+ [[ -3.95323663e+00  -1.08578348e+00  -1.18338629e+00 ...,   3.47826087e+00
+     7.00000000e-01   3.07692308e-01]
+  [  1.60829254e+00   8.69345138e-01  -4.02551795e-01 ...,   1.57777778e+00
+     9.49367089e-01   9.11111111e-01]
+  [  1.49108572e+00  -2.64925113e+00  -3.76657552e-01 ...,   8.48000000e-01
+     9.84251969e-01   5.81196581e-01]
+  ...,
+  [  2.98269515e-01  -6.31396006e-01   9.31164981e-04 ...,   7.29166667e-01
+     3.18840580e-01   6.26865672e-01]
+  [  4.09547850e-02  -2.37550079e-01   4.73556860e-01 ...,   1.03314917e+00
+     5.69620253e-01   6.46090535e-01]
+  [  1.73164855e-01   4.40315874e-01   2.79250361e-01 ...,   1.27083333e+00
+     6.24161074e-01   2.71317829e-01]]
+
+ [[ -2.81227483e+00  -3.06520230e+00  -1.76203195e-01 ...,   1.57534247e+00
+     1.21686747e+00   2.23140496e-01]
+  [  7.39911810e-01   3.78528927e-01  -2.54117474e-01 ...,   7.47368421e-01
+     9.27007299e-01   6.17283951e-01]
+  [  3.01612199e-01   7.22319534e-01  -7.73105515e-01 ...,   1.09523810e+00
+     9.60000000e-01   5.20833333e-01]
+  ...,
+  [  7.15514345e-01   2.71408617e-01   7.35046898e-02 ...,   7.96791444e-01
+     3.57798165e-01   7.28506787e-01]
+  [  2.64434829e-02   4.47146149e+00   7.91429913e-01 ...,   7.14285714e-01
+     3.62318841e-01   7.92452830e-01]
+  [  9.71314290e-02   4.79513787e-01   1.90441318e-01 ...,   8.15602837e-01
+     3.95555556e-01   6.00000000e-01]]
+
+ [[  4.63255521e-01  -7.99447139e-02  -1.33510449e+00 ...,   4.05714286e-01
+     2.03896104e+00   2.54237288e-01]
+  [  7.19774017e-01   2.59126495e+00  -4.69612143e-01 ...,   1.51898734e-01
+     1.00000000e+00   2.41935484e-01]
+  [  2.22652859e+00   3.03562862e-02  -1.01740938e+00 ...,   3.24324324e-01
+     8.88888889e-01   1.45833333e-01]
+  ...,
+  [  5.43459088e-01  -4.37695328e-01  -1.20095242e+00 ...,   1.13861386e+00
+     6.00000000e-01   1.01063830e+00]
+  [ -1.21137942e+00   6.20990618e-01   6.37545091e+00 ...,   1.02094241e+00
+     4.73684211e-01   1.10138249e+00]
+  [  1.60277808e-01   7.24665119e-01   8.50346255e-02 ...,   1.38888889e+00
+     6.27450980e-01   4.31818182e-01]]]
+
+Wavelengths
+[ 505.914289   533.8275323  542.8327583  565.1690104  614.2813052
+  687.9319591  697.0142294  701.3626464  740.2281587  775.054537
+  810.0078184  853.1906881  933.2791575]
+Wavelengths count
+13
+
+Ledsets
+[3 2 1 3 3 2 4 1 5 6 7 8 8]
+
+Calibration file indexes
+[2 1 0 3 2 1 4 0 5 6 7 8 9]
+Start saving radiance images
+Saving wavelength: 505.914289
+Saving wavelength: 533.8275323
+Saving wavelength: 542.8327583
+Saving wavelength: 565.1690104
+Saving wavelength: 614.2813052
+Saving wavelength: 687.9319591
+Saving wavelength: 697.0142294
+Saving wavelength: 701.3626464
+Saving wavelength: 740.2281587
+Saving wavelength: 775.054537
+Saving wavelength: 810.0078184
+Saving wavelength: 853.1906881
+Saving wavelength: 933.2791575
+
+C:\tldati\zyboz7\github\spectralcamera\python\combined>
