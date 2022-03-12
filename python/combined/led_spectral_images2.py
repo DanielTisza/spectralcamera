@@ -6,7 +6,7 @@
 #
 #	Acquiring spectral images
 #
-#	Version 2022.03.12  08:16
+#	Version 2022.03.12  08:31
 # ----------------------------------------------------------------------------
 
 from __future__ import print_function
@@ -844,7 +844,7 @@ hsi = HSI(danielCam, fpi)
 print(hsi)
 
 print('Reading calibration and image configuration file')
-hsi.read_calibration_file('images_calib1_genesys_single.txt')
+hsi.read_calibration_file('images_calib1_genesys.txt')
 
 input("Set dark reference and press a key to take images")
 print('Capturing dark reference')
