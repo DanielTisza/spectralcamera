@@ -940,9 +940,25 @@ for x in range(0, len(raw.index)):
 	calibfileindexValue = calibfileindexes[x]
 	calibfileIndexStr = str(calibfileindexValue)
 
+	print('  Saving calibration/configuration file index: ' + calibfileIndexStr)
+
 	# Raw CFA data values
+	strFilename = 'rawcfa_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png'
+	print('  Saving image: ' + strFilename)
 	dn1 = raw.dn.isel(index=x)
-	matplotlib.image.imsave('rawcfa_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', dn1, cmap='gray')
+	matplotlib.image.imsave(strFilename, dn1, cmap='gray')
+
+	# Demosaic to get RGB colour image
+	strFilename = 'rawdemosaic_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png'
+	print('  Saving image: ' + strFilename)
+	dm1 = fp.demosaic(dn1, 'BayerGB', 'bilinear')
+
+	# Adjust pixel values to 0.0 - 1.0 range
+	dmMin = np.min(dm1)
+	dmMax = np.max(dm1)
+	dmClamped = (dm1 - dmMin) / (dmMax - dmMin)
+
+	matplotlib.image.imsave(strFilename, dmClamped, vmin=0, vmax=1)
 
 #
 # Save radiance images
@@ -963,19 +979,25 @@ for x in range(0, imagelastindex):
 	calibfileindexValue = calibfileindexes[x]
 	calibfileIndexStr = str(calibfileindexValue)
 
-	print('Saving wavelength: ' + wavelengthStr)
+	print('  Saving wavelength: ' + wavelengthStr + ' for calibration/configuration file index: ' + calibfileIndexStr)
 	
 	# Radiance calculated from raw CFA and calibration coefficients
 	rad1 = testdata[:,:,x]
-	matplotlib.image.imsave('rad_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', rad1, cmap='gray')
+	strFilename = 'rad_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png'
+	print('  Saving image: ' + strFilename)
+	matplotlib.image.imsave(strFilename, rad1, cmap='gray')
 
 	# White reference calculated from raw CFA and calibration coefficients
 	white1 = whitedata[:,:,x]
-	matplotlib.image.imsave('white_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', white1, cmap='gray')
+	strFilename = 'white_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png'
+	print('  Saving image: ' + strFilename)
+	matplotlib.image.imsave(strFilename, white1, cmap='gray')
 	
 	# Reflectance calculated from radiance and white reference
 	ref1 = reflectdata[:,:,x]
-	matplotlib.image.imsave('refl_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png', ref1, cmap='gray', vmin=0,vmax=1)
+	strFilename = 'refl_' + wavelengthStr + 'nm_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png'
+	print('  Saving image: ' + strFilename)
+	matplotlib.image.imsave(strFilename, ref1, cmap='gray', vmin=0, vmax=1)
 
 
 
