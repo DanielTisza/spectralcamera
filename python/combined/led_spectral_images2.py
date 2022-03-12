@@ -1,11 +1,10 @@
 # ----------------------------------------------------------------------------
-#	simulated_led_spectral_images.py
+#	led_spectral_images2.py
 #
 #	Copyright 2021 Daniel Tisza
 #	MIT License
 #
 #	Acquiring spectral images
-#	with only camera module available
 #
 #	Version 2022.03.12  08:16
 # ----------------------------------------------------------------------------
@@ -24,8 +23,8 @@ import datetime as dt
 
 import matplotlib
 
-#from LEDDriver import detect_LED_devices, LEDDriver, LEDException
-#from spectracular.fpi_driver import detectFPIDevices, createFPIDevice
+from LEDDriver import detect_LED_devices, LEDDriver, LEDException
+from spectracular.fpi_driver import detectFPIDevices, createFPIDevice
 
 import fpipy as fp
 import fpipy.conventions as c
@@ -313,7 +312,7 @@ LED_HWIDS = [
 	'10025018 af28a028 5a66a511 f5001983'
 ]
 
-#ledportdevice = detect_LED_devices()
+ledportdevice = detect_LED_devices()
 
 # Linux (Zybo, Genesys, Ubuntu)
 # ledportstring = '/dev/ttyACM0'
@@ -322,13 +321,13 @@ LED_HWIDS = [
 ledportstring = 'COM10'
 
 print('Trying to use ' + ledportstring + ' for LED control')
-#led = LEDDriver(ledportstring)
-#print(led)
+led = LEDDriver(ledportstring)
+print(led)
 
-#led.open()
+led.open()
 
-#print('Turning off LEDs')
-#led.L(0)
+print('Turning off LEDs')
+led.L(0)
 
 #----------------------------------------- 
 #  MFPI
@@ -345,8 +344,8 @@ FPI_HWIDS = [
 ]
 
 print('Trying to create FPI device')
-#fpi = createFPIDevice(detectFPIDevices(FPI_IDS, FPI_HWIDS)[0].device)
-#print(fpi)
+fpi = createFPIDevice(detectFPIDevices(FPI_IDS, FPI_HWIDS)[0].device)
+print(fpi)
 
 # ------------------------------------------
 #  camazing.pixelformats
@@ -789,8 +788,7 @@ class HSI:
                 print('')
                 print('Handling calibration file image index: ' + str(idx))
                 print('Setting setpoint: ' + str(setpoint))
-
-                # self.fpi.set_setpoint(setpoint, wait=True)
+                self.fpi.set_setpoint(setpoint, wait=True)
 
                 # Add here setting correct LED lighting for taking image
                 # Later the correct white image need to be used with this image
@@ -802,7 +800,7 @@ class HSI:
                 ledsetnum = ledsetnumarray.data
                 print(ledsetnum)
                 
-                # daniel_set_leds(ledsetnum)
+                daniel_set_leds(ledsetnum)
                 
                 # Take one image with camera
                 frame = self.camera.get_frame()
@@ -813,7 +811,7 @@ class HSI:
                 frames.append(frame)
 
                 print('Turning off LEDs')
-                # led.L(0)
+                led.L(0)
 
 #       else:
 #            with self.camera:
@@ -842,8 +840,7 @@ print('Creating camera device object')
 danielCam = DanielCamera(pDev)
 print(danielCam)
 
-#hsi = HSI(danielCam, fpi)
-hsi = HSI(danielCam)
+hsi = HSI(danielCam, fpi)
 print(hsi)
 
 print('Reading calibration and image configuration file')

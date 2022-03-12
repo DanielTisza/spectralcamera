@@ -1,3 +1,13 @@
+# ----------------------------------------------------------------------------
+#	led_spectral_images.py
+#
+#	Copyright 2021 Daniel Tisza
+#	MIT License
+#
+#	Acquiring spectral images
+#
+#	Version 2022.03.12  08:16
+# ----------------------------------------------------------------------------
 
 from __future__ import print_function
 import os
