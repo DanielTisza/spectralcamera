@@ -851,7 +851,7 @@ hsi.read_calibration_file('images_calib1_genesys_single.txt')
 
 input("Set dark reference and press a key to take images")
 print('Capturing dark reference')
-hsi.take_dark_reference()
+hsi.take_dark_reference(2)
 print(hsi.dataset.dark)
 
 input("Set white reference and press a key to take images")
@@ -865,7 +865,7 @@ print('')
 print(raw)
 
 print('')
-print('Number of images captured:')
+print('Number of raw images captured:')
 print(len(raw.index))
 
 # ------------------------------------------
@@ -959,7 +959,13 @@ for x in range(0, len(raw.index)):
 	dn1 = raw.dn.isel(index=x)
 	matplotlib.image.imsave(strFilename, dn1, cmap='gray')
 
-	# Demosaic to get RGB colour image
+	# Raw CFA data values
+	strFilename = 'whiterawcfa_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png'
+	print('  Saving image: ' + strFilename)
+	whitedn1 = white_raw.dn.isel(index=x)
+	matplotlib.image.imsave(strFilename, whitedn1, cmap='gray')
+
+	# Demosaic to get raw RGB colour image
 	strFilename = 'rawdemosaic_' + calibfileIndexStr + '_exp_' + exposureTime + '_ledset_' + ledsetStr + '.png'
 	print('  Saving image: ' + strFilename)
 	dm1 = fp.demosaic(dn1, 'BayerGB', 'bilinear')
