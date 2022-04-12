@@ -7,7 +7,7 @@
 #	Acquiring spectral images
 #	with only camera module available
 #
-#	Version 2022.03.12  08:16
+#	Version 2022.04.12  06:17
 # ----------------------------------------------------------------------------
 
 from __future__ import print_function
@@ -202,15 +202,6 @@ imgp.colorProcessing.writeS("Raw")
 print("New colorProcessing:")
 print(imgp.colorProcessing.readS())
 
-
-print("Old ExposureTime:")
-print(ac.exposureTime.readS())
-print("New ExposureTime:")
-# ac.exposureTime.writeS("150000")
-# ac.exposureTime.writeS("60000")
-ac.exposureTime.writeS(str(exposureTime))
-print(ac.exposureTime.readS())
-
 anlgc = acquire.AnalogControl(pDev)
 
 print("Old BalanceWhiteAuto:")
@@ -240,6 +231,17 @@ print(anlgc.gainAuto.readS())
 # -----------------------------------------
 # Test
 # -----------------------------------------
+
+print('')
+input("Set dark bias reference and press a key to take image")
+print('Capturing dark bias reference')
+
+print('Setting exposure to minimum value')
+print("Old ExposureTime:")
+print(ac.exposureTime.readS())
+print("New ExposureTime:")
+ac.exposureTime.writeS(str("10"))
+print(ac.exposureTime.readS())
 
 #
 # Taking image
@@ -285,18 +287,35 @@ if fi.isRequestNrValid(requestNr):
 
         channelType = np.uint16 if channelBitDepth > 8 else np.uint8
         
-        arr = np.fromstring(cbuf, dtype = channelType)
+        # arr = np.fromstring(cbuf, dtype = channelType)
         
-        arr.shape = (height, width, channelCount)
-        print(arr)
+        # arr.shape = (height, width, channelCount)
+        # print(arr)
+
+        arr = np.frombuffer(cbuf, np.uint16)
+        arrshaped = arr.reshape(height, width)
 
         # print("Start saving PNG image...")
         # matplotlib.image.imsave('testimage.png', arr)
+
+        strFilename = 'biasrawcfa_' + '_exp_10' + '.png'
+        print('  Saving image: ' + strFilename)
+        matplotlib.image.imsave(strFilename, arrshaped, cmap='gray')
 
     fi.imageRequestUnlock(requestNr)
     
 exampleHelper.manuallyStopAcquisitionIfNeeded(pDev, fi)
 
+print('')
+
+print("Setting normal exposure")
+print("Old ExposureTime:")
+print(ac.exposureTime.readS())
+print("New ExposureTime:")
+# ac.exposureTime.writeS("150000")
+# ac.exposureTime.writeS("60000")
+ac.exposureTime.writeS(str(exposureTime))
+print(ac.exposureTime.readS())
 
 #----------------------------------------- 
 #  LED driver
@@ -851,7 +870,8 @@ hsi.read_calibration_file('images_calib1_genesys_single.txt')
 
 input("Set dark reference and press a key to take images")
 print('Capturing dark reference')
-hsi.take_dark_reference(2)
+#hsi.take_dark_reference(2)
+hsi.take_dark_reference()
 print(hsi.dataset.dark)
 
 input("Set white reference and press a key to take images")
