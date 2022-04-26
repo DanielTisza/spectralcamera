@@ -334,10 +334,10 @@ LED_HWIDS = [
 ledportdevice = detect_LED_devices()
 
 # Linux (Zybo, Genesys, Ubuntu)
-# ledportstring = '/dev/ttyACM0'
+ledportstring = '/dev/ttyACM0'
 
 # Windows
-ledportstring = 'COM10'
+# ledportstring = 'COM10'
 
 print('Trying to use ' + ledportstring + ' for LED control')
 led = LEDDriver(ledportstring)
