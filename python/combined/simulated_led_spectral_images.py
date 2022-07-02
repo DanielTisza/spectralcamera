@@ -620,7 +620,11 @@ def daniel_set_leds(ledsetnum):
     print('')
     print('Setting ledset: ' + str(ledsetnum))
 
-    if ledsetnum == 1:
+    if ledsetnum == 0:
+        # Turn off leds
+        print('LEDs off')
+        #led.L(0)
+    elif ledsetnum == 1:
         # Led set A
         # VIS
         #  
@@ -634,7 +638,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 000000111000000111000000111
         #
-        led.L(0b000000111000000111000000111)
+        print('LED set A')
+        #led.L(0b000000111000000111000000111)
     elif ledsetnum == 2:
         # Led set B
         # VIS
@@ -649,7 +654,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 000000011000000011000000011
         #
-        led.L(0b000000011000000011000000011)
+        print('LED set B')
+        #led.L(0b000000011000000011000000011)
     elif ledsetnum == 3:
         # Led set C
         # VIS
@@ -664,7 +670,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 000000001000000001000000001
         #
-        led.L(0b000000001000000001000000001)
+        print('LED set C')
+        #led.L(0b000000001000000001000000001)
     elif ledsetnum == 4:
         # Led set D
         # VNIR1
@@ -676,7 +683,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 000011110000011110000011110
         #
-        led.L(0b000011110000011110000011110)
+        print('LED set D')
+        #led.L(0b000011110000011110000011110)
     elif ledsetnum == 5:
         # Led set E
         # VNIR1 and VNIR2
@@ -688,7 +696,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 000111100000111100000111100
         #
-        led.L(0b000111100000111100000111100)
+        print('LED set E')
+        #led.L(0b000111100000111100000111100)
     elif ledsetnum == 6:
         # Led set F
         # VNIR1 and VNIR2
@@ -700,7 +709,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 001111000001111000001111000
         #
-        led.L(0b001111000001111000001111000)
+        print('LED set F')
+        #led.L(0b001111000001111000001111000)
     elif ledsetnum == 7:
         # Led set G
         # VNIR1 and VNIR2
@@ -712,7 +722,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 011110000011110000011110000
         #
-        led.L(0b011110000011110000011110000)
+        print('LED set G')
+        #led.L(0b011110000011110000011110000)
     elif ledsetnum == 8:
         # Led set H
         # VNIR1 and VNIR2
@@ -724,7 +735,8 @@ def daniel_set_leds(ledsetnum):
         # * Reverse for LED control:
         # 111100000111100000111100000
         #
-        led.L(0b111100000111100000111100000)
+        print('LED set H')
+        #led.L(0b111100000111100000111100000)
 
     time.sleep(0.1)
 
@@ -821,7 +833,7 @@ class HSI:
                 ledsetnum = ledsetnumarray.data
                 print(ledsetnum)
                 
-                # daniel_set_leds(ledsetnum)
+                daniel_set_leds(ledsetnum)
                 
                 # Take one image with camera
                 frame = self.camera.get_frame()
@@ -832,7 +844,7 @@ class HSI:
                 frames.append(frame)
 
                 print('Turning off LEDs')
-                # led.L(0)
+                daniel_set_leds(0)
 
 #       else:
 #            with self.camera:

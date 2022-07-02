@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-#	capture_images_nilered_coarse1.py
+#	capture_images_nilered_coarse2.py
 #
 #	Copyright 2021 Daniel Tisza
 #	MIT License

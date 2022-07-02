@@ -1,13 +1,12 @@
 # ----------------------------------------------------------------------------
-#	simulated_led_spectral_images.py
+#	capture_images_nilered_fine1.py
 #
 #	Copyright 2021 Daniel Tisza
 #	MIT License
 #
 #	Acquiring spectral images
-#	with only camera module available
 #
-#	Version 2022.04.12  06:17
+#	Version 2022.06.30  06:32
 # ----------------------------------------------------------------------------
 
 from __future__ import print_function
@@ -24,8 +23,8 @@ import datetime as dt
 
 import matplotlib
 
-#from LEDDriver import detect_LED_devices, LEDDriver, LEDException
-#from spectracular.fpi_driver import detectFPIDevices, createFPIDevice
+from LEDDriver import detect_LED_devices, LEDDriver, LEDException
+from spectracular.fpi_driver import detectFPIDevices, createFPIDevice
 
 import fpipy as fp
 import fpipy.conventions as c
@@ -332,22 +331,22 @@ LED_HWIDS = [
 	'10025018 af28a028 5a66a511 f5001983'
 ]
 
-#ledportdevice = detect_LED_devices()
+ledportdevice = detect_LED_devices()
 
 # Linux (Zybo, Genesys, Ubuntu)
-# ledportstring = '/dev/ttyACM0'
+ledportstring = '/dev/ttyACM0'
 
 # Windows
-ledportstring = 'COM10'
+# ledportstring = 'COM10'
 
 print('Trying to use ' + ledportstring + ' for LED control')
-#led = LEDDriver(ledportstring)
-#print(led)
+led = LEDDriver(ledportstring)
+print(led)
 
-#led.open()
+led.open()
 
-#print('Turning off LEDs')
-#led.L(0)
+print('Turning off LEDs')
+led.L(0)
 
 #----------------------------------------- 
 #  MFPI
@@ -364,8 +363,8 @@ FPI_HWIDS = [
 ]
 
 print('Trying to create FPI device')
-#fpi = createFPIDevice(detectFPIDevices(FPI_IDS, FPI_HWIDS)[0].device)
-#print(fpi)
+fpi = createFPIDevice(detectFPIDevices(FPI_IDS, FPI_HWIDS)[0].device)
+print(fpi)
 
 # ------------------------------------------
 #  camazing.pixelformats
@@ -623,7 +622,7 @@ def daniel_set_leds(ledsetnum):
     if ledsetnum == 0:
         # Turn off leds
         print('LEDs off')
-        #led.L(0)
+        led.L(0)
     elif ledsetnum == 1:
         # Led set A
         # VIS
@@ -639,7 +638,7 @@ def daniel_set_leds(ledsetnum):
         # 000000111000000111000000111
         #
         print('LED set A')
-        #led.L(0b000000111000000111000000111)
+        led.L(0b000000111000000111000000111)
     elif ledsetnum == 2:
         # Led set B
         # VIS
@@ -655,7 +654,7 @@ def daniel_set_leds(ledsetnum):
         # 000000011000000011000000011
         #
         print('LED set B')
-        #led.L(0b000000011000000011000000011)
+        led.L(0b000000011000000011000000011)
     elif ledsetnum == 3:
         # Led set C
         # VIS
@@ -671,7 +670,7 @@ def daniel_set_leds(ledsetnum):
         # 000000001000000001000000001
         #
         print('LED set C')
-        #led.L(0b000000001000000001000000001)
+        led.L(0b000000001000000001000000001)
     elif ledsetnum == 4:
         # Led set D
         # VNIR1
@@ -684,7 +683,7 @@ def daniel_set_leds(ledsetnum):
         # 000011110000011110000011110
         #
         print('LED set D')
-        #led.L(0b000011110000011110000011110)
+        led.L(0b000011110000011110000011110)
     elif ledsetnum == 5:
         # Led set E
         # VNIR1 and VNIR2
@@ -697,7 +696,7 @@ def daniel_set_leds(ledsetnum):
         # 000111100000111100000111100
         #
         print('LED set E')
-        #led.L(0b000111100000111100000111100)
+        led.L(0b000111100000111100000111100)
     elif ledsetnum == 6:
         # Led set F
         # VNIR1 and VNIR2
@@ -710,7 +709,7 @@ def daniel_set_leds(ledsetnum):
         # 001111000001111000001111000
         #
         print('LED set F')
-        #led.L(0b001111000001111000001111000)
+        led.L(0b001111000001111000001111000)
     elif ledsetnum == 7:
         # Led set G
         # VNIR1 and VNIR2
@@ -723,7 +722,7 @@ def daniel_set_leds(ledsetnum):
         # 011110000011110000011110000
         #
         print('LED set G')
-        #led.L(0b011110000011110000011110000)
+        led.L(0b011110000011110000011110000)
     elif ledsetnum == 8:
         # Led set H
         # VNIR1 and VNIR2
@@ -736,7 +735,7 @@ def daniel_set_leds(ledsetnum):
         # 111100000111100000111100000
         #
         print('LED set H')
-        #led.L(0b111100000111100000111100000)
+        led.L(0b111100000111100000111100000)
 
     time.sleep(0.1)
 
@@ -820,8 +819,7 @@ class HSI:
                 print('')
                 print('Handling calibration file image index: ' + str(idx))
                 print('Setting setpoint: ' + str(setpoint))
-
-                # self.fpi.set_setpoint(setpoint, wait=True)
+                self.fpi.set_setpoint(setpoint, wait=True)
 
                 # Add here setting correct LED lighting for taking image
                 # Later the correct white image need to be used with this image
@@ -873,16 +871,14 @@ print('Creating camera device object')
 danielCam = DanielCamera(pDev)
 print(danielCam)
 
-#hsi = HSI(danielCam, fpi)
-hsi = HSI(danielCam)
+hsi = HSI(danielCam, fpi)
 print(hsi)
 
 print('Reading calibration and image configuration file')
-hsi.read_calibration_file('images_nilered_fine2.txt')
+hsi.read_calibration_file('images_nilered_fine1.txt')
 
 input("Set dark reference and press a key to take images")
 print('Capturing dark reference')
-#hsi.take_dark_reference(2)
 hsi.take_dark_reference()
 print(hsi.dataset.dark)
 

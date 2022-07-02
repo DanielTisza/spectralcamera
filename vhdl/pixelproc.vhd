@@ -15,12 +15,12 @@ entity pixelproc is
 	port (
 		addrb : out std_logic_vector(31 downto 0);
 		clkb : in std_logic;
-		doutb : out std_logic_vector(31 downto 0);	
-		dinb : in std_logic_vector(31 downto 0);
+		doutb : out std_logic_vector(511 downto 0);	
+		dinb : in std_logic_vector(511 downto 0);
 		enb : out std_logic;
 		rstbn : in std_logic;
 		rstb : out std_logic;
-		web : out std_logic_vector(3 downto 0)
+		web : out std_logic_vector(63 downto 0)
 	);
 
 end pixelproc;
@@ -32,7 +32,7 @@ architecture rtl of pixelproc is
 	-- subtype bram_addr_type is std_logic_vector(31 downto 0);
 	-- subtype bram_word_type is std_logic_vector(31 downto 0);
 				
-	signal doutb_int : std_logic_vector(31 downto 0);	
+	signal doutb_int : std_logic_vector(511 downto 0);	
 	
 	-- Internal variables
 	subtype ram_addr_type is unsigned(31 downto 0);
@@ -63,9 +63,9 @@ begin
 		
 			ram_addr <= to_unsigned(0,32);
 			ram_rd_addr <= to_unsigned(0,32);
-			doutb_int <= X"00000000";
+			doutb_int <= X"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 			enb <= '0';
-			web <= X"0";
+			web <= X"0000000000000000";
 			rstb <=	'1';
 			
 			dinb_rdaddr_0 <= X"00000000";
@@ -92,8 +92,10 @@ begin
 				-- Delay read address by one clock cycle
 				ram_rd_addr <= ram_addr;
 				
-				web <= X"F";
-				doutb_int <= X"1234ABCD";
+				web <= X"FFFFFFFFFFFFFFFF";
+				-- doutb_int <= X"1234ABCD";
+				-- doutb_int <= X"1234ABCD000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+				doutb_int <=    X"1234ABCD111111112222222233333333444444445555555566666666777777778888888899999999AAAAAAAABBBBBBBBCCCCCCCCDDDDDDDDEEEEEEEEFFFFFFFF";
 
 
 				-- -- Wrap to beginning (0x8000 - 4) = 0x7FFC = 32764
