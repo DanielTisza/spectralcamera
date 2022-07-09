@@ -1,3 +1,21 @@
+This is the edid log with Genesys ZU 3EG on 2022.07.09
+
+Connected "J8" serial port with USB cable to laptop for capturing this bootlog with Putty.
+
+Connected "DP TX" with mini displayport to displayport cable to HP Compaq LA2306x 
+(XN375AA XN375AT)
+
+Turning power on to Genesys.
+
+Connected "USB HOST" to USB keyboard.
+
+Text login console comes up on display and it is possible to enter login information
+with USB keyboard and login to Genesys command line.
+
+cat /sys/class/drm/card0-DP-1/edid | edid-decode
+
+-----------------------------------------------------------
+
 Extracted contents:
 header:          00 ff ff ff ff ff ff 00
 serial number:   22 f0 49 29 01 01 01 01 2d 16
