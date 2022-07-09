@@ -12,6 +12,8 @@ Connected "USB HOST" to USB keyboard.
 Text login console comes up on display and it is possible to enter login information
 with USB keyboard and login to Genesys command line.
 
+Command:
+
 cat /sys/class/drm/card0-DP-1/edid | edid-decode
 
 -----------------------------------------------------------

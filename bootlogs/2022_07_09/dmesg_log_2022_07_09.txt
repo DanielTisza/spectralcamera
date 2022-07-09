@@ -13,6 +13,10 @@ Text login console comes up on display and it is possible to enter login informa
 with USB keyboard and login to Genesys command line.
 
 
+Command:
+
+dmesg
+
 -----------------------------------------------------------
 
 [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]

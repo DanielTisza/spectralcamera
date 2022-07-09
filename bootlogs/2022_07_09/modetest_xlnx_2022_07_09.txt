@@ -1,0 +1,230 @@
+This is the edid log with Genesys ZU 3EG on 2022.07.09
+
+Connected "J8" serial port with USB cable to laptop for capturing this bootlog with Putty.
+
+Connected "DP TX" with mini displayport to displayport cable to HP Compaq LA2306x 
+(XN375AA XN375AT)
+
+Turning power on to Genesys.
+
+Connected "USB HOST" to USB keyboard.
+
+Text login console comes up on display and it is possible to enter login information
+with USB keyboard and login to Genesys command line.
+
+Command:
+
+modetest -M xlnx
+
+-----------------------------------------------------------
+
+Encoders:
+id	crtc	type	possible crtcs	possible clones	
+38	37	TMDS	0x00000001	0x00000000
+
+Connectors:
+id	encoder	status		name		size (mm)	modes	encoders
+39	38	connected	DP-1           	510x290		7	38
+  modes:
+	index name refresh (Hz) hdisp hss hse htot vdisp vss vse vtot)
+  #0 1280x1024 60.02 1280 1328 1440 1688 1024 1025 1028 1066 108000 flags: phsync, pvsync; type: driver
+  #1 1440x900 59.89 1440 1520 1672 1904 900 903 909 934 106500 flags: nhsync, pvsync; type: driver
+  #2 1280x720 60.00 1280 1390 1430 1650 720 725 730 750 74250 flags: phsync, pvsync; type: driver
+  #3 1024x768 60.00 1024 1048 1184 1344 768 771 777 806 65000 flags: nhsync, nvsync; type: driver
+  #4 800x600 60.32 800 840 968 1056 600 601 605 628 40000 flags: phsync, pvsync; type: driver
+  #5 640x480 59.94 640 656 752 800 480 490 492 525 25175 flags: nhsync, nvsync; type: driver
+  #6 720x400 70.08 720 738 846 900 400 412 414 449 28320 flags: nhsync, pvsync; type: driver
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+			00ffffffffffff0022f0492901010101
+			2d160104a5331d78261e55a059569f27
+			0d5054a1080081c081809500b300d1c0
+			010101010101023a801871382d40582c
+			4500fd1e1100001e000000fd00324c18
+			5e11000a202020202020000000fc0048
+			50204c41323330360a202020000000ff
+			00334351323435313743560a202000b5
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	6 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 0
+	19 CRTC_ID:
+		flags: object
+		value: 37
+	40 sync:
+		flags: range
+		values: 0 1
+		value: 0
+	41 bpc:
+		flags: enum
+		enums: 6BPC=6 8BPC=8 10BPC=10 12BPC=12
+		value: 8
+
+CRTCs:
+id	fb	pos	size
+37	47	(0,0)	(1280x1024)
+  #0 1280x1024 60.02 1280 1328 1440 1688 1024 1025 1028 1066 108000 flags: phsync, pvsync; type: driver
+  props:
+	20 ACTIVE:
+		flags: range
+		values: 0 1
+		value: 1
+	21 MODE_ID:
+		flags: blob
+		blobs:
+
+		value:
+			e0a5010000053005a005980600000004
+			010404042a0400003c00000005000000
+			40000000313238307831303234000000
+			00000000000000000000000000000000
+			00000000
+	18 OUT_FENCE_PTR:
+		flags: range
+		values: 0 18446744073709551615
+		value: 0
+	30 output_color:
+		flags: enum
+		enums: rgb=0 ycrcb444=1 ycrcb422=2 yonly=3
+		value: 0
+	31 bg_c0:
+		flags: range
+		values: 0 4095
+		value: 0
+	32 bg_c1:
+		flags: range
+		values: 0 4095
+		value: 0
+	33 bg_c2:
+		flags: range
+		values: 0 4095
+		value: 0
+
+Planes:
+id	crtc	fb	CRTC x,y	x,y	gamma size	possible crtcs
+35	0	0	0,0		0,0	0       	0x00000001
+  formats: VYUY UYVY YUYV YVYU YU16 YV16 YU24 YV24 NV16 NV61 GREY Y10  BG24 RG24 XB24 XR24 XB30 XR30 YU12 YV12 NV12 NV21 XV15 XV20
+  props:
+	7 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 0
+	16 FB_ID:
+		flags: object
+		value: 0
+	17 IN_FENCE_FD:
+		flags: signed range
+		values: -1 2147483647
+		value: -1
+	19 CRTC_ID:
+		flags: object
+		value: 0
+	12 CRTC_X:
+		flags: signed range
+		values: -2147483648 2147483647
+		value: 0
+	13 CRTC_Y:
+		flags: signed range
+		values: -2147483648 2147483647
+		value: 0
+	14 CRTC_W:
+		flags: range
+		values: 0 2147483647
+		value: 0
+	15 CRTC_H:
+		flags: range
+		values: 0 2147483647
+		value: 0
+	8 SRC_X:
+		flags: range
+		values: 0 4294967295
+		value: 0
+	9 SRC_Y:
+		flags: range
+		values: 0 4294967295
+		value: 0
+	10 SRC_W:
+		flags: range
+		values: 0 4294967295
+		value: 0
+	11 SRC_H:
+		flags: range
+		values: 0 4294967295
+		value: 0
+	34 tpg:
+		flags: range
+		values: 0 1
+		value: 0
+36	37	47	0,0		0,0	0       	0x00000001
+  formats: AB24 AR24 RA24 BA24 BG24 RG24 RA15 BA15 RA12 BA12 RG16 BG16
+  props:
+	7 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+	16 FB_ID:
+		flags: object
+		value: 47
+	17 IN_FENCE_FD:
+		flags: signed range
+		values: -1 2147483647
+		value: -1
+	19 CRTC_ID:
+		flags: object
+		value: 37
+	12 CRTC_X:
+		flags: signed range
+		values: -2147483648 2147483647
+		value: 0
+	13 CRTC_Y:
+		flags: signed range
+		values: -2147483648 2147483647
+		value: 0
+	14 CRTC_W:
+		flags: range
+		values: 0 2147483647
+		value: 1280
+	15 CRTC_H:
+		flags: range
+		values: 0 2147483647
+		value: 1024
+	8 SRC_X:
+		flags: range
+		values: 0 4294967295
+		value: 0
+	9 SRC_Y:
+		flags: range
+		values: 0 4294967295
+		value: 0
+	10 SRC_W:
+		flags: range
+		values: 0 4294967295
+		value: 83886080
+	11 SRC_H:
+		flags: range
+		values: 0 4294967295
+		value: 67108864
+	28 alpha:
+		flags: range
+		values: 0 255
+		value: 255
+	29 g_alpha_en:
+		flags: range
+		values: 0 1
+		value: 1
+
+Frame buffers:
+id	size	pitch
+
