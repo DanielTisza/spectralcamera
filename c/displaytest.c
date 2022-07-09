@@ -178,7 +178,7 @@ int main()
 #endif			
 
 
-#if 1
+#if 0
 				/*
 				 * Format seems to be
 				 * ABRG
@@ -211,6 +211,57 @@ int main()
 					data = 0<<5 | 31<<0;
 					bytesWritten = write(fd, &data, 1);
 				 }
+#endif
+
+#if 1
+				/*
+				 * Format seems to be
+				 * ABRG
+				 * 
+				 * | A B R | R G |
+				 * | 1 5 2 | 3 5 |
+				 */
+				 
+				 if (row < 200) {
+					 
+					data = 1<<7 | 31<<2 | 0<<0;					
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 0<<6 | 0<<1 | 0<<0;
+					bytesWritten = write(fd, &data, 1);
+					 
+				 } else if (row < 400) {
+					 
+					data = 1<<7 | 0<<2 | 3<<0;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 7<<5 | 0<<0;
+					bytesWritten = write(fd, &data, 1);
+					 
+				 } else if (row < 600) {
+					 
+					data = 1<<7 | 0<<2 | 0<<0;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 0<<5 | 31<<0;
+					bytesWritten = write(fd, &data, 1);
+
+				 } else if (row < 800) {
+					 
+					data = 1<<7 | 0<<2 | 0<<0;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 0<<5 | 0<<0;
+					bytesWritten = write(fd, &data, 1);
+					
+				 } else {
+					 
+					data = 1<<7 | 31<<2 | 3<<0;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 7<<5 | 31<<0;
+					bytesWritten = write(fd, &data, 1);
+				 } 
 #endif
 				
 			}
