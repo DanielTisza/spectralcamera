@@ -219,14 +219,14 @@ if fi.isRequestNrValid(requestNr):
         #print("Shaped array shape:")
         #print(arrshaped.shape)
 
+        # Adjust pixel values to 0.0 - 1.0 range
+        dmMin = np.min(arr)
+        dmMax = np.max(arr)
+        dmClamped = (arr - dmMin) / (dmMax - dmMin)
+
         strFilename = 'rgb888_' + '_exp_' + exposureTime + '.png'
         print('  Saving image: ' + strFilename)
         matplotlib.image.imsave(strFilename, arr)
-
-        # Adjust pixel values to 0.0 - 1.0 range
-        #dmMin = np.min(arrshaped)
-        #dmMax = np.max(arrshaped)
-        #dmClamped = (arrshaped - dmMin) / (dmMax - dmMin)
 
         #strFilename = 'rgb888_' + '_exp_' + exposureTime + '.png'
         #print('  Saving image: ' + strFilename)

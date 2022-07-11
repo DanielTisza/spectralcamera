@@ -46,7 +46,7 @@ int main()
 			width = 2592;	//1280; 
 			height = 1944;	//1024;
 			
-			leftoffset = 700;
+			leftoffset = 0; //700;
 
 			for (row=0;row<height;row++) {
 				

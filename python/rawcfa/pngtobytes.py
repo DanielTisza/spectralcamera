@@ -27,7 +27,8 @@ from matplotlib import image
 
 import io
 
-rawdemosaic = image.imread("rawdemosaic_0_exp_60000_ledset_1.png")
+# rawdemosaic = image.imread("rawdemosaic_0_exp_60000_ledset_1.png")
+rawdemosaic = image.imread("rgb888__exp_10000.png")
 
 print(rawdemosaic)
 
@@ -38,9 +39,9 @@ f = open('test.dat', 'wb')
 for row in rawdemosaic:
 	for col in row:
 		#print(col)
-		redbyte = col[0] # * 31
-		greenbyte = col[1] # * 31
-		bluebyte = col[2] # * 31
+		redbyte = col[0] * 31
+		greenbyte = col[1] * 31
+		bluebyte = col[2] * 31
 
 		f.write(redbyte.astype(np.uint8))
 		f.write(greenbyte.astype(np.uint8))
