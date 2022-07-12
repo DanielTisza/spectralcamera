@@ -49,13 +49,53 @@ int main( void )
      * 
      * mvIMPACT::acquire::GenICam::AcquisitionControl
      */
-    mvIMPACT::acquire::GenICam::ImageFormatControl ifc(pDev);
-
     mvIMPACT::acquire::GenICam::AcquisitionControl ac(pDev);
+    mvIMPACT::acquire::GenICam::ImageFormatControl ifc(pDev);
+    //mvIMPACT::acquire::GenICam::ImageProcessing imgp(pDev);
+    mvIMPACT::acquire::ImageProcessing imgp(pDev);
+    mvIMPACT::acquire::GenICam::AnalogControl anlgc(pDev);
 
-    cout    << "ifc.pixelFormat: "
-            << ifc.pixelFormat.readS()
-            << endl;
+    cout    << "ac.exposureAuto: " << ac.exposureAuto.readS() << endl;
+    ac.exposureAuto.writeS("Off");
+    cout    << "ac.exposureAuto: " << ac.exposureAuto.readS() << endl;
+
+
+    cout    << "ifc.pixelFormat: " << ifc.pixelFormat.readS() << endl;
+    //"BayerGB12"
+    //"RGB8"
+    ifc.pixelFormat.writeS("RGB8");
+    cout    << "ifc.pixelFormat: " << ifc.pixelFormat.readS() << endl;
+
+
+    cout    << "ifc.pixelColorFilter: " << ifc.pixelColorFilter.readS() << endl;
+    //"BayerRG" ?
+    cout    << "ifc.pixelColorFilter: " << ifc.pixelColorFilter.readS() << endl;
+
+
+    cout    << "imgp.colorProcessing: " << imgp.colorProcessing.readS() << endl;
+    imgp.colorProcessing.writeS("Raw");
+    cout    << "imgp.colorProcessing: " << imgp.colorProcessing.readS() << endl;
+
+
+    cout    << "anlgc.balanceWhiteAuto: " << anlgc.balanceWhiteAuto.readS() << endl;
+    anlgc.balanceWhiteAuto.writeS("Off");
+    cout    << "anlgc.balanceWhiteAuto: " << anlgc.balanceWhiteAuto.readS() << endl;
+
+
+    cout    << "anlgc.gamma: " << anlgc.gamma.readS() << endl;
+    anlgc.gamma.writeS("1");
+    cout    << "anlgc.gamma: " << anlgc.gamma.readS() << endl;
+
+
+    cout    << "anlgc.gain: " << anlgc.gain.readS() << endl;
+    anlgc.gain.writeS("1.9382002601");
+    cout    << "anlgc.gain: " << anlgc.gain.readS() << endl;
+
+
+    cout    << "anlgc.gainAuto: " << anlgc.gainAuto.readS() << endl;
+    anlgc.gainAuto.writeS("Off");
+    cout    << "anlgc.gainAuto: " << anlgc.gainAuto.readS() << endl;
+
 
     FunctionInterface fi( pDev );
 
