@@ -229,17 +229,14 @@ int main( void )
                     imgGreen = (imgGreen >> 3) & 0x1F;
                     imgRed = (imgRed >> 3) & 0x1F;
 
-                    data =  (1<<7)
+                    databuf[0] =  (1<<7)
                         |   (imgBlue << 2)
                         |   (imgRed >> 3);
 
-                    bytesWritten = write(fd, &data, 1);
-
-                    data =  ((imgRed & 0x7) << 5)
+                    databuf[1] =  ((imgRed & 0x7) << 5)
                         |   imgGreen;
 
-                    
-                    bytesWritten = write(fd, &data, 1);
+                    bytesWritten = write(fd, databuf, 2);
                 } 
             }
 
