@@ -147,6 +147,21 @@ int main( void )
             << ")" 
             << endl;
 
+    /*
+     * Read data
+     */
+    /*
+    char* pTempBuf = new char[pRequest->imageSize.read()];
+    memcpy(pTempBuf, pRequest->imageData.read(), pRequest->imageSize.read());
+    */
+
+    unsigned char * pData = (unsigned char *)pRequest->imageData.read();
+
+    cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
+    cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
+    cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
+
+
     // unlock the buffer to let the driver know that you no longer need this buffer.
     fi.imageRequestUnlock( requestNr );
 
