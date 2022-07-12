@@ -28,6 +28,7 @@ int main( void )
     uint32_t        col;
     uint32_t        row;
     uint8_t         data;
+    uint8_t         databuf[2];
     ssize_t         bytesWritten;
 
     uint8_t         imgRed;
@@ -64,7 +65,6 @@ int main( void )
      */
     mvIMPACT::acquire::GenICam::AcquisitionControl ac(pDev);
     mvIMPACT::acquire::GenICam::ImageFormatControl ifc(pDev);
-    //mvIMPACT::acquire::GenICam::ImageProcessing imgp(pDev);
     mvIMPACT::acquire::ImageProcessing imgp(pDev);
     mvIMPACT::acquire::GenICam::AnalogControl anlgc(pDev);
 
@@ -108,6 +108,11 @@ int main( void )
     cout    << "anlgc.gainAuto: " << anlgc.gainAuto.readS() << endl;
     anlgc.gainAuto.writeS("Off");
     cout    << "anlgc.gainAuto: " << anlgc.gainAuto.readS() << endl;
+
+
+    cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
+    ac.exposureTime.writeS("8000");
+    cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
 
 
     FunctionInterface fi( pDev );
@@ -200,9 +205,9 @@ int main( void )
                  * Camera image format is given as:
                  * (BGR888Packed 2592x1944)
                  */
-                imgBlue = *pData++;
-                imgGreen = *pData++;
                 imgRed = *pData++;
+                imgGreen = *pData++;
+                imgBlue = *pData++;
 
                 if (    col >= leftoffset 
                     &&  col < (leftoffset + 1280)
@@ -233,6 +238,7 @@ int main( void )
                     data =  ((imgRed & 0x7) << 5)
                         |   imgGreen;
 
+                    
                     bytesWritten = write(fd, &data, 1);
                 } 
             }
@@ -252,7 +258,7 @@ int main( void )
     // unlock the buffer to let the driver know that you no longer need this buffer.
     fi.imageRequestUnlock( requestNr );
 
-    cout << "Press [ENTER] to end the application" << endl;
-    cin.get();
+    //cout << "Press [ENTER] to end the application" << endl;
+    //cin.get();
     return 0;
 }
