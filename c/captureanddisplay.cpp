@@ -22,6 +22,19 @@ using namespace std;
 int main( void )
 //-----------------------------------------------------------------------------
 {
+    int             fd;
+    uint32_t        width;
+    uint32_t        height;
+    uint32_t        col;
+    uint32_t        row;
+    uint8_t         data;
+    ssize_t         bytesWritten;
+
+    uint8_t         imgRed;
+    uint8_t         imgGreen;
+    uint8_t         imgBlue;
+    uint32_t        leftoffset;
+
     DeviceManager devMgr;
     Device* pDev = getDeviceFromUserInput( devMgr );
     if( !pDev )
@@ -155,12 +168,86 @@ int main( void )
     memcpy(pTempBuf, pRequest->imageData.read(), pRequest->imageSize.read());
     */
 
-    unsigned char * pData = (unsigned char *)pRequest->imageData.read();
+    unsigned char * pImg = (unsigned char *)pRequest->imageData.read();
+    unsigned char * pData = pImg;
 
     cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
     cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
     cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
 
+    /*
+     * Draw data to display
+     */
+    if ((fd = open("/dev/fb0", O_RDWR | O_SYNC)) != -1) {
+
+        /*
+         * Image size
+         * 2592 x 1944
+         * 
+         * Screen size
+         * 1280 x 1024
+         */
+        width = 2592;	//1280; 
+        height = 1944;	//1024;
+
+        leftoffset = 0; //700;
+
+        for (row=0;row<height;row++) {
+
+            for (col=0;col<width;col++) {
+
+                /*
+                 * Camera image format is given as:
+                 * (BGR888Packed 2592x1944)
+                 */
+                imgBlue = *pData++;
+                imgGreen = *pData++;
+                imgRed = *pData++;
+
+                if (    col >= leftoffset 
+                    &&  col < (leftoffset + 1280)
+                    &&	row >= 0
+                    && 	row < (0 + 1024)
+                ) {
+                    /*
+                     * Draw pixel to screen
+                     * 
+                     * Format seems to be
+                     * ABRG
+                     * 
+                     * | A B R | R G |
+                     * | 1 5 2 | 3 5 |
+                     * 
+                     */
+                    
+                    imgBlue = (imgBlue >> 3) & 0x1F;
+                    imgGreen = (imgGreen >> 3) & 0x1F;
+                    imgRed = (imgRed >> 3) & 0x1F;
+
+                    data =  (1<<7)
+                        |   (imgBlue << 2)
+                        |   (imgRed >> 3);
+
+                    bytesWritten = write(fd, &data, 1);
+
+                    data =  ((imgRed & 0x7) << 5)
+                        |   imgGreen;
+
+                    bytesWritten = write(fd, &data, 1);
+                } 
+            }
+
+            /*
+             * Stop reading file when outside
+             * display row size
+             */
+            if (row > 1024) {
+                break;
+            }
+        }
+
+        close(fd);
+    }
 
     // unlock the buffer to let the driver know that you no longer need this buffer.
     fi.imageRequestUnlock( requestNr );
