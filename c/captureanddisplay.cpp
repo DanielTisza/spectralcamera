@@ -12,6 +12,8 @@
 #include <iostream>
 #include <apps/Common/exampleHelper.h>
 #include <mvIMPACT_CPP/mvIMPACT_acquire.h>
+#include <mvIMPACT_CPP/mvIMPACT_acquire_GenICam.h>
+#include <mvIMPACT_CPP/mvIMPACT_acquire_helper.h>
 
 using namespace mvIMPACT::acquire;
 using namespace std;
@@ -41,6 +43,19 @@ int main( void )
         cin.get();
         return 1;
     }
+
+    /*
+     * Settings
+     * 
+     * mvIMPACT::acquire::GenICam::AcquisitionControl
+     */
+    mvIMPACT::acquire::GenICam::ImageFormatControl ifc(pDev);
+
+    mvIMPACT::acquire::GenICam::AcquisitionControl ac(pDev);
+
+    cout    << "ifc.pixelFormat: "
+            << ifc.pixelFormat.readS()
+            << endl;
 
     FunctionInterface fi( pDev );
 
