@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------
--- captureanddisplay.c
+-- captureanddisplay.cpp
 --
 -- Capture image and display it
 -- Based on SingleCapture.cpp
