@@ -256,20 +256,35 @@ int main(int argc, char *argv[])
 		if (ret) {
 			printf("drmModeSetCrtc() restore original crtc failed: %m\n");
 		}
+
 	}
 
-	
+	/*
+	 * Unmap frame buffer
+	 */
+	ret = munmap(map, creq.size);
+
+	if (ret != 0) {
+		printf("munmap failed: %s\n", strerror(errno));
+	}
+
+	/*
+	 * Remove frame buffer
+	 */
+	drmModeRmFB(fd, fb);
+
+	/*
+	 * Destroy dumb buffer
+	 */
+	memset(&dreq, 0, sizeof(dreq));
+
+	dreq.handle = creq.handle;
+
+	drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
 }
 	printf("Exiting...");
 
-
 #if 0
-free_second_fb:
-	drmModeRmFB(fd, second_fb_id);
-	
-free_second_bo:
-	kms_bo_destroy(&second_kms_bo);
-	
 free_first_fb:
 	drmModeRmFB(fd, fb_id);
 	
