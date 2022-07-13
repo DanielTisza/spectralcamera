@@ -141,7 +141,7 @@ int main( void )
 
 
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
-    ac.exposureTime.writeS("8000");
+    ac.exposureTime.writeS("60000");
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
 
 
@@ -240,9 +240,9 @@ int main( void )
                  * Camera image format is given as:
                  * (BGR888Packed 2592x1944)
                  */
-                imgRed = *pData++;
-                imgGreen = *pData++;
                 imgBlue = *pData++;
+                imgGreen = *pData++;
+                imgRed = *pData++;
 
                 if (    col >= leftoffset 
                     &&  col < (leftoffset + 1280)
