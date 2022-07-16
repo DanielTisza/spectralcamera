@@ -47,13 +47,18 @@ drmModeCrtcPtr		orig_crtc;
 void *				pMap;
 
 /*
- * 1920 1080
- * 1280 1024
+ * Display modes
  */
 #if 0
 int					selectedMode = 0;
 uint32_t			displayWidth = 1920;
 uint32_t			displayHeight = 1080;
+#endif
+
+#if 0
+int					selectedMode = 1;
+uint32_t			displayWidth = 1680;
+uint32_t			displayHeight = 1050;
 #endif
 
 #if 1
@@ -251,9 +256,9 @@ int main( void )
 		for (col=0;col<width;col++) {
 
 			/*
-				* Camera image format is given as:
-				* (BGR888Packed 2592x1944)
-				*/
+			 * Camera image format is given as:
+			 * (BGR888Packed 2592x1944)
+			 */
 			imgBlue = *pData++;
 			imgGreen = *pData++;
 			imgRed = *pData++;
@@ -270,9 +275,9 @@ int main( void )
 		}
 
 		/*
-			* Stop drawing image when outside
-			* display row size
-			*/
+		 * Stop drawing image when outside
+		 * display row size
+		 */
 		if (row > displayHeight) {
 			break;
 		}
