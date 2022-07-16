@@ -40,16 +40,18 @@ using namespace std;
 void initDrmDisplay(void);
 void closeDrmDisplay(void);
 
-int 				fdDrm;
-drmModeRes *		resources;
-drmModeConnector *	connector;
-drmModeCrtcPtr		orig_crtc;
-void *				pMap;
+int 							fdDrm;
+drmModeRes *					resources;
+drmModeConnector *				connector;
+struct drm_mode_create_dumb		creq;
+drmModeCrtcPtr					orig_crtc;
+void *							pMap;
+
 
 /*
  * Display modes
  */
-#if 0
+#if 1
 int					selectedMode = 0;
 uint32_t			displayWidth = 1920;
 uint32_t			displayHeight = 1080;
@@ -61,7 +63,7 @@ uint32_t			displayWidth = 1680;
 uint32_t			displayHeight = 1050;
 #endif
 
-#if 1
+#if 0
 int					selectedMode = 3;
 uint32_t			displayWidth = 1280;
 uint32_t			displayHeight = 1024;
@@ -275,6 +277,18 @@ int main( void )
 		}
 
 		/*
+		 * Jump over dummy bytes if pitch larger than display width
+		 */
+		if (creq.pitch > (3 * displayWidth)) {
+
+			uint32_t fillByteCount;
+
+			fillByteCount = creq.pitch - (3 * displayWidth);
+
+			pBuf += fillByteCount;
+		}
+
+		/*
 		 * Stop drawing image when outside
 		 * display row size
 		 */
@@ -306,7 +320,6 @@ void initDrmDisplay(
 	drmModeModeInfo mode;
 	int ret;
 	int i;
-	struct drm_mode_create_dumb		creq;
 	struct drm_mode_map_dumb		mreq;
 	struct drm_mode_destroy_dumb 	dreq;
 	uint32_t fb;
@@ -429,6 +442,14 @@ void initDrmDisplay(
 	}
 	/* creq.pitch, creq.handle and creq.size are filled by this ioctl with
 	* the requested values and can be used now. */
+
+	printf("Dumb frame buffer parameters:\n");
+	printf("  creq.width: %d\n", creq.width);
+	printf("  creq.height: %d\n", creq.height);
+	printf("  creq.bpp: %d\n", creq.bpp);
+	printf("  creq.pitch: %d\n", creq.pitch);
+	printf("  creq.handle: %d\n", creq.handle);
+	printf("  creq.size: %llu\n", creq.size);
 
 	/* create framebuffer object for the dumb-buffer */
 	ret = drmModeAddFB(
