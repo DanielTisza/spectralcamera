@@ -46,6 +46,22 @@ drmModeConnector *	connector;
 drmModeCrtcPtr		orig_crtc;
 void *				pMap;
 
+/*
+ * 1920 1080
+ * 1280 1024
+ */
+#if 0
+int					selectedMode = 0;
+uint32_t			displayWidth = 1920;
+uint32_t			displayHeight = 1080;
+#endif
+
+#if 1
+int					selectedMode = 3;
+uint32_t			displayWidth = 1280;
+uint32_t			displayHeight = 1024;
+#endif
+
 //-----------------------------------------------------------------------------
 int main( void )
 //-----------------------------------------------------------------------------
@@ -217,55 +233,50 @@ int main( void )
 
 	pBuf = (uint8_t *)pMap;
 
-    //if ((fd = open("/dev/fb0", O_RDWR | O_SYNC)) != -1) {
-	{
+	/*
+		* Image size
+		* 2592 x 1944
+		* 
+		* Screen size
+		* 1280 x 1024 (HP )
+		* 1920 x 1080 (HP EliteDisplay E231)
+		*/
+	width = 2592;
+	height = 1944;
 
-        /*
-         * Image size
-         * 2592 x 1944
-         * 
-         * Screen size
-         * 1280 x 1024
-         */
-        width = 2592;	//1280; 
-        height = 1944;	//1024;
+	leftoffset = 0; //700;
 
-        leftoffset = 0; //700;
+	for (row=0;row<height;row++) {
 
-        for (row=0;row<height;row++) {
+		for (col=0;col<width;col++) {
 
-            for (col=0;col<width;col++) {
+			/*
+				* Camera image format is given as:
+				* (BGR888Packed 2592x1944)
+				*/
+			imgBlue = *pData++;
+			imgGreen = *pData++;
+			imgRed = *pData++;
 
-                /*
-                 * Camera image format is given as:
-                 * (BGR888Packed 2592x1944)
-                 */
-                imgBlue = *pData++;
-                imgGreen = *pData++;
-                imgRed = *pData++;
+			if (    col >= leftoffset 
+				&&  col < (leftoffset + displayWidth)
+				&&	row >= 0
+				&& 	row < (0 + displayHeight)
+			) {
+				*pBuf++ = imgRed;
+				*pBuf++ = imgGreen;
+				*pBuf++ = imgBlue;
+			} 
+		}
 
-                if (    col >= leftoffset 
-                    &&  col < (leftoffset + 1280)
-                    &&	row >= 0
-                    && 	row < (0 + 1024)
-                ) {
-					*pBuf++ = imgRed;
-					*pBuf++ = imgGreen;
-					*pBuf++ = imgBlue;
-                } 
-            }
-
-            /*
-             * Stop reading file when outside
-             * display row size
-             */
-            if (row > 1024) {
-                break;
-            }
-        }
-
-        //close(fd);
-    }
+		/*
+			* Stop drawing image when outside
+			* display row size
+			*/
+		if (row > displayHeight) {
+			break;
+		}
+	}
 
     // unlock the buffer to let the driver know that you no longer need this buffer.
     fi.imageRequestUnlock( requestNr );
@@ -343,8 +354,23 @@ void initDrmDisplay(
 		return; //goto free_drm_res;
 	}
 
-	mode = connector->modes[0];
-	printf("(%dx%d)\n", mode.hdisplay, mode.vdisplay);
+	printf("Connector mode count: (%d)\n", connector->count_modes);
+
+	for(i=0; i < connector->count_modes; i++){
+
+		drmModeModeInfo tmpMode;
+
+		tmpMode = connector->modes[i];
+		printf("[%d] (%dx%d)\n", i, tmpMode.hdisplay, tmpMode.vdisplay);
+	}
+
+	mode = connector->modes[selectedMode];
+
+	printf("Selected mode: %d (%dx%d)\n",
+		selectedMode,
+		mode.hdisplay,
+		mode.vdisplay
+	);
 
 	/*
 	 * Find encoder matching selected connector
@@ -382,8 +408,8 @@ void initDrmDisplay(
 	/* create dumb buffer */
 	memset(&creq, 0, sizeof(creq));
 
-	creq.width = 1280;
-	creq.height = 1024;
+	creq.width = displayWidth; //1280;
+	creq.height = displayHeight; //1024;
 	creq.bpp = 24; //32;
 
 	ret = drmIoctl(
@@ -402,8 +428,8 @@ void initDrmDisplay(
 	/* create framebuffer object for the dumb-buffer */
 	ret = drmModeAddFB(
 		fdDrm,
-		1280,
-		1024,
+		displayWidth,
+		displayHeight,
 		24,
 		24, //32,
 		creq.pitch,
