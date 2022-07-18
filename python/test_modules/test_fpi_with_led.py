@@ -79,17 +79,18 @@ port = serial.Serial(ledportstring, 9600, timeout=0.5)
 # 6	190	1	44248	0	0	800.8814747	0	0	0.930350147	0.930350147	0.930350147	0	0	0	0	0	0	25.21518763	0	0
 
 # Turn off
+print('')
 print('LEDs turn off with 0x0')
-input("Press to activate")
 port.flushOutput()
 port.flushInput()
 port.write(str.encode('L0x0\r\n'))
 
 print("_current_setpoint: " + str(fpi._current_setpoint))
+input("LEDs off, press to continue")
 
 #C
-print('LEDs on for set C [3]')
-input("Press to activate")
+print('')
+print('LEDs for set C [3]')
 #led.L(0b000000001000000001000000001) 40201
 port.flushOutput()
 port.flushInput()
@@ -97,15 +98,23 @@ port.write(str.encode('L0x40201\r\n'))
 port.flushOutput()
 port.flushInput()
 
+print('')
+print('fpi.setSetpoint(52164)')
 fpi.setSetpoint(52164)
 print("_current_setpoint: " + str(fpi._current_setpoint))
 
+input("Examine image 1, press to continue")
+
+print('')
+print('fpi.setSetpoint(46815)')
 fpi.setSetpoint(46815)
 print("_current_setpoint: " + str(fpi._current_setpoint))
 
+input("Examine image 2, press to continue")
+
 #D
-print('LEDs on for set D [4]')
-input("Press to activate")
+print('')
+print('LEDs for set D [4]')
 #led.L(0b000011110000011110000011110) 783C1E
 port.flushOutput()
 port.flushInput()
@@ -113,13 +122,16 @@ port.write(str.encode('L0x783C1E\r\n'))
 port.flushOutput()
 port.flushInput()
 
-
+print('')
+print('fpi.setSetpoint(53506)')
 fpi.setSetpoint(53506)
 print("_current_setpoint: " + str(fpi._current_setpoint))
 
+input("Examine image 3, press to continue")
+
 #F
+print('')
 print('LEDs on for set F [6]')
-input("Press to activate")
 #led.L(0b001111000001111000001111000) 1E0F078
 port.flushOutput()
 port.flushInput()
@@ -127,14 +139,16 @@ port.write(str.encode('L0x1E0F078\r\n'))
 port.flushOutput()
 port.flushInput()
 
+print('')
+print('fpi.setSetpoint(44248)')
 fpi.setSetpoint(44248)
 print("_current_setpoint: " + str(fpi._current_setpoint))
 
+input("Examine image 4, press to continue")
 
 # Turn off
+print('')
 print('LEDs turn off with 0x0')
-input("Press to activate")
 port.flushOutput()
 port.flushInput()
 port.write(str.encode('L0x0\r\n'))
-
