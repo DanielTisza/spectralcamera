@@ -77,6 +77,7 @@ port = serial.Serial(ledportstring, 9600, timeout=0.5)
 # 3	112	1	46815	0	0	600.3957949	0	0	0.63670834	0.421133211	-0.719467142	0	0	0	0	0	0	22.66214846	0	0
 # 4	121	1	53506	0	0	695.9738452	0	0	0.746581945	0.746581945	0.746581945	0	0	0	0	0	0	30.93814177	0	0
 # 6	190	1	44248	0	0	800.8814747	0	0	0.930350147	0.930350147	0.930350147	0	0	0	0	0	0	25.21518763	0	0
+# 8	235	1	25324	0	0	900.9252753	0	0	2.326559343	2.326559343	2.326559343	0	0	0	0	0	0	24.2601732	0	0
 
 # Turn off
 print('')
@@ -145,6 +146,24 @@ fpi.setSetpoint(44248)
 print("_current_setpoint: " + str(fpi._current_setpoint))
 
 input("Examine image 4, press to continue")
+
+#H
+print('')
+print('LEDs on for set H [8]')
+#led.L(0b111100000111100000111100000) 783C1E0
+port.flushOutput()
+port.flushInput()
+port.write(str.encode('L0x783C1E0\r\n'))
+port.flushOutput()
+port.flushInput()
+
+print('')
+print('fpi.setSetpoint(25324)')
+fpi.setSetpoint(25324)
+print("_current_setpoint: " + str(fpi._current_setpoint))
+
+input("Examine image 5, press to continue")
+
 
 # Turn off
 print('')
