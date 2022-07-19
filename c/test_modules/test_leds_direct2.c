@@ -194,38 +194,67 @@ void main(
 	 * Write to serial port
 	 */
 
+	/*
+	 * Turn off
+	 */
 	printf("Turn LEDs off\r\n");
 	printf("Press to active\r\n");
-	led_set(0);
 	scanf("%c", &dummy);
+	led_set(0);	
 
-
+	/*
+	 * LED sets A to H
+	 */
 	printf("LEDs on for set A\r\n");
-	printf("Press to active\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
 	led_set(1);
+	
+	printf("LEDs on for set B\r\n");
+	printf("Press to activate\r\n");
 	scanf("%c", &dummy);
-
-
+	led_set(2);
+	
+	printf("LEDs on for set C\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	led_set(3);
+	
+	printf("LEDs on for set D\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	led_set(4);
+	
+	printf("LEDs on for set E\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	led_set(5);
+	
+	printf("LEDs on for set F\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	led_set(6);
+	
+	printf("LEDs on for set G\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	led_set(7);
+	
+	printf("LEDs on for set H\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	led_set(8);
+	
+	/*
+	 * Turn off
+	 */
 	printf("Turn LEDs off\r\n");
-	printf("Press to active\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
 	led_set(0);
-	scanf("%c", &dummy);
-
-
-	printf("LEDs on for set A\r\n");
-	printf("Press to active\r\n");
-	led_set(1);
-	scanf("%c", &dummy);
-
-
-	printf("Turn LEDs off\r\n");
-	printf("Press to active\r\n");
-	led_set(0);
-	scanf("%c", &dummy);
-
+	
 
 	CloseHandle(hComm);
-	
 }
 
 void led_set(
@@ -237,15 +266,86 @@ void led_set(
 	int						sendBytes;
 
 	char					szLedSetNone[] = "L0x0\r\n";
+
+	/*
+	 * LED set A
+	 *
+	 * 111000000111000000111000000
+     * Reverse for LED control:
+     * 000000111000000111000000111
+	 * => 0x1C0E07
+	 */
 	char					szLedSetA[] = "L0x1C0E07\r\n";
 
 	/*
-	#A
-	print('LEDs on for set A')
-	input("Press to activate")
-	# led.L(0b000000111000000111000000111) 1C0E07
-	port.write(str.encode('L0x1C0E07\r\n'))
-	*/
+	 * LED set B
+	 *
+	 * 110000000110000000110000000
+     * Reverse for LED control:
+     * 000000011000000011000000011
+	 * => 0xC0603
+	 */
+	char					szLedSetB[] = "L0xC0603\r\n";
+
+	/*
+	 * LED set C
+	 *
+	 * 100000000100000000100000000
+     * Reverse for LED control:
+     * 000000001000000001000000001
+	 * => 0x40201
+	 */
+	char					szLedSetC[] = "L0x40201\r\n";
+
+	/*
+	 * LED set D
+	 *
+	 * 011110000011110000011110000
+     * Reverse for LED control:
+     * 000011110000011110000011110
+	 * => 0x783C1E
+	 */
+	char					szLedSetD[] = "L0x783C1E\r\n";
+
+	/*
+	 * LED set E
+	 *
+	 * 001111000001111000001111000
+     * Reverse for LED control:
+     * 000111100000111100000111100
+	 * => 0xF0783C
+	 */
+	char					szLedSetE[] = "L0xF0783C\r\n";
+
+	/*
+	 * LED set F
+	 *
+	 * 000111100000111100000111100
+     * Reverse for LED control:
+     * 001111000001111000001111000
+	 * => 0x1E0F078
+	 */
+	char					szLedSetF[] = "L0x1E0F078\r\n";
+
+	/*
+	 * LED set G
+	 *
+	 * 000011110000011110000011110
+     * Reverse for LED control:
+     * 011110000011110000011110000
+	 * => 0x3C1E0F0
+	 */
+	char					szLedSetG[] = "L0x3C1E0F0\r\n";
+
+	/*
+	 * LED set H
+	 *
+	 * 000001111000001111000001111
+     * Reverse for LED control:
+     * 111100000111100000111100000
+	 * => 0x783C1E0
+	 */
+	char					szLedSetH[] = "L0x783C1E0\r\n";
 
 	switch (ledset) {
 
@@ -257,6 +357,41 @@ void led_set(
 		case 1:
 			szSendBuf = szLedSetA;
 			sendBytes = strlen(szLedSetA);
+			break;
+
+		case 2:
+			szSendBuf = szLedSetB;
+			sendBytes = strlen(szLedSetB);
+			break;
+
+		case 3:
+			szSendBuf = szLedSetC;
+			sendBytes = strlen(szLedSetC);
+			break;
+
+		case 4:
+			szSendBuf = szLedSetD;
+			sendBytes = strlen(szLedSetD);
+			break;
+
+		case 5:
+			szSendBuf = szLedSetE;
+			sendBytes = strlen(szLedSetE);
+			break;
+
+		case 6:
+			szSendBuf = szLedSetF;
+			sendBytes = strlen(szLedSetF);
+			break;
+
+		case 7:
+			szSendBuf = szLedSetG;
+			sendBytes = strlen(szLedSetG);
+			break;
+
+		case 8:
+			szSendBuf = szLedSetH;
+			sendBytes = strlen(szLedSetH);
 			break;
 
 		default:
