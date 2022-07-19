@@ -130,15 +130,161 @@ port.write(str.encode('L0x0\r\n'))
 #include <fcntl.h>
 #include <errno.h>
 #include <math.h>
+#include <windows.h>
 
+HANDLE		hComm;
 
-void main(int argc, char* argv[]) {
+void led_set(
+	int						ledset
+);
 
-	char		ledportstring[16];
+void main(
+	int						argc,
+	char *					argv[]
+) {
+	DCB						dcb;
+	BOOL					res;
+	char					ledportstring[16];
+	char					dummy;
 
 	ledportstring[0] = '\0';
 
 	printf("Trying to use %s for LED control", ledportstring);
 
+	hComm = CreateFileA(
+				"\\\\.\\COM4",
+				GENERIC_READ | GENERIC_WRITE,
+				0,
+				NULL,
+				OPEN_EXISTING,
+				0,
+				NULL
+	);
+
+	if (hComm == INVALID_HANDLE_VALUE) {
+		printf("CreateFileA() for serial port failed!");
+	}
+
+	/*
+	 * Setup DCB
+	 */
+	memset(&dcb, 0, sizeof(dcb));
+
+	dcb.BaudRate = CBR_115200;
+	dcb.ByteSize = 8;
+	dcb.StopBits = ONESTOPBIT;
+	dcb.Parity = NOPARITY;
+
+	res = SetCommState(hComm, &dcb);
+
+	if (res == FALSE) {
+		printf("SetCommState() for serial port failed!");
+	}
+
+	/*
+	 * Set timeouts (if necessary)
+	 */
+
+	/*
+	 * Clear TX, RX buffers
+	 */
+	PurgeComm(hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
+
+	/*
+	 * Write to serial port
+	 */
+
+	printf("Turn LEDs off\r\n");
+	printf("Press to active\r\n");
+	led_set(0);
+	scanf("%c", &dummy);
+
+
+	printf("LEDs on for set A\r\n");
+	printf("Press to active\r\n");
+	led_set(1);
+	scanf("%c", &dummy);
+
+
+	printf("Turn LEDs off\r\n");
+	printf("Press to active\r\n");
+	led_set(0);
+	scanf("%c", &dummy);
+
+
+	printf("LEDs on for set A\r\n");
+	printf("Press to active\r\n");
+	led_set(1);
+	scanf("%c", &dummy);
+
+
+	printf("Turn LEDs off\r\n");
+	printf("Press to active\r\n");
+	led_set(0);
+	scanf("%c", &dummy);
+
+
+	CloseHandle(hComm);
 	
 }
+
+void led_set(
+	int						ledset
+) {
+	BOOL					res;
+	DWORD					writeCount;
+	char *					szSendBuf;
+	int						sendBytes;
+
+	char					szLedSetNone[] = "L0x0\r\n";
+	char					szLedSetA[] = "L0x1C0E07\r\n";
+
+	/*
+	#A
+	print('LEDs on for set A')
+	input("Press to activate")
+	# led.L(0b000000111000000111000000111) 1C0E07
+	port.write(str.encode('L0x1C0E07\r\n'))
+	*/
+
+	switch (ledset) {
+
+		case 0:
+			szSendBuf = szLedSetNone;
+			sendBytes = strlen(szLedSetNone);
+			break;
+
+		case 1:
+			szSendBuf = szLedSetA;
+			sendBytes = strlen(szLedSetA);
+			break;
+
+		default:
+			break;
+	}
+
+	res = WriteFile(
+			hComm,
+			szSendBuf,
+			sendBytes,
+			&writeCount,
+			NULL
+	);
+
+	if (res == FALSE) {
+		printf("WriteFile() for serial port failed!");
+	}
+
+	printf("WriteFile() write count = %d\n\n", writeCount);
+
+	if (sendBytes != writeCount) {
+		printf("WriteFile() sendBytes != writeCount, write failed!");
+	}
+
+	res = FlushFileBuffers(hComm);
+
+	if (res == FALSE) {
+		printf("FlushFileBuffers() for serial port failed!");
+	}
+}
+
