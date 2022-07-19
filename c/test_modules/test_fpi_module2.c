@@ -98,12 +98,13 @@ void main(
 ) {
 	DCB						dcb;
 	BOOL					res;
-	char					ledportstring[16];
+	COMMTIMEOUTS			timeouts;
+	char					fpiportstring[16];
 	char					dummy;
 
-	ledportstring[0] = '\0';
+	fpiportstring[0] = '\0';
 
-	printf("Trying to use %s for LED control", ledportstring);
+	printf("Trying to use %s for FPI control", fpiportstring);
 
 	hComm = CreateFileA(
 				"\\\\.\\COM4",
@@ -138,6 +139,20 @@ void main(
 	/*
 	 * Set timeouts (if necessary)
 	 */
+	memset(&timeouts, 0, sizeof(timeouts));
+
+	timeouts.ReadTotalTimeoutConstant = 500;
+	timeouts.ReadTotalTimeoutMultiplier = 5;
+	timeouts.ReadIntervalTimeout = 100;
+
+	timeouts.WriteTotalTimeoutConstant = 500;
+	timeouts.WriteTotalTimeoutMultiplier  = 50;
+
+	res = SetCommTimeouts(hComm, &timeouts);
+
+	if (res == FALSE) {
+		printf("SetCommTimeouts() for serial port failed!");
+	}
 
 	/*
 	 * Clear TX, RX buffers
@@ -149,12 +164,30 @@ void main(
 	 */
 
 	/*
+	 * FPI open
+	 * Write '!\r\n' and expect '!' in reply
+	 */
+
+
+	/*
+	 * FPI get EEPROM
+	 */
+
+
+	/*
 	 * Turn off
 	 */
 	printf("Set FPI setpoint: %d\r\n", 0);
 	printf("Press to active\r\n");
 	scanf("%c", &dummy);
 	fpi_set(0);	
+
+
+	printf("Set FPI setpoint: %d\r\n", 0);
+	printf("Press to active\r\n");
+	scanf("%c", &dummy);
+	fpi_set(1);	
+	
 	
 
 	CloseHandle(hComm);
@@ -167,20 +200,36 @@ void fpi_set(
 	DWORD					writeCount;
 	char *					szSendBuf;
 	int						sendBytes;
+	char					szReceiveBuf[100];
+	int						receiveBytes = 100;
+	DWORD					receiveCount;
+	int						ii;
 
-	char					szLedSetNone[] = "L0x0\r\n";
+	char					szReadEeprom0[] = "R0\r\n";
+	char					szReadEeprom1[] = "R1\r\n";
+	char					szReadEeprom2[] = "R2\r\n";
 
 	switch (setpoint) {
 
 		case 0:
-			szSendBuf = szLedSetNone;
-			sendBytes = strlen(szLedSetNone);
+			szSendBuf = szReadEeprom0;
+			sendBytes = strlen(szReadEeprom0);
 			break;
+
+		case 1:
+			szSendBuf = szReadEeprom1;
+			sendBytes = strlen(szReadEeprom1);
+			break;
+
+		
 
 		default:
 			break;
 	}
 
+	/*
+	 * Write command
+	 */
 	res = WriteFile(
 			hComm,
 			szSendBuf,
@@ -204,5 +253,40 @@ void fpi_set(
 	if (res == FALSE) {
 		printf("FlushFileBuffers() for serial port failed!");
 	}
+
+	/*
+	 * Read response
+	 */
+	res = ReadFile(
+			hComm,
+			szReceiveBuf,
+			receiveBytes,
+			&receiveCount,
+			NULL
+	);
+
+	if (res == FALSE) {
+		printf("ReadFile() for serial port failed!");
+	}
+
+	printf("ReadFile() read count = %d\n\n", receiveCount);
+
+	res = FlushFileBuffers(hComm);
+
+	if (res == FALSE) {
+		printf("FlushFileBuffers() for serial port failed!");
+	}
+
+	/*
+	 * Print received bytes
+	 */
+	printf("\r\n\r\nReceived bytes:\r\n");
+
+	for (ii=0;ii<receiveCount;ii++) {
+
+		printf("[%d]=0x%X ", ii, szReceiveBuf[ii]);
+	}
+
+	printf("\r\n");
 }
 
