@@ -88,6 +88,8 @@ print("_current_setpoint: " + str(fpi._current_setpoint))
 
 HANDLE		hComm;
 char		szReceiveBuf[100];
+long		dnMax;
+long		dnMin;
 
 void fpi_command(
 	int						command
@@ -102,6 +104,7 @@ void main(
 	COMMTIMEOUTS			timeouts;
 	char					fpiportstring[16];
 	char					dummy;
+	int						iRes;
 
 	fpiportstring[0] = '\0';
 
@@ -185,6 +188,29 @@ void main(
 	printf("\r\n\r\nReceived response string:\r\n");
 	printf("[0]=[%s]\r\n", szReceiveBuf);
 
+	{
+		char * pSecond;
+		char * pThird;
+		
+		pSecond = strchr(szReceiveBuf, ',');
+
+		if (pSecond != NULL) {
+
+			pSecond++;
+
+			printf("[acdc_name]=[%s]\r\n", pSecond);
+
+			pThird = strchr(pSecond, '_');
+
+			if (pThird != NULL) {
+
+				pThird++;
+
+				printf("[name]=[%s]\r\n", pThird);
+			}
+		}
+	}
+
 
 	printf("Set FPI setpoint: %d\r\n", 0);
 	printf("Press to active\r\n");
@@ -192,6 +218,26 @@ void main(
 	fpi_command(13);
 	printf("\r\n\r\nReceived response string:\r\n");
 	printf("[13]=[%s]\r\n", szReceiveBuf);
+
+	{
+		char * pSecond;
+		char * pThird;
+		
+		pSecond = strchr(szReceiveBuf, ',');
+
+		if (pSecond != NULL) {
+
+			pSecond++;
+
+			printf("[dn_max_value]=[%s]\r\n", pSecond);
+
+			iRes = sscanf(pSecond, "%d", &dnMax);
+
+			if (iRes == 1) {
+				printf("DN max: %d\r\n", dnMax);
+			}
+		}
+	}
 	
 	printf("Set FPI setpoint: %d\r\n", 0);
 	printf("Press to active\r\n");
@@ -200,6 +246,25 @@ void main(
 	printf("\r\n\r\nReceived response string:\r\n");
 	printf("[14]=[%s]\r\n", szReceiveBuf);
 	
+	{
+		char * pSecond;
+		char * pThird;
+		
+		pSecond = strchr(szReceiveBuf, ',');
+
+		if (pSecond != NULL) {
+
+			pSecond++;
+
+			printf("[dn_min_value]=[%s]\r\n", pSecond);
+
+			iRes = sscanf(pSecond, "%d", &dnMin);
+
+			if (iRes == 1) {
+				printf("DN min: %d\r\n", dnMin);
+			}
+		}
+	}
 
 	CloseHandle(hComm);
 }
@@ -271,7 +336,7 @@ void fpi_command(
 	 * Read response
 	 */
 	memset(szReceiveBuf, 0, sizeof(szReceiveBuf));
-	
+
 	res = ReadFile(
 			hComm,
 			szReceiveBuf,
