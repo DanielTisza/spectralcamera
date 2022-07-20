@@ -1,7 +1,7 @@
 /*# ----------------------------------------------------------------------------
 #	test_fpi_module2.c
 #
-#	Copyright 2021 Daniel Tisza
+#	Copyright 2022 Daniel Tisza
 #	MIT License
 #
 #	Test controlling FPI module
