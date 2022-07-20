@@ -88,11 +88,40 @@ print("_current_setpoint: " + str(fpi._current_setpoint))
 
 HANDLE		hComm;
 char		szReceiveBuf[100];
+int			isAC = 0;
+int			isDC = 0;
 long		dnMax;
 long		dnMin;
 
+/*
+ledset	index	Npeaks	SP1	SP2	SP3	PeakWL1	PeakWL2	PeakWL3	Sinv11	Sinv12	Sinv13	Sinv21	Sinv22	Sinv23	Sinv31	Sinv32	Sinv33	FWHM1	FWHM2	FWHM3
+0	0	2	44748	0	0	505.914289	614.2813052	0	-0.398411474	1.259903596	1.025911637	0.752656263	-0.099247137	0.020958335	0	0	0	14.26460175	22.90707427	0
+0	1	2	38137	0	0	529.6967931	648.7050781	0	-0.213236666	0.675034929	0.47800432	1.096529239	-0.196707289	0.090149999	0	0	0	19.31133749	22.91851783	0
+0	2	1	51545	0	0	559.946926	0	0	0.679889519	1.419721666	-4.845915769	0	0	0	0	0	0	22.17152035	0	0
+0	3	1	48253	0	0	590.5393079	0	0	0.744158985	0.88514816	-1.525211353	0	0	0	0	0	0	19.27394234	0	0
+0	4	2	43666	0	0	509.0977574	620.8469159	0	-0.278237594	0.95500646	0.689725545	0.799175554	-0.12899134	0.070664975	0	0	0	17.24490964	22.21616876	0
+0	5	2	32410	0	0	547.9435618	670.419621	0	-0.033097435	1.002178578	-1.246062	0.941021878	-0.658921908	2.815570398	0	0	0	17.5773986	22.00005834	0
+0	6	1	52670	0	0	709.6242043	0	0	0.761968164	0.761968164	0.761968164	0	0	0	0	0	0	27.34661845	0	0
+0	7	1	50362	0	0	740.2281587	0	0	0.810986945	0.810986945	0.810986945	0	0	0	0	0	0	28.68050028	0	0
+*/
+
+long setpoint[8] = {
+	44748,
+	38137,
+	51545,
+	48253,
+	43666,
+	32410,
+	52670,
+	50362,
+};
+
 void fpi_command(
 	int						command
+);
+
+void fpi_setpoint(
+	long					setpoint
 );
 
 void main(
@@ -105,6 +134,7 @@ void main(
 	char					fpiportstring[16];
 	char					dummy;
 	int						iRes;
+	int						ii;
 
 	fpiportstring[0] = '\0';
 
@@ -164,10 +194,6 @@ void main(
 	PurgeComm(hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
 
 	/*
-	 * Write to serial port
-	 */
-
-	/*
 	 * FPI open
 	 * Write '!\r\n' and expect '!' in reply
 	 */
@@ -176,13 +202,8 @@ void main(
 	/*
 	 * FPI get EEPROM
 	 */
-
-
-	/*
-	 * Turn off
-	 */
-	printf("Set FPI setpoint: %d\r\n", 0);
-	printf("Press to active\r\n");
+	printf("Read EEPROM [0]: %d\r\n", 0);
+	printf("Press to activate\r\n");
 	scanf("%c", &dummy);
 	fpi_command(0);	
 	printf("\r\n\r\nReceived response string:\r\n");
@@ -204,16 +225,30 @@ void main(
 
 			if (pThird != NULL) {
 
-				pThird++;
+				*pThird = '\0';
+				printf("[ACDC]=[%s]\r\n", pSecond);
 
+				if (	pSecond[0] == 'A'
+					&&	pSecond[1] == 'C'
+				) {
+					isAC = 1;
+
+				} else if (
+						pSecond[0] == 'D'
+					&&	pSecond[1] == 'C'
+				) {
+
+					isDC = 1;
+				}
+
+				pThird++;
 				printf("[name]=[%s]\r\n", pThird);
 			}
 		}
 	}
 
-
-	printf("Set FPI setpoint: %d\r\n", 0);
-	printf("Press to active\r\n");
+	printf("Read EEPROM [13]: %d\r\n", 0);
+	printf("Press to activate\r\n");
 	scanf("%c", &dummy);
 	fpi_command(13);
 	printf("\r\n\r\nReceived response string:\r\n");
@@ -239,8 +274,8 @@ void main(
 		}
 	}
 	
-	printf("Set FPI setpoint: %d\r\n", 0);
-	printf("Press to active\r\n");
+	printf("Read EEPROM [14]: %d\r\n", 0);
+	printf("Press to activate\r\n");
 	scanf("%c", &dummy);
 	fpi_command(14);
 	printf("\r\n\r\nReceived response string:\r\n");
@@ -264,6 +299,17 @@ void main(
 				printf("DN min: %d\r\n", dnMin);
 			}
 		}
+	}
+
+	/*
+	 * FPI set setpoints
+	 */
+	for (ii=0;ii<8;ii++) {
+
+		printf("Set FPI setpoint: %d\r\n", setpoint[ii]);
+		printf("Press to activate\r\n");
+		scanf("%c", &dummy);
+		fpi_setpoint(setpoint[ii]);
 	}
 
 	CloseHandle(hComm);
@@ -368,5 +414,71 @@ void fpi_command(
 	}
 
 	printf("\r\n");
+}
+
+void fpi_setpoint(
+	long					setpoint
+) {
+	BOOL					res;
+	DWORD					writeCount;
+	char 					szSendBuf[100];
+	int						sendBytes;	
+	int						ii;
+
+	/*
+	 * Validate setpoint against given range
+	 */
+	if (setpoint < dnMin || setpoint > dnMax) {
+		printf("Setpoint %d out of range [%d, %d]!", setpoint, dnMin, dnMax);
+		return;
+	}
+
+	/*
+	 * AC setpoint command = 'a'
+	 * DC setpoint command = 'd'
+	 */
+	if (isAC) {
+		sprintf(szSendBuf, "a%d\r\n", setpoint);
+	} else if (isDC) {
+		sprintf(szSendBuf, "d%d\r\n", setpoint);
+	} else {
+		printf("Invalid control type! Should be AC or DC");
+		return;
+	}
+
+	printf("Setpoint command: [%s]", szSendBuf);
+
+	sendBytes = strlen(szSendBuf);
+	printf("Setpoint command byte count: %d", sendBytes);
+
+	/*
+	 * Write command
+	 */
+	res = WriteFile(
+			hComm,
+			szSendBuf,
+			sendBytes,
+			&writeCount,
+			NULL
+	);
+
+	if (res == FALSE) {
+		printf("WriteFile() for serial port failed!");
+	}
+
+	printf("WriteFile() write count = %d\n\n", writeCount);
+
+	if (sendBytes != writeCount) {
+		printf("WriteFile() sendBytes != writeCount, write failed!");
+	}
+
+	res = FlushFileBuffers(hComm);
+
+	if (res == FALSE) {
+		printf("FlushFileBuffers() for serial port failed!");
+	}
+
+	printf("\r\n");
+
 }
 
