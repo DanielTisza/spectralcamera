@@ -53,6 +53,14 @@ long setpoint[SETPOINT_COUNT] = {
 	44248,
 };
 
+void initFpiSerial(
+	void
+);
+
+void readFpiEeprom(
+	void
+);
+
 void fpi_command(
 	int						command
 );
@@ -61,21 +69,77 @@ void fpi_setpoint(
 	long					setpoint
 );
 
+/***************************************************************************//**
+ *
+ *	\brief		Main application entry point
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
 void main(
 	int						argc,
 	char *					argv[]
 ) {
-	DCB						dcb;
-	BOOL					res;
-	COMMTIMEOUTS			timeouts;
 	char					fpiportstring[16];
 	char					dummy;
-	int						iRes;
 	int						ii;
 
 	fpiportstring[0] = '\0';
 
 	printf("Trying to use %s for FPI control", fpiportstring);
+
+	/*
+	 * Open FPI serial port
+	 */
+	initFpiSerial();
+
+	/*
+	 * Write '!\r\n' and expect '!' in reply
+	 */
+
+	/*
+	 * FPI get EEPROM
+	 */
+	readFpiEeprom();	
+
+	/*
+	 * FPI set setpoints
+	 */
+	for (ii=0;ii<SETPOINT_COUNT;ii++) {
+
+		printf("Set FPI setpoint: %d\r\n", setpoint[ii]);
+		printf("Press to activate\r\n");
+		scanf("%c", &dummy);
+		fpi_setpoint(setpoint[ii]);
+	}
+
+	CloseHandle(hComm);
+}
+/***************************************************************************//**
+ *
+ *	\brief		Initializes serial port for controlling FPI filter
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+void initFpiSerial(
+	void
+) {
+	DCB						dcb;
+	BOOL					res;
+	COMMTIMEOUTS			timeouts;
 
 	hComm = CreateFileA(
 				"\\\\.\\COM4",
@@ -129,16 +193,26 @@ void main(
 	 * Clear TX, RX buffers
 	 */
 	PurgeComm(hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
+}
+/***************************************************************************//**
+ *
+ *	\brief		Reads FPI filter EEPROM
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note		Must be called before trying to set setpoint.
+ *	
+ ******************************************************************************/
+void readFpiEeprom(
+	void
+) {
+	char					dummy;
+	int						iRes;
 
-	/*
-	 * FPI open
-	 * Write '!\r\n' and expect '!' in reply
-	 */
-
-
-	/*
-	 * FPI get EEPROM
-	 */
 	printf("Read EEPROM [0]: %d\r\n", 0);
 	printf("Press to activate\r\n");
 	scanf("%c", &dummy);
@@ -237,21 +311,20 @@ void main(
 			}
 		}
 	}
-
-	/*
-	 * FPI set setpoints
-	 */
-	for (ii=0;ii<SETPOINT_COUNT;ii++) {
-
-		printf("Set FPI setpoint: %d\r\n", setpoint[ii]);
-		printf("Press to activate\r\n");
-		scanf("%c", &dummy);
-		fpi_setpoint(setpoint[ii]);
-	}
-
-	CloseHandle(hComm);
 }
-
+/***************************************************************************//**
+ *
+ *	\brief		Sends command to FPI and reads response
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
 void fpi_command(
 	int						command
 ) {
@@ -352,7 +425,19 @@ void fpi_command(
 
 	printf("\r\n");
 }
-
+/***************************************************************************//**
+ *
+ *	\brief		Sets FPI filter setpoint
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	Sends setpoint command to FPI filter
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
 void fpi_setpoint(
 	long					setpoint
 ) {
