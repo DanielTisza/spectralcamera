@@ -87,9 +87,10 @@ print("_current_setpoint: " + str(fpi._current_setpoint))
 #include <windows.h>
 
 HANDLE		hComm;
+char		szReceiveBuf[100];
 
-void fpi_set(
-	int						setpoint
+void fpi_command(
+	int						command
 );
 
 void main(
@@ -180,48 +181,60 @@ void main(
 	printf("Set FPI setpoint: %d\r\n", 0);
 	printf("Press to active\r\n");
 	scanf("%c", &dummy);
-	fpi_set(0);	
+	fpi_command(0);	
+	printf("\r\n\r\nReceived response string:\r\n");
+	printf("[0]=[%s]\r\n", szReceiveBuf);
 
 
 	printf("Set FPI setpoint: %d\r\n", 0);
 	printf("Press to active\r\n");
 	scanf("%c", &dummy);
-	fpi_set(1);	
+	fpi_command(13);
+	printf("\r\n\r\nReceived response string:\r\n");
+	printf("[13]=[%s]\r\n", szReceiveBuf);
 	
+	printf("Set FPI setpoint: %d\r\n", 0);
+	printf("Press to active\r\n");
+	scanf("%c", &dummy);
+	fpi_command(14);
+	printf("\r\n\r\nReceived response string:\r\n");
+	printf("[14]=[%s]\r\n", szReceiveBuf);
 	
 
 	CloseHandle(hComm);
 }
 
-void fpi_set(
-	int						setpoint
+void fpi_command(
+	int						command
 ) {
 	BOOL					res;
 	DWORD					writeCount;
 	char *					szSendBuf;
-	int						sendBytes;
-	char					szReceiveBuf[100];
+	int						sendBytes;	
 	int						receiveBytes = 100;
 	DWORD					receiveCount;
 	int						ii;
 
 	char					szReadEeprom0[] = "R0\r\n";
-	char					szReadEeprom1[] = "R1\r\n";
-	char					szReadEeprom2[] = "R2\r\n";
+	char					szReadEeprom13[] = "R13\r\n";
+	char					szReadEeprom14[] = "R14\r\n";
 
-	switch (setpoint) {
+	switch (command) {
 
 		case 0:
 			szSendBuf = szReadEeprom0;
 			sendBytes = strlen(szReadEeprom0);
 			break;
 
-		case 1:
-			szSendBuf = szReadEeprom1;
-			sendBytes = strlen(szReadEeprom1);
+		case 13:
+			szSendBuf = szReadEeprom13;
+			sendBytes = strlen(szReadEeprom13);
 			break;
 
-		
+		case 14:
+			szSendBuf = szReadEeprom14;
+			sendBytes = strlen(szReadEeprom14);
+			break;
 
 		default:
 			break;
@@ -257,6 +270,8 @@ void fpi_set(
 	/*
 	 * Read response
 	 */
+	memset(szReceiveBuf, 0, sizeof(szReceiveBuf));
+	
 	res = ReadFile(
 			hComm,
 			szReceiveBuf,
