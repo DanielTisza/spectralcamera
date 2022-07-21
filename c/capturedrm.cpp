@@ -40,6 +40,12 @@ using namespace std;
 void initDrmDisplay(void);
 void closeDrmDisplay(void);
 
+void takeImageAndDraw(
+	Device *				pDev,
+	FunctionInterface		fi,
+	uint8_t *				pBuf
+);
+
 int 							fdDrm;
 drmModeRes *					resources;
 drmModeConnector *				connector;
@@ -74,23 +80,10 @@ int main( void )
 //-----------------------------------------------------------------------------
 {
     int             fd;
-    uint32_t        width;
-    uint32_t        height;
-    uint32_t        col;
-    uint32_t        row;
-    uint8_t         data;
-    uint8_t         databuf[2];
-    ssize_t         bytesWritten;
+    DeviceManager	devMgr;
 
-    uint8_t         imgRed;
-    uint8_t         imgGreen;
-    uint8_t         imgBlue;
-    uint32_t        leftoffset;
-
-	uint8_t *		pBuf;
-
-    DeviceManager devMgr;
     Device* pDev = getDeviceFromUserInput( devMgr );
+
     if( !pDev )
     {
         cout << "Unable to continue! Press [ENTER] to end the application" << endl;
@@ -167,87 +160,148 @@ int main( void )
     ac.exposureTime.writeS("60000");
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
 
-
-    FunctionInterface fi( pDev );
-
-    // send a request to the default request queue of the device and wait for the result.
-    fi.imageRequestSingle();
-
-    manuallyStartAcquisitionIfNeeded( pDev, fi );
-
-    // Wait for results from the default capture queue by passing a timeout (The maximum time allowed
-    // for the application to wait for a Result). Infinity value: -1, positive value: The time to wait in milliseconds.
-    // Please note that slow systems or interface technologies in combination with high resolution sensors
-    // might need more time to transmit an image than the timeout value.
-    // Once the device is configured for triggered image acquisition and the timeout elapsed before
-    // the device has been triggered this might happen as well.
-    // If waiting with an infinite timeout(-1) it will be necessary to call 'imageRequestReset' from another thread
-    // to force 'imageRequestWaitFor' to return when no data is coming from the device/can be captured.
-    int requestNr = fi.imageRequestWaitFor( 10000 );
-
-    manuallyStopAcquisitionIfNeeded( pDev, fi );
-
-    // check if the image has been captured without any problems.
-    if( !fi.isRequestNrValid( requestNr ) )
-    {
-        // If the error code is -2119(DEV_WAIT_FOR_REQUEST_FAILED), the documentation will provide
-        // additional information under TDMR_ERROR in the interface reference
-        cout << "imageRequestWaitFor failed maybe the timeout value has been too small?" << endl;
-        return 1;
-    }
-
-    const Request* pRequest = fi.getRequest( requestNr );
-
-    if( !pRequest->isOK() )
-    {
-        cout << "Error: " << pRequest->requestResult.readS() << endl;
-        // if the application wouldn't terminate at this point this buffer HAS TO be unlocked before
-        // it can be used again as currently it is under control of the user. However terminating the application
-        // will free the resources anyway thus the call
-        // fi.imageRequestUnlock( requestNr );
-        // can be omitted here.
-        return 1;
-    }
-
-    cout    << "Image captured(" 
-            << pRequest->imagePixelFormat.readS() 
-            << " " 
-            << pRequest->imageWidth.read() 
-            << "x" 
-            << pRequest->imageHeight.read() 
-            << ")" 
-            << endl;
-
-    /*
-     * Read data
-     */
-    /*
-    char* pTempBuf = new char[pRequest->imageSize.read()];
-    memcpy(pTempBuf, pRequest->imageData.read(), pRequest->imageSize.read());
-    */
-
-    unsigned char * pImg = (unsigned char *)pRequest->imageData.read();
-    unsigned char * pData = pImg;
-
-    cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
-    cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
-    cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
-
-    /*
-     * Draw data to display
-     */
+	FunctionInterface fi(pDev);
+	
+	/*
+	 * Initialize display
+	 */
 	initDrmDisplay();
 
-	pBuf = (uint8_t *)pMap;
+	/*
+	 * Enter loop taking images
+	 */
+	while (1) {
+		
+		char		userCmd;
+
+		/*
+		 * Take image and draw to display
+		 */
+		takeImageAndDraw(pDev, fi, (uint8_t *)pMap);
+
+		/*
+		 * Handle user commands
+		 */
+		cout << "Press space key to take image" << endl;
+		cout << "Press 'q' key to end application" << endl;
+
+		scanf("%c", &userCmd);
+
+		switch (userCmd) {
+			default:
+				break;
+		}
+
+		if (userCmd == 'q') {
+			break;
+		}
+	}
+
+	closeDrmDisplay();
+
+    return 0;
+}
+
+/***************************************************************************//**
+ *
+ *	\brief		Take image and draw to display
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+void takeImageAndDraw(
+	Device *				pDev,
+	FunctionInterface		fi,
+	uint8_t *				pBuf
+) {
+	uint32_t				width;
+	uint32_t				height;
+	uint32_t				col;
+	uint32_t				row;
+	uint8_t					data;
+
+	uint8_t					imgRed;
+	uint8_t					imgGreen;
+	uint8_t					imgBlue;
+	uint32_t				leftoffset;
+	
+	// send a request to the default request queue of the device and wait for the result.
+	fi.imageRequestSingle();
+
+	manuallyStartAcquisitionIfNeeded( pDev, fi );
+
+	// Wait for results from the default capture queue by passing a timeout (The maximum time allowed
+	// for the application to wait for a Result). Infinity value: -1, positive value: The time to wait in milliseconds.
+	// Please note that slow systems or interface technologies in combination with high resolution sensors
+	// might need more time to transmit an image than the timeout value.
+	// Once the device is configured for triggered image acquisition and the timeout elapsed before
+	// the device has been triggered this might happen as well.
+	// If waiting with an infinite timeout(-1) it will be necessary to call 'imageRequestReset' from another thread
+	// to force 'imageRequestWaitFor' to return when no data is coming from the device/can be captured.
+	int requestNr = fi.imageRequestWaitFor( 10000 );
+
+	manuallyStopAcquisitionIfNeeded( pDev, fi );
+
+	// check if the image has been captured without any problems.
+	if( !fi.isRequestNrValid( requestNr ) )
+	{
+		// If the error code is -2119(DEV_WAIT_FOR_REQUEST_FAILED), the documentation will provide
+		// additional information under TDMR_ERROR in the interface reference
+		cout << "imageRequestWaitFor failed maybe the timeout value has been too small?" << endl;
+		return;
+	}
+
+	const Request* pRequest = fi.getRequest( requestNr );
+
+	if( !pRequest->isOK() )
+	{
+		cout << "Error: " << pRequest->requestResult.readS() << endl;
+		// if the application wouldn't terminate at this point this buffer HAS TO be unlocked before
+		// it can be used again as currently it is under control of the user. However terminating the application
+		// will free the resources anyway thus the call
+		// fi.imageRequestUnlock( requestNr );
+		// can be omitted here.
+		return;
+	}
+
+	cout    << "Image captured(" 
+			<< pRequest->imagePixelFormat.readS() 
+			<< " " 
+			<< pRequest->imageWidth.read() 
+			<< "x" 
+			<< pRequest->imageHeight.read() 
+			<< ")" 
+			<< endl;
 
 	/*
-		* Image size
-		* 2592 x 1944
-		* 
-		* Screen size
-		* 1280 x 1024 (HP )
-		* 1920 x 1080 (HP EliteDisplay E231)
-		*/
+	 * Read data
+	 */
+	/*
+	char* pTempBuf = new char[pRequest->imageSize.read()];
+	memcpy(pTempBuf, pRequest->imageData.read(), pRequest->imageSize.read());
+	*/
+
+	unsigned char * pImg = (unsigned char *)pRequest->imageData.read();
+	unsigned char * pData = pImg;
+
+	cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
+	cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
+	cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
+
+	/*
+	 * Image size
+	 * 2592 x 1944
+	 * 
+	 * Screen size
+	 * 1280 x 1024 (HP )
+	 * 1920 x 1080 (HP EliteDisplay E231)
+	 */
 	width = 2592;
 	height = 1944;
 
@@ -297,15 +351,8 @@ int main( void )
 		}
 	}
 
-    // unlock the buffer to let the driver know that you no longer need this buffer.
-    fi.imageRequestUnlock( requestNr );
-
-    //cout << "Press [ENTER] to end the application" << endl;
-    cin.get();
-
-	closeDrmDisplay();
-
-    return 0;
+	// unlock the buffer to let the driver know that you no longer need this buffer.
+	fi.imageRequestUnlock( requestNr );
 }
 /*------------------------------------------------------------------------------
  * 
