@@ -282,17 +282,8 @@ void takeImageAndDraw(
 	/*
 	 * Read data
 	 */
-	/*
-	char* pTempBuf = new char[pRequest->imageSize.read()];
-	memcpy(pTempBuf, pRequest->imageData.read(), pRequest->imageSize.read());
-	*/
-
 	unsigned char * pImg = (unsigned char *)pRequest->imageData.read();
 	unsigned char * pData = pImg;
-
-	cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
-	cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
-	cout << "[ " << (int)*pData++ << " " << (int)*pData++ << " " << (int)*pData++ << " ]" << endl;
 
 	/*
 	 * Image size
