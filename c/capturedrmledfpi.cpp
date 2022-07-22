@@ -83,6 +83,8 @@ drmModeConnector *				connector;
 struct drm_mode_create_dumb		creq;
 drmModeCrtcPtr					orig_crtc;
 void *							pMap;
+uint32_t						leftoffset;
+uint32_t						topoffset;
 
 int			fdLed;
 
@@ -289,6 +291,8 @@ int main(
 	 * Enter loop taking images
 	 */
 	running = 1;
+	leftoffset = 0; //700;
+	topoffset = 0;
 
 	while (running) {
 
@@ -297,7 +301,7 @@ int main(
 		 */
 		cout << endl;
 		cout << "Taking image" << endl;
-		
+
 		takeImageAndDraw(pDev, fi, (uint8_t *)pMap);
 
 		/*
@@ -312,6 +316,8 @@ int main(
 			cout << "'q' and ENTER key to end application" << endl;
 			cout << "'c 1' and ENTER key to set configuration 1-N" << endl;
 			cout << "'e 60000' and ENTER key to set camera exposure to 60000 us" << endl;
+			cout << "'l 100' and ENTER key to set left offset (columns) to 100" << endl;
+			cout << "'t 50' and ENTER key to set top offset (rows) to 50" << endl;
 			cout << ">>";
 
 			szRes = fgets(userCmd, 100 , stdin);
@@ -335,8 +341,9 @@ int main(
 				} else if (
 						userCmd[0] == 'c'
 					||	userCmd[0] == 'e'
+					||	userCmd[0] == 'l'
+					||	userCmd[0] == 't'
 				) {
-
 					long		userNum;
 
 					/*
@@ -375,6 +382,28 @@ int main(
 							sprintf(szExpTime, "%ld", userNum);
 							ac.exposureTime.writeS(szExpTime);
 							cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
+						}
+
+					} else if (userCmd[0] == 'l') {
+
+						/*
+						 * 2592 - 1920 = 672
+						 */
+						if (userNum > 0 && userNum < 670) {
+
+							cout << "--- Changing left offset (columns): [" << userNum << "] ---" << endl;
+							leftoffset = (uint32_t)userNum;
+						}
+
+					} else if (userCmd[0] == 't') {
+
+						/*
+						 * 1944 - 1080 = 864
+						 */
+						if (userNum > 0 && userNum < 860) {
+
+							cout << "--- Changing top offset (rows): [" << userNum << "] ---" << endl;
+							topoffset = (uint32_t)userNum;
 						}
 					}
 
@@ -998,7 +1027,6 @@ void takeImageAndDraw(
 	uint8_t					imgRed;
 	uint8_t					imgGreen;
 	uint8_t					imgBlue;
-	uint32_t				leftoffset;
 	
 	// send a request to the default request queue of the device and wait for the result.
 	fi.imageRequestSingle();
@@ -1065,8 +1093,6 @@ void takeImageAndDraw(
 	width = 2592;
 	height = 1944;
 
-	leftoffset = 0; //700;
-
 	for (row=0;row<height;row++) {
 
 		for (col=0;col<width;col++) {
@@ -1081,8 +1107,8 @@ void takeImageAndDraw(
 
 			if (    col >= leftoffset 
 				&&  col < (leftoffset + displayWidth)
-				&&	row >= 0
-				&& 	row < (0 + displayHeight)
+				&&	row >= topoffset
+				&& 	row < (topoffset + displayHeight)
 			) {
 				*pBuf++ = imgRed;
 				*pBuf++ = imgGreen;
@@ -1093,20 +1119,24 @@ void takeImageAndDraw(
 		/*
 		 * Jump over dummy bytes if pitch larger than display width
 		 */
-		if (creq.pitch > (3 * displayWidth)) {
+		if (	row >= topoffset
+			&&	row < (topoffset + displayHeight)
+		) {
+			if (creq.pitch > (3 * displayWidth)) {
 
-			uint32_t fillByteCount;
+				uint32_t fillByteCount;
 
-			fillByteCount = creq.pitch - (3 * displayWidth);
+				fillByteCount = creq.pitch - (3 * displayWidth);
 
-			pBuf += fillByteCount;
+				pBuf += fillByteCount;
+			}
 		}
 
 		/*
 		 * Stop drawing image when outside
 		 * display row size
 		 */
-		if (row > displayHeight) {
+		if (row >= (topoffset + displayHeight)) {
 			break;
 		}
 	}
