@@ -158,7 +158,7 @@ void initLedSerial(
 );
 
 void led_set(
-	int						ledset
+	long					ledset
 );
 
 /***************************************************************************//**
@@ -309,8 +309,9 @@ int main(
 			cout << "Press ENTER key to take new image" << endl;
 			cout << "'q' and ENTER key to end application" << endl;
 			cout << "'c 1' and ENTER key to set configuration 1-N" << endl;
+			cout << ">>";
 
-			fgets(userCmd, 100 , stdin);
+			szRes = fgets(userCmd, 100 , stdin);
 
 			if (szRes != NULL) {
 
@@ -328,25 +329,50 @@ int main(
 				} else if (userCmd[0] == '\n') {
 					break;
 
-				} else if (userCmd[0] == 'c') {
+				} else if (
+						userCmd[0] == 'c'
+					||	userCmd[0] == 'e'
+				) {
 
-					int		userNum;
+					long		userNum;
 
 					/*
-					 * Try parse configuration number
+					 * Try parse user given number
 					 */
-					sscanf(&userCmd[1], "%d", &userNum);
+					sscanf(&userCmd[1], "%ld", &userNum);
 
-					if (	userNum >= 0
-						&&	userNum < SETPOINT_COUNT
-					) {
-						cout << "--- Changing to setpoint: [" << userNum << "] ---" << endl;
+					/*
+					 * Change configuration for LED, FPI
+					 */
+					if (userCmd[0] == 'c') {
 
-						cout << "Setting LED set: " << ledset[userNum] << endl;
-						led_set(ledset[userNum]);
+						
+						if (	userNum >= 0
+							&&	userNum < SETPOINT_COUNT
+						) {
+							cout << "--- Changing to setpoint: [" << userNum << "] ---" << endl;
 
-						cout << "Setting FPI setpoint: " << setpoint[userNum] << endl;
-						fpi_setpoint(setpoint[userNum]);
+							cout << "Setting LED set: " << ledset[userNum] << endl;
+							led_set(ledset[userNum]);
+
+							cout << "Setting FPI setpoint: " << setpoint[userNum] << endl;
+							fpi_setpoint(setpoint[userNum]);
+						}
+
+					/*
+					 * Change camera exposure time
+					 */
+					} else if (userCmd[0] == 'e') {
+
+						if (userNum > 0 && userNum < 4294967296) {
+
+							char			szExpTime[16];
+
+							cout << "--- Changing exposure time: [" << userNum << "] ---" << endl;
+							sprintf(szExpTime, "%ld", userNum);
+							ac.exposureTime.writeS(szExpTime);
+							cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
+						}
 					}
 
 					break;
@@ -827,7 +853,7 @@ void initLedSerial(
  *	
  ******************************************************************************/
 void led_set(
-	int						ledset
+	long					ledset
 ) {
 	ssize_t					writeCount;
 	char *					szSendBuf;
