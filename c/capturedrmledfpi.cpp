@@ -163,7 +163,7 @@ void led_set(
  * 
  *	\return		
  *
- *	\details	
+ *	\details	Main application entry point
  *
  * 	\note
  *	
@@ -540,7 +540,7 @@ void readFpiEeprom(
  * 
  *	\return		
  *
- *	\details	
+ *	\details	Sends command to FPI and reads response
  *
  * 	\note
  *	
@@ -918,7 +918,7 @@ void led_set(
  * 
  *	\return		
  *
- *	\details	
+ *	\details	Take image and draw to display
  *
  * 	\note
  *	
@@ -1053,12 +1053,19 @@ void takeImageAndDraw(
 	// unlock the buffer to let the driver know that you no longer need this buffer.
 	fi.imageRequestUnlock( requestNr );
 }
-/*------------------------------------------------------------------------------
+/***************************************************************************//**
+ *
+ *	\brief		Initialize display DRM interface
+ *
+ * 	\param		
  * 
+ *	\return		
  *
+ *	\details	Initialize display DRM interface
  *
- *
-**----------------------------------------------------------------------------*/
+ * 	\note
+ *	
+ ******************************************************************************/
 void initDrmDisplay(
 	void
 ) {
@@ -1289,13 +1296,19 @@ void initDrmDisplay(
 	}
 
 }
-
-/*------------------------------------------------------------------------------
+/***************************************************************************//**
+ *
+ *	\brief		Close display DRM interface
+ *
+ * 	\param		
  * 
+ *	\return		
  *
+ *	\details	Close display DRM interface
  *
- *
-**----------------------------------------------------------------------------*/
+ * 	\note
+ *	
+ ******************************************************************************/
 void closeDrmDisplay(
 	void
 ) {
