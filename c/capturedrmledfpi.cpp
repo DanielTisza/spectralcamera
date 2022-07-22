@@ -1,18 +1,26 @@
 /*-----------------------------------------------------------
--- capturedrmled.cpp
+-- capturedrmledfpi.cpp
 --
--- Capture image and display it using libdrm
--- with RGB888 pixel format and control LED lighting
+-- Capture image, display it using libdrm
+-- with RGB888 pixel format, control LED lighting,
+-- and control FPI filter
 --
 -- Inspired by SingleCapture.cpp
 -- Inspired by https://waynewolf.github.io/code/post/kms-pageflip.c
 --
--- g++ capturedrmled.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -I/usr/include/libdrm -l drm -o capturedrmled
+-- g++ capturedrmledfpi.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -I/usr/include/libdrm -l drm -o capturedrmledfpi
 --
 -- Copyright: Daniel Tisza, 2022, GPLv3 or later
 -----------------------------------------------------------*/
 
+/*
+ * This must be defined before includes
+ */
 #define _FILE_OFFSET_BITS 64
+
+/*------------------------------------------------------------------------------
+ * Includes
+ *----------------------------------------------------------------------------*/
 
 #include <iostream>
 #include <stdio.h>
@@ -34,35 +42,13 @@
 #include <mvIMPACT_CPP/mvIMPACT_acquire_GenICam.h>
 #include <mvIMPACT_CPP/mvIMPACT_acquire_helper.h>
 
+
+/*------------------------------------------------------------------------------
+ * Definitions
+ *----------------------------------------------------------------------------*/
+
 using namespace mvIMPACT::acquire;
 using namespace std;
-
-void initDrmDisplay(void);
-void closeDrmDisplay(void);
-
-void takeImageAndDraw(
-	Device *				pDev,
-	FunctionInterface		fi,
-	uint8_t *				pBuf
-);
-
-void initLedSerial(
-	void
-);
-
-void led_set(
-	int						ledset
-);
-
-int 							fdDrm;
-drmModeRes *					resources;
-drmModeConnector *				connector;
-struct drm_mode_create_dumb		creq;
-drmModeCrtcPtr					orig_crtc;
-void *							pMap;
-
-int								fdLed;
-
 
 /*
  * Display modes
@@ -85,17 +71,117 @@ uint32_t			displayWidth = 1280;
 uint32_t			displayHeight = 1024;
 #endif
 
-//-----------------------------------------------------------------------------
-int main( void )
-//-----------------------------------------------------------------------------
-{
-    int             fd;
-    DeviceManager	devMgr;
+#define SETPOINT_COUNT		5
 
-    Device* pDev = getDeviceFromUserInput( devMgr );
+/*------------------------------------------------------------------------------
+ * Global variables
+ *----------------------------------------------------------------------------*/
 
-    if( !pDev )
-    {
+int 							fdDrm;
+drmModeRes *					resources;
+drmModeConnector *				connector;
+struct drm_mode_create_dumb		creq;
+drmModeCrtcPtr					orig_crtc;
+void *							pMap;
+
+int			fdLed;
+
+/* FPI */
+int			fdFpi;
+char		szReceiveBuf[100];
+int			isAC = 0;
+int			isDC = 0;
+long		dnMax;
+long		dnMin;
+
+/*
+# 3	72	1	52164	0	0	554.0473012	0	0	-0.167038819	0.897291038	-1.106291748	0	0	0	0	0	0	20.36692413	0	0
+# 3	112	1	46815	0	0	600.3957949	0	0	0.63670834	0.421133211	-0.719467142	0	0	0	0	0	0	22.66214846	0	0
+# 4	121	1	53506	0	0	695.9738452	0	0	0.746581945	0.746581945	0.746581945	0	0	0	0	0	0	30.93814177	0	0
+# 6	190	1	44248	0	0	800.8814747	0	0	0.930350147	0.930350147	0.930350147	0	0	0	0	0	0	25.21518763	0	0
+# 8	235	1	25324	0	0	900.9252753	0	0	2.326559343	2.326559343	2.326559343	0	0	0	0	0	0	24.2601732	0	0
+*/
+
+int ledset[SETPOINT_COUNT] = {
+	3,
+	3,
+	4,
+	6,
+	8,
+};
+
+long setpoint[SETPOINT_COUNT] = {
+	52164,
+	46815,
+	53506,
+	44248,
+	25324,
+};
+
+/*------------------------------------------------------------------------------
+ * Function declarations
+ *----------------------------------------------------------------------------*/
+
+/* Display */
+void initDrmDisplay(void);
+void closeDrmDisplay(void);
+
+/* Camera */
+void takeImageAndDraw(
+	Device *				pDev,
+	FunctionInterface		fi,
+	uint8_t *				pBuf
+);
+
+/* FPI */
+void initFpiSerial(
+	void
+);
+
+void readFpiEeprom(
+	void
+);
+
+void fpi_command(
+	int						command
+);
+
+/* LED */
+void initLedSerial(
+	void
+);
+
+void led_set(
+	int						ledset
+);
+
+/***************************************************************************//**
+ *
+ *	\brief		Main application entry point
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+int main(
+	void
+) {
+	int						fd;
+	DeviceManager			devMgr;
+	Device *				pDev;
+
+	/*
+	 * Open camera device
+	 */
+	pDev = getDeviceFromUserInput(devMgr);
+
+    if (!pDev) {
+
         cout << "Unable to continue! Press [ENTER] to end the application" << endl;
         cin.get();
         return 1;
@@ -183,6 +269,16 @@ int main( void )
 	initLedSerial();
 
 	/*
+	 * Initialize FPI module
+	 */
+	initFpiSerial();
+
+	/*
+	 * FPI get EEPROM
+	 */
+	readFpiEeprom();	
+
+	/*
 	 * Enter loop taking images
 	 */
 	while (1) {
@@ -263,6 +359,312 @@ int main( void )
 	close(fdLed);
 
     return 0;
+}
+/***************************************************************************//**
+ *
+ *	\brief		Initializes serial port for controlling FPI filter
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	Initializes serial port for controlling FPI filter
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+void initFpiSerial(
+	void
+) {
+	struct termios			portSettings;
+
+	fdFpi = open("/dev/ttyACM0", O_RDWR | O_NOCTTY);
+
+	if (fdFpi < 0) {
+		printf("Failed opening FPI serial port!\r\n");
+	} else {
+		printf("Opened FPI serial port!\r\n");
+	}
+
+	tcgetattr(fdFpi, &portSettings);
+
+	cfsetispeed(&portSettings, B115200);
+	cfsetospeed(&portSettings, B115200);
+
+	cfmakeraw(&portSettings);
+
+	/*
+	 * 8 data
+	 * no parity
+	 * 1 stop bit
+	 */
+	portSettings.c_cflag &= ~CSIZE;
+	portSettings.c_cflag |= CS8;
+	
+	portSettings.c_cflag &= ~CSTOPB;
+	
+	portSettings.c_cflag |= CREAD;
+
+	portSettings.c_cflag &= ~PARENB;
+
+	portSettings.c_cflag |= CLOCAL;
+
+	portSettings.c_cflag &= ~CRTSCTS;
+
+
+	tcsetattr(fdFpi, TCSANOW, &portSettings);
+}
+/***************************************************************************//**
+ *
+ *	\brief		Reads FPI filter EEPROM
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note		Must be called before trying to set setpoint.
+ *	
+ ******************************************************************************/
+void readFpiEeprom(
+	void
+) {
+	char					dummy;
+	int						iRes;
+
+	printf("Read EEPROM [0]: %d\r\n", 0);
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	fpi_command(0);	
+	printf("\r\n\r\nReceived response string:\r\n");
+	printf("[0]=[%s]\r\n", szReceiveBuf);
+
+	{
+		char * pSecond;
+		char * pThird;
+		
+		pSecond = strchr(szReceiveBuf, ',');
+
+		if (pSecond != NULL) {
+
+			pSecond++;
+
+			printf("[acdc_name]=[%s]\r\n", pSecond);
+
+			pThird = strchr(pSecond, '_');
+
+			if (pThird != NULL) {
+
+				*pThird = '\0';
+				printf("[ACDC]=[%s]\r\n", pSecond);
+
+				if (	pSecond[0] == 'A'
+					&&	pSecond[1] == 'C'
+				) {
+					isAC = 1;
+
+				} else if (
+						pSecond[0] == 'D'
+					&&	pSecond[1] == 'C'
+				) {
+
+					isDC = 1;
+				}
+
+				pThird++;
+				printf("[name]=[%s]\r\n", pThird);
+			}
+		}
+	}
+
+	printf("Read EEPROM [13]: %d\r\n", 0);
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	fpi_command(13);
+	printf("\r\n\r\nReceived response string:\r\n");
+	printf("[13]=[%s]\r\n", szReceiveBuf);
+
+	{
+		char * pSecond;
+		char * pThird;
+		
+		pSecond = strchr(szReceiveBuf, ',');
+
+		if (pSecond != NULL) {
+
+			pSecond++;
+
+			printf("[dn_max_value]=[%s]\r\n", pSecond);
+
+			iRes = sscanf(pSecond, "%ld", &dnMax);
+
+			if (iRes == 1) {
+				printf("DN max: %ld\r\n", dnMax);
+			}
+		}
+	}
+	
+	printf("Read EEPROM [14]: %d\r\n", 0);
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+	fpi_command(14);
+	printf("\r\n\r\nReceived response string:\r\n");
+	printf("[14]=[%s]\r\n", szReceiveBuf);
+	
+	{
+		char * pSecond;
+		char * pThird;
+		
+		pSecond = strchr(szReceiveBuf, ',');
+
+		if (pSecond != NULL) {
+
+			pSecond++;
+
+			printf("[dn_min_value]=[%s]\r\n", pSecond);
+
+			iRes = sscanf(pSecond, "%ld", &dnMin);
+
+			if (iRes == 1) {
+				printf("DN min: %ld\r\n", dnMin);
+			}
+		}
+	}
+}
+/***************************************************************************//**
+ *
+ *	\brief		Sends command to FPI and reads response
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+void fpi_command(
+	int						command
+) {
+	ssize_t					writeCount;
+	char *					szSendBuf;
+	int						sendBytes;	
+	int						receiveBytes = 100;
+	ssize_t					receiveCount;
+	int						ii;
+
+	char					szReadEeprom0[] = "R0\r\n";
+	char					szReadEeprom13[] = "R13\r\n";
+	char					szReadEeprom14[] = "R14\r\n";
+
+	switch (command) {
+
+		case 0:
+			szSendBuf = szReadEeprom0;
+			sendBytes = strlen(szReadEeprom0);
+			break;
+
+		case 13:
+			szSendBuf = szReadEeprom13;
+			sendBytes = strlen(szReadEeprom13);
+			break;
+
+		case 14:
+			szSendBuf = szReadEeprom14;
+			sendBytes = strlen(szReadEeprom14);
+			break;
+
+		default:
+			break;
+	}
+
+	/*
+	 * Write command
+	 */
+	/*
+	res = WriteFile(
+			hCommFpi,
+			szSendBuf,
+			sendBytes,
+			&writeCount,
+			NULL
+	);
+	*/
+
+	writeCount = write(
+		fdFpi,
+		szSendBuf,
+		(size_t)sendBytes
+	);
+
+	if (writeCount == -1) {
+		printf("write() for serial port failed!");
+	}
+
+	printf("write() write count = %d\n\n", writeCount);
+
+	if (sendBytes != writeCount) {
+		printf("write() sendBytes != writeCount, write failed!");
+	}
+
+	fsync(fdFpi);
+/*
+	res = FlushFileBuffers(hCommFpi);
+
+	if (res == FALSE) {
+		printf("FlushFileBuffers() for serial port failed!");
+	}
+*/
+
+	/*
+	 * Read response
+	 */
+	memset(szReceiveBuf, 0, sizeof(szReceiveBuf));
+
+/*
+	res = ReadFile(
+			hCommFpi,
+			szReceiveBuf,
+			receiveBytes,
+			&receiveCount,
+			NULL
+	);
+*/
+
+	receiveCount = read(
+		fdFpi,
+		szReceiveBuf,
+		receiveBytes
+	);
+
+	if (receiveCount == -1) {
+		printf("read() for serial port failed!");
+	}
+
+	printf("read() read count = %d\n\n", receiveCount);
+
+	fsync(fdFpi);
+/*
+	res = FlushFileBuffers(hCommFpi);
+
+	if (res == FALSE) {
+		printf("FlushFileBuffers() for serial port failed!");
+	}
+*/
+
+	/*
+	 * Print received bytes
+	 */
+	printf("\r\n\r\nReceived bytes:\r\n");
+
+	for (ii=0;ii<receiveCount;ii++) {
+
+		printf("[%d]=0x%X ", ii, szReceiveBuf[ii]);
+	}
+
+	printf("\r\n");
 }
 /***************************************************************************//**
  *
