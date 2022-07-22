@@ -295,7 +295,9 @@ int main(
 		/*
 		 * Take image and draw to display
 		 */
+		cout << endl;
 		cout << "Taking image" << endl;
+		
 		takeImageAndDraw(pDev, fi, (uint8_t *)pMap);
 
 		/*
@@ -309,6 +311,7 @@ int main(
 			cout << "Press ENTER key to take new image" << endl;
 			cout << "'q' and ENTER key to end application" << endl;
 			cout << "'c 1' and ENTER key to set configuration 1-N" << endl;
+			cout << "'e 60000' and ENTER key to set camera exposure to 60000 us" << endl;
 			cout << ">>";
 
 			szRes = fgets(userCmd, 100 , stdin);
@@ -614,16 +617,6 @@ void fpi_command(
 	/*
 	 * Write command
 	 */
-	/*
-	res = WriteFile(
-			hCommFpi,
-			szSendBuf,
-			sendBytes,
-			&writeCount,
-			NULL
-	);
-	*/
-
 	writeCount = write(
 		fdFpi,
 		szSendBuf,
@@ -641,28 +634,11 @@ void fpi_command(
 	}
 
 	fsync(fdFpi);
-/*
-	res = FlushFileBuffers(hCommFpi);
-
-	if (res == FALSE) {
-		printf("FlushFileBuffers() for serial port failed!");
-	}
-*/
 
 	/*
 	 * Read response
 	 */
 	memset(szReceiveBuf, 0, sizeof(szReceiveBuf));
-
-/*
-	res = ReadFile(
-			hCommFpi,
-			szReceiveBuf,
-			receiveBytes,
-			&receiveCount,
-			NULL
-	);
-*/
 
 	receiveCount = read(
 		fdFpi,
@@ -677,13 +653,6 @@ void fpi_command(
 	printf("read() read count = %d\n\n", receiveCount);
 
 	fsync(fdFpi);
-/*
-	res = FlushFileBuffers(hCommFpi);
-
-	if (res == FALSE) {
-		printf("FlushFileBuffers() for serial port failed!");
-	}
-*/
 
 	/*
 	 * Print received bytes
@@ -721,7 +690,9 @@ void fpi_setpoint(
 	/*
 	 * Validate setpoint against given range
 	 */
-	if (setpoint < dnMin || setpoint > dnMax) {
+	if (	setpoint < dnMin 
+		||	setpoint > dnMax
+	) {
 		printf("Setpoint %ld out of range [%ld, %ld]!\r\n", setpoint, dnMin, dnMax);
 		return;
 	}
@@ -731,10 +702,15 @@ void fpi_setpoint(
 	 * DC setpoint command = 'd'
 	 */
 	if (isAC) {
+
 		sprintf(szSendBuf, "a%ld\r\n", setpoint);
+
 	} else if (isDC) {
+
 		sprintf(szSendBuf, "d%ld\r\n", setpoint);
+
 	} else {
+
 		printf("Invalid control type! Should be AC or DC");
 		return;
 	}
@@ -747,15 +723,6 @@ void fpi_setpoint(
 	/*
 	 * Write command
 	 */
-/*
-	res = WriteFile(
-			hCommFpi,
-			szSendBuf,
-			sendBytes,
-			&writeCount,
-			NULL
-	);
-*/
 	writeCount = write(
 		fdFpi,
 		szSendBuf,
@@ -774,16 +741,7 @@ void fpi_setpoint(
 
 	fsync(fdFpi);
 
-/*
-	res = FlushFileBuffers(hCommFpi);
-
-	if (res == FALSE) {
-		printf("FlushFileBuffers() for serial port failed!");
-	}
-*/
-
 	printf("\r\n");
-
 }
 /***************************************************************************//**
  *
@@ -992,22 +950,14 @@ void led_set(
 			break;
 	}
 
-/*
-	res = WriteFile(
-			hCommLed,
-			szSendBuf,
-			sendBytes,
-			&writeCount,
-			NULL
-	);
-*/
-
+	/*
+	 * Write to serial port
+	 */
 	writeCount = write(
 		fdLed,
 		szSendBuf,
 		(size_t)sendBytes
 	);
-
 
 	if (writeCount == -1) {
 		printf("write() for serial port failed!");
@@ -1020,14 +970,6 @@ void led_set(
 	}
 
 	fsync(fdLed);
-
-/*
-	res = FlushFileBuffers(hCommLed);
-
-	if (res == FALSE) {
-		printf("FlushFileBuffers() for serial port failed!");
-	}
-*/
 }
 /***************************************************************************//**
  *
