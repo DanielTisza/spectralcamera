@@ -71,7 +71,7 @@ uint32_t			displayWidth = 1280;
 uint32_t			displayHeight = 1024;
 #endif
 
-#define SETPOINT_COUNT		5
+#define SETPOINT_COUNT		6
 
 /*------------------------------------------------------------------------------
  * Global variables
@@ -103,6 +103,7 @@ long		dnMin;
 */
 
 int ledset[SETPOINT_COUNT] = {
+	0,
 	3,
 	3,
 	4,
@@ -111,6 +112,7 @@ int ledset[SETPOINT_COUNT] = {
 };
 
 long setpoint[SETPOINT_COUNT] = {
+	52164, /* leds off */
 	52164,
 	46815,
 	53506,
@@ -146,6 +148,10 @@ void fpi_command(
 	int						command
 );
 
+void fpi_setpoint(
+	long					setpoint
+);
+
 /* LED */
 void initLedSerial(
 	void
@@ -174,6 +180,7 @@ int main(
 	int						fd;
 	DeviceManager			devMgr;
 	Device *				pDev;
+	int						running;
 
 	/*
 	 * Open camera device
@@ -281,82 +288,86 @@ int main(
 	/*
 	 * Enter loop taking images
 	 */
-	while (1) {
-		
-		char		userCmd;
+	running = 1;
+
+	while (running) {
 
 		/*
 		 * Take image and draw to display
 		 */
+		cout << "Taking image" << endl;
 		takeImageAndDraw(pDev, fi, (uint8_t *)pMap);
 
 		/*
-		 * Handle user commands
+		 * Loop handling user commands
 		 */
-		cout << "Press space key to take image" << endl;
-		cout << "Press 'q' key to end application" << endl;
+		while (running) {
 
-		scanf("%c", &userCmd);
+			char	userCmd[100];
+			char *	szRes;
 
-		switch (userCmd) {
+			cout << "Press ENTER key to take new image" << endl;
+			cout << "'q' and ENTER key to end application" << endl;
+			cout << "'c 1' and ENTER key to set configuration 1-N" << endl;
 
-			case '0':
-				cout << "Setting LED set 0" << endl;
-				led_set(0);
-				break;
+			fgets(userCmd, 100 , stdin);
 
-			case '1':
-				cout << "Setting LED set 1" << endl;
-				led_set(1);
-				break;
+			if (szRes != NULL) {
 
-			case '2':
-				cout << "Setting LED set 2" << endl;
-				led_set(2);
-				break;
+				printf("User command: %s\r\n", userCmd);
 
-			case '3':
-				cout << "Setting LED set 3" << endl;
-				led_set(3);
-				break;
+				if (userCmd[0] == 'q') {
 
-			case '4':
-				cout << "Setting LED set 4" << endl;
-				led_set(4);
-				break;
+					printf("Exiting program\r\n");
+					running = 0;
+					break;
 
-			case '5':
-				cout << "Setting LED set 5" << endl;
-				led_set(5);
-				break;
+				} else if (userCmd[0] == ' ') {
+					break;
 
-			case '6':
-				cout << "Setting LED set 6" << endl;
-				led_set(6);
-				break;
+				} else if (userCmd[0] == '\n') {
+					break;
 
-			case '7':
-				cout << "Setting LED set 7" << endl;
-				led_set(7);
-				break;
+				} else if (userCmd[0] == 'c') {
 
-			case '8':
-				cout << "Setting LED set 8" << endl;
-				led_set(8);
-				break;
+					int		userNum;
 
-			default:
-				break;
-		}
+					/*
+					 * Try parse configuration number
+					 */
+					sscanf(&userCmd[1], "%d", &userNum);
 
-		if (userCmd == 'q') {
-			break;
+					if (	userNum >= 0
+						&&	userNum < SETPOINT_COUNT
+					) {
+						cout << "--- Changing to setpoint: [" << userNum << "] ---" << endl;
+
+						cout << "Setting LED set: " << ledset[userNum] << endl;
+						led_set(ledset[userNum]);
+
+						cout << "Setting FPI setpoint: " << setpoint[userNum] << endl;
+						fpi_setpoint(setpoint[userNum]);
+					}
+
+					break;
+				}
+
+			}
 		}
 	}
 
-	closeDrmDisplay();
+	/*
+	 * Turn off LEDs
+	 */
+	printf("Turn LEDs off\r\n");
+	led_set(0);
 
+	/*
+	 * Close
+	 */
+	closeDrmDisplay();
 	close(fdLed);
+	close(fdFpi);
 
     return 0;
 }
@@ -434,8 +445,6 @@ void readFpiEeprom(
 	int						iRes;
 
 	printf("Read EEPROM [0]: %d\r\n", 0);
-	printf("Press to activate\r\n");
-	scanf("%c", &dummy);
 	fpi_command(0);	
 	printf("\r\n\r\nReceived response string:\r\n");
 	printf("[0]=[%s]\r\n", szReceiveBuf);
@@ -479,8 +488,6 @@ void readFpiEeprom(
 	}
 
 	printf("Read EEPROM [13]: %d\r\n", 0);
-	printf("Press to activate\r\n");
-	scanf("%c", &dummy);
 	fpi_command(13);
 	printf("\r\n\r\nReceived response string:\r\n");
 	printf("[13]=[%s]\r\n", szReceiveBuf);
@@ -506,8 +513,6 @@ void readFpiEeprom(
 	}
 	
 	printf("Read EEPROM [14]: %d\r\n", 0);
-	printf("Press to activate\r\n");
-	scanf("%c", &dummy);
 	fpi_command(14);
 	printf("\r\n\r\nReceived response string:\r\n");
 	printf("[14]=[%s]\r\n", szReceiveBuf);
@@ -665,6 +670,94 @@ void fpi_command(
 	}
 
 	printf("\r\n");
+}
+/***************************************************************************//**
+ *
+ *	\brief		Sets FPI filter setpoint
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	Sends setpoint command to FPI filter
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+void fpi_setpoint(
+	long					setpoint
+) {
+	ssize_t					writeCount;
+	char 					szSendBuf[100];
+	int						sendBytes;	
+	int						ii;
+
+	/*
+	 * Validate setpoint against given range
+	 */
+	if (setpoint < dnMin || setpoint > dnMax) {
+		printf("Setpoint %ld out of range [%ld, %ld]!\r\n", setpoint, dnMin, dnMax);
+		return;
+	}
+
+	/*
+	 * AC setpoint command = 'a'
+	 * DC setpoint command = 'd'
+	 */
+	if (isAC) {
+		sprintf(szSendBuf, "a%ld\r\n", setpoint);
+	} else if (isDC) {
+		sprintf(szSendBuf, "d%ld\r\n", setpoint);
+	} else {
+		printf("Invalid control type! Should be AC or DC");
+		return;
+	}
+
+	printf("Setpoint command: [%s]\r\n", szSendBuf);
+
+	sendBytes = strlen(szSendBuf);
+	printf("Setpoint command byte count: %d\r\n", sendBytes);
+
+	/*
+	 * Write command
+	 */
+/*
+	res = WriteFile(
+			hCommFpi,
+			szSendBuf,
+			sendBytes,
+			&writeCount,
+			NULL
+	);
+*/
+	writeCount = write(
+		fdFpi,
+		szSendBuf,
+		(size_t)sendBytes
+	);
+
+	if (writeCount == -1) {
+		printf("write() for serial port failed!");
+	}
+
+	printf("write() write count = %d\n\n", (int)writeCount);
+
+	if (sendBytes != writeCount) {
+		printf("write() sendBytes != writeCount, write failed!");
+	}
+
+	fsync(fdFpi);
+
+/*
+	res = FlushFileBuffers(hCommFpi);
+
+	if (res == FALSE) {
+		printf("FlushFileBuffers() for serial port failed!");
+	}
+*/
+
+	printf("\r\n");
+
 }
 /***************************************************************************//**
  *
