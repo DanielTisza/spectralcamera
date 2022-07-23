@@ -291,8 +291,8 @@ int main(
 	 * Enter loop taking images
 	 */
 	running = 1;
-	leftoffset = 0; //700;
-	topoffset = 0;
+	leftoffset = 300;
+	topoffset = 100;
 
 	while (running) {
 
