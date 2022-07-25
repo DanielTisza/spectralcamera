@@ -282,6 +282,66 @@ const CalibRowType calibRows[CALIBROW_COUNT] = {
  *----------------------------------------------------------------------------*/
 
 
+/***************************************************************************//**
+ *
+ *	\brief		Main application entry point
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	Main application entry point
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+long findNearestWavelength(
+	double					userWavelength
+) {
+	long					ii;
+	long					suitableIdx;
+	double					lowLimit;
+	double					highLimit;
+
+	lowLimit = 
+	suitableIdx = -1;
+
+	for (ii=0;ii<CALIBROW_COUNT;ii++) {
+
+		double 				wavelength1;
+		double 				wavelength2;
+		double 				diff;
+
+		wavelength1 = calibRows[ii][3];
+		wavelength2 = calibRows[ii][4];
+
+		/*
+		printf("Wavelenghts: %f, %f\r\n", wavelength1, wavelength2);
+		*/
+
+		diff = userWavelength - wavelength1;
+
+		if (diff > -2.5 && diff < 2.5) {
+
+			printf("Found suitable wavelength at [%ld] with center %f and diff: %f\r\n", ii, wavelength1, diff);
+			suitableIdx = ii;
+			break;
+
+		} else {
+
+			diff = userWavelength - wavelength2;
+
+			if (diff > -2.5 && diff < 2.5) {
+
+				printf("Found suitable wavelength at [%ld] with center %f and diff: %f\r\n", ii, wavelength2, diff);
+				suitableIdx = ii;
+				break;
+			}
+		}
+	}
+
+	return suitableIdx;
+}
 
 /***************************************************************************//**
  *
@@ -300,43 +360,26 @@ void main(
 	int						argc,
 	char					argv[]
 ) {
-	const CalibRowType *			pRow;
 	long					ii;
 	long					suitableIdx;
+	double					userWavelength;
 
-	suitableIdx = -1;
+	ii = 0;
 
-	for (ii=0;ii<CALIBROW_COUNT;ii++) {
+	do {
+	
+		userWavelength = (double)ii * (double)0.1 + (double)542;
 
-		double wavelength1;
-		double wavelength2;
+		suitableIdx = findNearestWavelength(userWavelength);
 
-		/* 
-		 * 536.3909141
-		 */
-		pRow = &calibRows[ii];
-
-		wavelength1 = calibRows[ii][3];
-		wavelength2 = calibRows[ii][4];
-
-		printf("Wavelenghts: %f, %f\r\n", wavelength1, wavelength2);
-
-		if (wavelength1 > 535.5 && wavelength1 < 536.4) {
-
-			printf("Found suitable wavelength at [%ld] with center %f\r\n", ii, wavelength1);
-			suitableIdx = ii;
-			break;
-
-		} else if (wavelength2 > 535.5 && wavelength2 < 536.4) {
-
-			printf("Found suitable wavelength at [%ld] with center %f\r\n", ii, wavelength2);
-			suitableIdx = ii;
+		if (suitableIdx == -1) {
+			printf("No suitable wavelength setting was found for: %f!\r\n", userWavelength);
 			break;
 		}
-	}
 
-	if (suitableIdx == -1) {
-		printf("No suitable wavelength setting was found!\r\n");
-	}
+		ii++;
 
+	} while (userWavelength < (double)934.0);
+
+	printf("Checked all wavelengths between 542.1 to 934.0 nm\r\n");
 }
