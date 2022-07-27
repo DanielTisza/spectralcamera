@@ -17,11 +17,11 @@ sudo mkfs -t ext4 /dev/mmcblk0p2
 
 sudo mkfs -t ext4 /dev/sdb2
 
-
 sudo mount /dev/sdb2 /media/rootfs/
 cd /media/rootfs/
 sudo tar -xvf /home/xilinx/ubuntu-base-18.04.5-base-armhf.tar.gz -C ./
 
+***
 
 sudo mkfs -t ext4 /dev/mmcblk0p2
 sudo mkdir /media/ubuntu/rootfs
@@ -29,6 +29,16 @@ sudo mount /dev/mmcblk0p2 /media/ubuntu/rootfs
 cd /media/ubuntu/rootfs
 
 sudo tar -xvf /media/ubuntu/9650922C509212DB/tldati/zyboz7/Releases/SD/genesys_ubuntu_minimal_2022_03_09/genesys_ubuntu_minimal_rootfs_2022_03_09.tar.gz -C ./
+
+*** Ubuntu Live USB and Transcend SD card reader
+
+sudo mkfs -t ext4 /dev/sdc2
+sudo mkdir /media/ubuntu/rootfs
+sudo mount /dev/sdc2 /media/ubuntu/rootfs
+cd /media/ubuntu/rootfs
+sudo tar -xvf /media/ubuntu/9650922C509212DB/tldati/zyboz7/petalinux/ubuntu/ubuntu_minimal_zybo7k_rootfs_2021_05_23_leddriver.tar.gz -C ./
+cd ..
+sudo umount rootfs
 
 ----------------------------------------
   Backup of root file system
