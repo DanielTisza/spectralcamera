@@ -1,0 +1,44 @@
+
+/dev/mmcblk0p1
+/dev/mmcblk0p2
+
+
+fdisk -l
+
+mkdir /mnt/sdboot
+
+mount /dev/mmcblk0p1 /mnt/sdboot
+
+sudo mkfs -t ext4 /dev/mmcblk0p2
+
+----------------------------------------
+  Extract root file system to SD card
+----------------------------------------
+
+sudo mkfs -t ext4 /dev/sdb2
+
+
+sudo mount /dev/sdb2 /media/rootfs/
+cd /media/rootfs/
+sudo tar -xvf /home/xilinx/ubuntu-base-18.04.5-base-armhf.tar.gz -C ./
+
+
+sudo mkfs -t ext4 /dev/mmcblk0p2
+sudo mkdir /media/ubuntu/rootfs
+sudo mount /dev/mmcblk0p2 /media/ubuntu/rootfs
+cd /media/ubuntu/rootfs
+
+sudo tar -xvf /media/ubuntu/9650922C509212DB/tldati/zyboz7/Releases/SD/genesys_ubuntu_minimal_2022_03_09/genesys_ubuntu_minimal_rootfs_2022_03_09.tar.gz -C ./
+
+----------------------------------------
+  Backup of root file system
+----------------------------------------
+
+sudo mount /dev/sdb2 /media/rootfs/
+
+cd /media/rootfs
+
+sudo tar -czf /ubuntu_minimal_zybo7k_rootfs_2021_05_23_leddriver.tar.gz ./
+
+
+
