@@ -401,6 +401,7 @@ void main(
 	char					userCmd[100];
 	char *					szRes;
 
+	running = 1;
 	ii = 0;
 	userWavelength = 542;
 
@@ -424,26 +425,35 @@ void main(
 				break;
 
 			} else if (userCmd[0] == ' ') {
-				break;
 
 			} else if (userCmd[0] == '\n') {
-				break;
 
 			} else if (userCmd[0] == 'w') {
 
+				float		userFloat;
+
 				printf("Set wavelength cmd\r\n");
 
-				suitableIdx = findNearestWavelength(userWavelength);
+				/*
+				 * Try parse user given number
+				 */
+				sscanf(&userCmd[1], "%f", &userFloat);
 
-				if (suitableIdx == -1) {
-					printf("No suitable wavelength setting was found for: %f!\r\n", userWavelength);
-					break;
+				if (	userFloat >= 505.0
+					&&	userFloat <= 934.0
+				) {
+					userWavelength = (double)userFloat;
+
+					printf("User wavelength: %f\r\n", userFloat);
+
+					suitableIdx = findNearestWavelength(userWavelength);
+
+					if (suitableIdx == -1) {
+						printf("No suitable wavelength setting was found for: %f!\r\n", userWavelength);
+						break;
+					}
 				}
-
-			} else {
-				break;
 			}
-
 		}
 	}
 
