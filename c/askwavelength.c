@@ -5,6 +5,7 @@
 -- values for LED, MFPI, calibration coefficients for spectral camera
 --
 -- cl askwavelength.c
+-- gcc askwavelength.c -o askwavelength
 --
 -- Copyright: Daniel Tisza, 2022, GPLv3 or later
 -----------------------------------------------------------*/

@@ -5,6 +5,7 @@
 -- in C source file format
 --
 -- cl led_set_all_calib.c
+-- gcc led_set_all_calib.c -o led_set_all_calib
 --
 -- Copyright: Daniel Tisza, 2022, GPLv3 or later
 -----------------------------------------------------------*/
