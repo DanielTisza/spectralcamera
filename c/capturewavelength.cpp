@@ -1475,6 +1475,7 @@ void takeImageAndDraw(
 	double					sinvRed;
 	double					sinvGreen;
 	double					sinvBlue;
+	long					isLimited;
 
 	useSinvLocal = useSinv;
 	sinvRed = sinvN1;
@@ -1545,6 +1546,7 @@ void takeImageAndDraw(
 	 */
 	width = 2592;
 	height = 1944;
+	isLimited = 0;
 
 	for (row=0;row<height;row++) {
 
@@ -1568,7 +1570,7 @@ void takeImageAndDraw(
 				 */
 				if (useSinvLocal) {
 
-					double temp;
+					double		temp;
 
 					/*
 					 * Red
@@ -1577,8 +1579,10 @@ void takeImageAndDraw(
 
 					if (temp > 255) {
 						temp = 255;
+						isLimited = 1;
 					} else if (temp < 0) {
 						temp = 0;
+						isLimited = 1;
 					}
 
 					imgRed = (uint8_t)temp;
@@ -1590,8 +1594,10 @@ void takeImageAndDraw(
 
 					if (temp > 255) {
 						temp = 255;
+						isLimited = 1;
 					} else if (temp < 0) {
 						temp = 0;
+						isLimited = 1;
 					}
 
 					imgGreen = (uint8_t)temp;
@@ -1603,8 +1609,10 @@ void takeImageAndDraw(
 
 					if (temp > 255) {
 						temp = 255;
+						isLimited = 1;
 					} else if (temp < 0) {
 						temp = 0;
+						isLimited = 1;
 					}
 
 					imgBlue = (uint8_t)temp;
@@ -1642,6 +1650,14 @@ void takeImageAndDraw(
 		if (row >= (topoffset + displayHeight)) {
 			break;
 		}
+	}
+
+	/*
+	 * Inform user if had to limit pixel value
+	 * after calibration multiplication
+	 */
+	if (isLimited) {
+		cout << "*** Forced to limit pixel value after calibration! ***" << endl;
 	}
 
 	// unlock the buffer to let the driver know that you no longer need this buffer.
