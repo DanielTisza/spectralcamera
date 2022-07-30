@@ -452,7 +452,8 @@ void led_set(
 
 /* Calibration */
 long findNearestWavelength(
-	double					userWavelength
+	double					userWavelength,
+	long *					pRowIndex
 );
 
 /***************************************************************************//**
@@ -583,8 +584,8 @@ int main(
 	 * Enter loop taking images
 	 */
 	running = 1;
-	leftoffset = 300;
-	topoffset = 100;
+	leftoffset = 330;
+	topoffset = 110;
 
 	while (running) {
 
@@ -634,7 +635,8 @@ int main(
 						userCmd[0] == 'w' 
 				) {
 					float		userFloat;
-					long		suitableIdx;
+					long		found;
+					long		rowIdx;
 					
 					/*
 					 * Try parse user given number
@@ -646,30 +648,48 @@ int main(
 					) {
 						printf("User wavelength: %f\r\n", userFloat);
 
-						suitableIdx = findNearestWavelength((double)userFloat);
+						found = findNearestWavelength((double)userFloat, &rowIdx);
 
-						if (suitableIdx == -1) {
+						if (found == -1) {
 
 							printf("No suitable wavelength setting was found for: %f!\r\n", userFloat);
 							break;
 
 						} else {
-							
+
+							long ledsetnum;
+							long fpisetpoint;
+							double peakWavelength;
+							double bandWidth;
+
 							/*
 							 * Calibration row found, use settings
 							 */
+							cout 	<< "Calibration row found, index: " << rowIdx << endl;
 
-							/*
+							if (found == 1) {
+								peakWavelength = calibRows[rowIdx][3];
+								bandWidth = calibRows[rowIdx][11];
 
-							suitableIdx
-							calibRows[suitableIdx][3];
+							} else {
+								peakWavelength = calibRows[rowIdx][4];
+								bandWidth = calibRows[rowIdx][12];
+							}
 
-							cout << "Setting LED set: " << ledset[userNum] << endl;
-							led_set(ledset[userNum]);
+							cout 	<< "Peak wavelength: " << peakWavelength << " nm "
+									<< "with bandwidth: " << bandWidth << " nm" 
+									<< endl;
 
-							cout << "Setting FPI setpoint: " << setpoint[userNum] << endl;
-							fpi_setpoint(setpoint[userNum]);
-							*/
+							ledsetnum = calibRows[rowIdx][0];
+							fpisetpoint = calibRows[rowIdx][2];
+
+							cout << "Setting LED set: " << ledsetnum << endl;
+							led_set(ledsetnum);
+
+							cout << "Setting FPI setpoint: " << fpisetpoint << endl;
+							fpi_setpoint(fpisetpoint);
+
+							break;
 						}
 					}
 
@@ -778,15 +798,13 @@ int main(
  *	
  ******************************************************************************/
 long findNearestWavelength(
-	double					userWavelength
+	double					userWavelength,
+	long *					pRowIndex
 ) {
 	long					ii;
-	long					suitableIdx;
-	double					lowLimit;
-	double					highLimit;
+	long					idxFound;
 
-	lowLimit = 
-	suitableIdx = -1;
+	idxFound = -1;
 
 	for (ii=0;ii<CALIBROW_COUNT;ii++) {
 
@@ -795,34 +813,31 @@ long findNearestWavelength(
 		double 				diff;
 
 		wavelength1 = calibRows[ii][3];
-		wavelength2 = calibRows[ii][4];
-
-		/*
-		printf("Wavelenghts: %f, %f\r\n", wavelength1, wavelength2);
-		*/
-
 		diff = userWavelength - wavelength1;
 
 		if (diff > -2.5 && diff < 2.5) {
 
 			printf("Found suitable wavelength at [%ld] with center %f and diff: %f\r\n", ii, wavelength1, diff);
-			suitableIdx = ii;
+			*pRowIndex = ii;
+			idxFound = 1;
 			break;
 
 		} else {
 
+			wavelength2 = calibRows[ii][4];
 			diff = userWavelength - wavelength2;
 
 			if (diff > -2.5 && diff < 2.5) {
 
 				printf("Found suitable wavelength at [%ld] with center %f and diff: %f\r\n", ii, wavelength2, diff);
-				suitableIdx = ii;
+				*pRowIndex = ii;
+				idxFound = 2;
 				break;
 			}
 		}
 	}
 
-	return suitableIdx;
+	return idxFound;
 }
 /***************************************************************************//**
  *
