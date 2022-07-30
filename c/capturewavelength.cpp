@@ -97,6 +97,11 @@ void *							pMap;
 uint32_t						leftoffset;
 uint32_t						topoffset;
 
+long							useSinv;
+double							sinvN1;
+double							sinvN2;
+double							sinvN3;
+
 int			fdLed;
 
 /* FPI */
@@ -168,6 +173,7 @@ long setpoint[SETPOINT_COUNT] = {
 const CalibRowType calibRows[CALIBROW_COUNT] = {
 
 /*	ledset	Npeaks	SP1		PeakWL1				PeakWL2				Sinv11				Sinv12				Sinv13				Sinv21				Sinv22			Sinv23			FWHM1				FWHM2				*/
+/*	[0]		[1]		[2]		[3]					[4]					[5]					[6]					[7]					[8]					[9]				[10]			[11]				[12]				*/
 {	1,		2,		53204,	542.8327583,		701.3626464,		-0.420617448,		0.611790438,		0.194467613,		1.732237891,		-0.341320306,	0.496859231,	22.03297271,		28.73682659		},
 {	1,		2,		53127,	543.66097,			702.6988306,		-0.419289634,		0.619177961,		0.157608083,		1.739098182,		-0.353827542,	0.57641956,		22.36907205,		27.41629179		},
 {	1,		2,		53047,	544.6850823,		704.0215069,		-0.439669591,		0.651841214,		0.199886125,		1.776956477,		-0.360874023,	0.524324152,	21.71155616,		26.26978143		},
@@ -584,8 +590,14 @@ int main(
 	 * Enter loop taking images
 	 */
 	running = 1;
+
 	leftoffset = 330;
 	topoffset = 110;
+
+	useSinv = 0;
+	sinvN1 = 1;
+	sinvN2 = 1;
+	sinvN3 = 1;
 
 	while (running) {
 
@@ -611,6 +623,7 @@ int main(
 			cout << "'e 60000' and ENTER key to set camera exposure to 60000 us" << endl;
 			cout << "'l 100' and ENTER key to set left offset (columns) to 100" << endl;
 			cout << "'t 50' and ENTER key to set top offset (rows) to 50" << endl;
+			cout << "'s 1' or 's 0' and ENTER key to enable or disable using calibration coefficients" << endl;
 			cout << ">>";
 
 			szRes = fgets(userCmd, 100 , stdin);
@@ -670,10 +683,16 @@ int main(
 							if (found == 1) {
 								peakWavelength = calibRows[rowIdx][3];
 								bandWidth = calibRows[rowIdx][11];
+								sinvN1 = calibRows[rowIdx][5];
+								sinvN2 = calibRows[rowIdx][6];
+								sinvN3 = calibRows[rowIdx][7];
 
 							} else {
 								peakWavelength = calibRows[rowIdx][4];
 								bandWidth = calibRows[rowIdx][12];
+								sinvN1 = calibRows[rowIdx][8];
+								sinvN2 = calibRows[rowIdx][9];
+								sinvN3 = calibRows[rowIdx][10];
 							}
 
 							cout 	<< "Peak wavelength: " << peakWavelength << " nm "
@@ -698,6 +717,7 @@ int main(
 					||	userCmd[0] == 'e'
 					||	userCmd[0] == 'l'
 					||	userCmd[0] == 't'
+					||	userCmd[0] == 's'
 				) {
 					long		userNum;
 
@@ -759,6 +779,14 @@ int main(
 
 							cout << "--- Changing top offset (rows): [" << userNum << "] ---" << endl;
 							topoffset = (uint32_t)userNum;
+						}
+
+					} else if (userCmd[0] == 's') {
+
+						if (userNum >= 0 && userNum <= 1) {
+
+							cout << "--- Changing use calibration coefficients to: " << userNum << " ---" << endl;
+							useSinv = userNum;
 						}
 					}
 
@@ -1181,6 +1209,11 @@ void fpi_setpoint(
 	fsync(fdFpi);
 
 	printf("\r\n");
+
+	/*
+	 * Wait 10 ms
+	 */
+	usleep(10000); 
 }
 /***************************************************************************//**
  *
@@ -1437,6 +1470,16 @@ void takeImageAndDraw(
 	uint8_t					imgRed;
 	uint8_t					imgGreen;
 	uint8_t					imgBlue;
+
+	long					useSinvLocal;
+	double					sinvRed;
+	double					sinvGreen;
+	double					sinvBlue;
+
+	useSinvLocal = useSinv;
+	sinvRed = sinvN1;
+	sinvGreen = sinvN2;
+	sinvBlue = sinvN3;
 	
 	// send a request to the default request queue of the device and wait for the result.
 	fi.imageRequestSingle();
@@ -1520,6 +1563,56 @@ void takeImageAndDraw(
 				&&	row >= topoffset
 				&& 	row < (topoffset + displayHeight)
 			) {
+				/*
+				 * Use calibration coefficients
+				 */
+				if (useSinvLocal) {
+
+					double temp;
+
+					/*
+					 * Red
+					 */
+					temp = (double)imgRed * sinvRed;
+
+					if (temp > 255) {
+						temp = 255;
+					} else if (temp < 0) {
+						temp = 0;
+					}
+
+					imgRed = (uint8_t)temp;
+
+					/*
+					 * Green
+					 */
+					temp = (double)imgGreen * sinvGreen;
+
+					if (temp > 255) {
+						temp = 255;
+					} else if (temp < 0) {
+						temp = 0;
+					}
+
+					imgGreen = (uint8_t)temp;
+
+					/*
+					 * Blue
+					 */
+					temp = (double)imgBlue * sinvBlue;
+
+					if (temp > 255) {
+						temp = 255;
+					} else if (temp < 0) {
+						temp = 0;
+					}
+
+					imgBlue = (uint8_t)temp;
+				}
+
+				/*
+				 * Write to display buffer
+				 */
 				*pBuf++ = imgRed;
 				*pBuf++ = imgGreen;
 				*pBuf++ = imgBlue;
