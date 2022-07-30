@@ -102,6 +102,8 @@ double							sinvN1;
 double							sinvN2;
 double							sinvN3;
 
+long							useSinvGray;
+
 int			fdLed;
 
 /* FPI */
@@ -599,6 +601,8 @@ int main(
 	sinvN2 = 1;
 	sinvN3 = 1;
 
+	useSinvGray = 0;
+
 	while (running) {
 
 		/*
@@ -624,6 +628,7 @@ int main(
 			cout << "'l 100' and ENTER key to set left offset (columns) to 100" << endl;
 			cout << "'t 50' and ENTER key to set top offset (rows) to 50" << endl;
 			cout << "'s 1' or 's 0' and ENTER key to enable or disable using calibration coefficients" << endl;
+			cout << "'g 1' or 'g 0' and ENTER key to enable or disable using calibration coefficients and grayscale" << endl;
 			cout << ">>";
 
 			szRes = fgets(userCmd, 100 , stdin);
@@ -718,6 +723,7 @@ int main(
 					||	userCmd[0] == 'l'
 					||	userCmd[0] == 't'
 					||	userCmd[0] == 's'
+					||	userCmd[0] == 'g'
 				) {
 					long		userNum;
 
@@ -749,7 +755,7 @@ int main(
 					 */
 					} else if (userCmd[0] == 'e') {
 
-						if (userNum > 0 && userNum < 4294967296) {
+						if (userNum >= 10 && userNum <= 1000000) {
 
 							char			szExpTime[16];
 
@@ -757,6 +763,9 @@ int main(
 							sprintf(szExpTime, "%ld", userNum);
 							ac.exposureTime.writeS(szExpTime);
 							cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
+
+						} else {
+							cout << "Requested exposure time out of range! Range 10 - 1000000 us" << endl;
 						}
 
 					} else if (userCmd[0] == 'l') {
@@ -787,6 +796,13 @@ int main(
 
 							cout << "--- Changing use calibration coefficients to: " << userNum << " ---" << endl;
 							useSinv = userNum;
+						}
+					} else if (userCmd[0] == 'g') {
+
+						if (userNum >= 0 && userNum <= 1) {
+
+							cout << "--- Changing use calibration coefficients with gray to: " << userNum << " ---" << endl;
+							useSinvGray = userNum;
 						}
 					}
 
@@ -1477,10 +1493,14 @@ void takeImageAndDraw(
 	double					sinvBlue;
 	long					isLimited;
 
+	long					useSinvGrayLocal;
+
 	useSinvLocal = useSinv;
 	sinvRed = sinvN1;
 	sinvGreen = sinvN2;
 	sinvBlue = sinvN3;
+
+	useSinvGrayLocal = useSinvGray;
 	
 	// send a request to the default request queue of the device and wait for the result.
 	fi.imageRequestSingle();
@@ -1616,6 +1636,31 @@ void takeImageAndDraw(
 					}
 
 					imgBlue = (uint8_t)temp;
+
+				} else if (useSinvGrayLocal) {
+
+					double		temp;
+					uint8_t		tempU8;
+
+					temp = 	((double)imgRed * sinvRed)
+						+	((double)imgGreen * sinvGreen)
+						+	((double)imgBlue * sinvBlue);
+
+					temp = temp / (double)3;
+
+					if (temp > 255) {
+						temp = 255;
+						isLimited = 1;
+					} else if (temp < 0) {
+						temp = 0;
+						isLimited = 1;
+					}
+
+					tempU8 = (uint8_t)temp;
+
+					imgRed = tempU8;
+					imgGreen = tempU8;
+					imgBlue = tempU8;
 				}
 
 				/*
