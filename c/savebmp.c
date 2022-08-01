@@ -50,84 +50,42 @@ typedef unsigned __int64 uint64_t;
  * Function declarations
  *----------------------------------------------------------------------------*/
 
-void generateBitmapImage(
-	unsigned char *image,
-	 int height, 
-	 int width, 
-	 int pitch, 
-	 const char* imageFileName
-);
-
-unsigned char* createBitmapFileHeader(
-	int height, 
-	int width, 
-	int pitch, 
-	int paddingSize
-);
-
-/***************************************************************************//**
- *
- *	\brief		Create bitmap file header
- *
- * 	\param		
- * 
- *	\return		
- *
- *	\details	Create bitmap file header
- *
- * 	\note
- *	
- ******************************************************************************/
-unsigned char* createBitmapFileHeader(
-	int height, 
-	int width, 
-	int pitch, 
-	int paddingSize
-) {
-    int fileSize = 
-			fileHeaderSize
-		+ 	infoHeaderSize
-		+ 	(pitch + paddingSize) * height;
-
-    static unsigned char fileHeader[] = {
-        0,0, /// signature
-        0,0,0,0, /// image file size in bytes
-        0,0,0,0, /// reserved
-        0,0,0,0, /// start of pixel array
-    };
-
-    fileHeader[0] = (unsigned char)('B');
-    fileHeader[1] = (unsigned char)('M');
-    fileHeader[2] = (unsigned char)(fileSize);
-    fileHeader[3] = (unsigned char)(fileSize >> 8);
-    fileHeader[4] = (unsigned char)(fileSize >> 16);
-    fileHeader[5] = (unsigned char)(fileSize >> 24);
-    fileHeader[10] = (unsigned char)(fileHeaderSize + infoHeaderSize);
-
-    return fileHeader;
-}
-/***************************************************************************//**
- *
- *	\brief		Create bitmap image
- *
- * 	\param		
- * 
- *	\return		
- *
- *	\details	Create bitmap image
- *
- * 	\note
- *	
- ******************************************************************************/
-void generateBitmapImage(
-	unsigned char *			image, 
+void saveBitmapImage(
+	unsigned char *			pBuf, 
 	int 					height, 
 	int 					width, 
 	int 					pitch, 
-	const char * 			imageFileName
+	const char * 			szFileName
+);
+
+/***************************************************************************//**
+ *
+ *	\brief		Save bitmap image
+ *
+ * 	\param		pBuf	Ptr to image pixels buffer
+ * 	\param		height	Image height in pixels
+ * 	\param		width	Image width in pixels
+ * 	\param		pitch	Distance in bytes between successive rows in image
+ * 	\param		szFileName	File name string, null-terminated
+ * 
+ *	\return		
+ *
+ *	\details	Save bitmap image
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+void saveBitmapImage(
+	unsigned char *			pBuf, 
+	int 					height, 
+	int 					width, 
+	int 					pitch, 
+	const char * 			szFileName
 ) {
 	int 					i;
-	FILE* 					imageFile;
+	FILE * 					imageFile;
+	int						paddingSize;
+	int						fileSize;
 
 	/*
 		0,0,0,0, /// header size
@@ -144,55 +102,84 @@ void generateBitmapImage(
 	 */
 	unsigned char infoHeader[infoHeaderSize];
 
-    unsigned char padding[3] = { 0, 0, 0 };
-
-    int paddingSize = (4 - (pitch) % 4) % 4;
-
-    unsigned char* fileHeader = createBitmapFileHeader(height, width, pitch, paddingSize);
+	/*
+		0,0, /// signature
+		0,0,0,0, /// image file size in bytes
+		0,0,0,0, /// reserved
+		0,0,0,0, /// start of pixel array
+	*/
+	unsigned char fileHeader[fileHeaderSize];
 
 	/*
-	 * Bitmap info header
+	 * Dummy buffer for writing padding values
 	 */
-	memset(&infoHeader, 0, infoHeaderSize);
-
-    infoHeader[0] = (unsigned char)(infoHeaderSize);
-
-    infoHeader[4] = (unsigned char)(width);
-    infoHeader[5] = (unsigned char)(width >> 8);
-    infoHeader[6] = (unsigned char)(width >> 16);
-    infoHeader[7] = (unsigned char)(width >> 24);
-
-    infoHeader[8] = (unsigned char)(height);
-    infoHeader[9] = (unsigned char)(height >> 8);
-    infoHeader[10] = (unsigned char)(height >> 16);
-    infoHeader[11] = (unsigned char)(height >> 24);
-
-    infoHeader[12] = (unsigned char)(1);
-
-    infoHeader[14] = (unsigned char)24; //(unsigned char)(bytesPerPixel * 8);
-
-    imageFile = fopen(imageFileName, "wb");
+	unsigned char padding[3] = { 0, 0, 0 };
 
 	/*
 	 * Bitmap file header
 	 */
-    fwrite(fileHeader, 1, fileHeaderSize, imageFile);
+	memset(&fileHeader[0], 0, fileHeaderSize);
+
+	paddingSize = (4 - (pitch) % 4) % 4;
+
+	fileSize = 
+			fileHeaderSize
+		+ 	infoHeaderSize
+		+ 	(pitch + paddingSize) * height;
+
+	fileHeader[0] = (unsigned char)('B');
+	fileHeader[1] = (unsigned char)('M');
+
+	fileHeader[2] = (unsigned char)(fileSize);
+	fileHeader[3] = (unsigned char)(fileSize >> 8);
+	fileHeader[4] = (unsigned char)(fileSize >> 16);
+	fileHeader[5] = (unsigned char)(fileSize >> 24);
+
+	fileHeader[10] = (unsigned char)(fileHeaderSize + infoHeaderSize);
 
 	/*
 	 * Bitmap info header
 	 */
-    fwrite(&infoHeader, 1, infoHeaderSize, imageFile);
+	memset(&infoHeader[0], 0, infoHeaderSize);
+
+	infoHeader[0] = (unsigned char)(infoHeaderSize);
+
+	infoHeader[4] = (unsigned char)(width);
+	infoHeader[5] = (unsigned char)(width >> 8);
+	infoHeader[6] = (unsigned char)(width >> 16);
+	infoHeader[7] = (unsigned char)(width >> 24);
+
+	infoHeader[8] = (unsigned char)(height);
+	infoHeader[9] = (unsigned char)(height >> 8);
+	infoHeader[10] = (unsigned char)(height >> 16);
+	infoHeader[11] = (unsigned char)(height >> 24);
+
+	infoHeader[12] = (unsigned char)(1);
+
+	infoHeader[14] = (unsigned char)24;
+
+	/*
+	 * Create file
+	 */
+	imageFile = fopen(szFileName, "wb");
+
+	/*
+	 * Bitmap file header
+	 * Bitmap info header
+	 */
+	fwrite(&fileHeader[0], 1, fileHeaderSize, imageFile);
+	fwrite(&infoHeader[0], 1, infoHeaderSize, imageFile);
 
 	/*
 	 * Pixels
 	 */
-    for (i = 0; i < height; i++) {
+	for (i = 0; i < height; i++) {
 
 		/*
 		 * Pixel row
 		 */
-        fwrite(
-			image + (i*pitch),
+		fwrite(
+			pBuf + (i * pitch),
 			bytesPerPixel,
 			width,
 			imageFile
@@ -201,18 +188,15 @@ void generateBitmapImage(
 		/*
 		 * Padding to multiple of 4
 		 */
-        fwrite(
+		fwrite(
 			padding,
 			1,
 			paddingSize,
 			imageFile
 		);
-    }
+	}
 
-    fclose(imageFile);
-
-    //free(fileHeader);
-    //free(infoHeader);
+	fclose(imageFile);
 }
 /***************************************************************************//**
  *
@@ -260,15 +244,15 @@ void main(
 
 			for (jj=0;jj<width;jj++) {
 
-				*pTmp++ = 200; //blue
+				*pTmp++ = 0; //blue
 				*pTmp++ = 0; //green
-				*pTmp++ = 0;  //red
+				*pTmp++ = 200;  //red
 			}
 
 			pTmp += (pitchBytes - (width * 3));			
 		}
 
-		generateBitmapImage(
+		saveBitmapImage(
 			(unsigned char *)pBuf, 
 			(int)height, 
 			(int)width, 
