@@ -2143,7 +2143,13 @@ void saveBitmapImage(
 	/*
 	 * Pixels
 	 */
-	for (i = 0; i < height; i++) {
+	/* for (i = 0; i < height; i++) { */
+
+	i = height;
+
+	do {
+
+		i--;
 
 		/*
 		 * Pixel row
@@ -2164,7 +2170,8 @@ void saveBitmapImage(
 			paddingSize,
 			imageFile
 		);
-	}
+		
+	} while (i > 0);
 
 	fclose(imageFile);
 }
