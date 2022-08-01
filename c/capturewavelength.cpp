@@ -739,6 +739,8 @@ int main(
 					/*
 					 * Save bitmap
 					 */
+					cout << "Saving display image to test.bmp" << endl;
+
 					saveBitmapImage(
 						(unsigned char *)pMap, 
 						(int)displayHeight, 
