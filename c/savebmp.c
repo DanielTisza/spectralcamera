@@ -17,6 +17,7 @@
  *----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef _MSC_VER
 
@@ -41,9 +42,9 @@ typedef unsigned __int64 uint64_t;
  * Global variables
  *----------------------------------------------------------------------------*/
 
-const int bytesPerPixel = 3; /// red, green, blue
-const int fileHeaderSize = 14;
-const int infoHeaderSize = 40;
+#define bytesPerPixel			3 	// red, green, blue
+#define fileHeaderSize			14
+#define infoHeaderSize			40
 
 /*------------------------------------------------------------------------------
  * Function declarations
@@ -62,11 +63,6 @@ unsigned char* createBitmapFileHeader(
 	int width, 
 	int pitch, 
 	int paddingSize
-);
-
-unsigned char* createBitmapInfoHeader(
-	int height, 
-	int width
 );
 
 /***************************************************************************//**
@@ -112,55 +108,6 @@ unsigned char* createBitmapFileHeader(
 }
 /***************************************************************************//**
  *
- *	\brief		Create bitmap info header
- *
- * 	\param		
- * 
- *	\return		
- *
- *	\details	Create bitmap info header
- *
- * 	\note
- *	
- ******************************************************************************/
-unsigned char* createBitmapInfoHeader(
-	int height, 
-	int width
-) {
-    static unsigned char infoHeader[] = {
-        0,0,0,0, /// header size
-        0,0,0,0, /// image width
-        0,0,0,0, /// image height
-        0,0, /// number of color planes
-        0,0, /// bits per pixel
-        0,0,0,0, /// compression
-        0,0,0,0, /// image size
-        0,0,0,0, /// horizontal resolution
-        0,0,0,0, /// vertical resolution
-        0,0,0,0, /// colors in color table
-        0,0,0,0, /// important color count
-    };
-
-    infoHeader[0] = (unsigned char)(infoHeaderSize);
-
-    infoHeader[4] = (unsigned char)(width);
-    infoHeader[5] = (unsigned char)(width >> 8);
-    infoHeader[6] = (unsigned char)(width >> 16);
-    infoHeader[7] = (unsigned char)(width >> 24);
-
-    infoHeader[8] = (unsigned char)(height);
-    infoHeader[9] = (unsigned char)(height >> 8);
-    infoHeader[10] = (unsigned char)(height >> 16);
-    infoHeader[11] = (unsigned char)(height >> 24);
-
-    infoHeader[12] = (unsigned char)(1);
-
-    infoHeader[14] = (unsigned char)24; //(unsigned char)(bytesPerPixel * 8);
-
-    return infoHeader;
-}
-/***************************************************************************//**
- *
  *	\brief		Create bitmap image
  *
  * 	\param		
@@ -180,6 +127,22 @@ void generateBitmapImage(
 	const char * 			imageFileName
 ) {
 	int 					i;
+	FILE* 					imageFile;
+
+	/*
+		0,0,0,0, /// header size
+		0,0,0,0, /// image width
+		0,0,0,0, /// image height
+		0,0, /// number of color planes
+		0,0, /// bits per pixel
+		0,0,0,0, /// compression
+		0,0,0,0, /// image size
+		0,0,0,0, /// horizontal resolution
+		0,0,0,0, /// vertical resolution
+		0,0,0,0, /// colors in color table
+		0,0,0,0, /// important color count
+	 */
+	unsigned char infoHeader[infoHeaderSize];
 
     unsigned char padding[3] = { 0, 0, 0 };
 
@@ -187,9 +150,28 @@ void generateBitmapImage(
 
     unsigned char* fileHeader = createBitmapFileHeader(height, width, pitch, paddingSize);
 
-    unsigned char* infoHeader = createBitmapInfoHeader(height, width);
+	/*
+	 * Bitmap info header
+	 */
+	memset(&infoHeader, 0, infoHeaderSize);
 
-    FILE* imageFile = fopen(imageFileName, "wb");
+    infoHeader[0] = (unsigned char)(infoHeaderSize);
+
+    infoHeader[4] = (unsigned char)(width);
+    infoHeader[5] = (unsigned char)(width >> 8);
+    infoHeader[6] = (unsigned char)(width >> 16);
+    infoHeader[7] = (unsigned char)(width >> 24);
+
+    infoHeader[8] = (unsigned char)(height);
+    infoHeader[9] = (unsigned char)(height >> 8);
+    infoHeader[10] = (unsigned char)(height >> 16);
+    infoHeader[11] = (unsigned char)(height >> 24);
+
+    infoHeader[12] = (unsigned char)(1);
+
+    infoHeader[14] = (unsigned char)24; //(unsigned char)(bytesPerPixel * 8);
+
+    imageFile = fopen(imageFileName, "wb");
 
 	/*
 	 * Bitmap file header
@@ -199,7 +181,7 @@ void generateBitmapImage(
 	/*
 	 * Bitmap info header
 	 */
-    fwrite(infoHeader, 1, infoHeaderSize, imageFile);
+    fwrite(&infoHeader, 1, infoHeaderSize, imageFile);
 
 	/*
 	 * Pixels
