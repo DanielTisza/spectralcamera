@@ -328,7 +328,7 @@ int main()
 				bytesWritten = write(fd, &data, 1);
 #endif	
 
-#if 1
+#if 0
 				/*
 				 * Fill with red
 				 */
@@ -342,6 +342,81 @@ int main()
 				data = 255;
 				bytesWritten = write(fd, &data, 1);
 #endif	
+
+#if 1
+				/*
+				 * Zybo Z7 7020 default framebuffer
+				 *
+				 * Format seems to be BGR with 24-bit colors (BGR888)
+				 * 
+				 * | B | G | R |
+				 * | 8 | 8 | 8 |
+				 * 
+				 * (BRG on ultrascale)
+				 */
+				 
+				 if (row < 200) {
+					
+					/* Blue */
+					data = 255;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+					 
+				 } else if (row < 400) {
+					 
+					/* Red */
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+
+					data = 255;
+					bytesWritten = write(fd, &data, 1);
+					 
+				 } else if (row < 600) {
+					 
+					/* Green */
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 255;
+					bytesWritten = write(fd, &data, 1);
+
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+
+				 } else if (row < 800) {
+					 
+					/* Black */
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+
+					data = 0;
+					bytesWritten = write(fd, &data, 1);
+					
+				 } else {
+					 
+					/* White */
+					data = 255;
+					bytesWritten = write(fd, &data, 1);
+					
+					data = 255;
+					bytesWritten = write(fd, &data, 1);
+
+					data = 255;
+					bytesWritten = write(fd, &data, 1);
+					
+				 } 
+#endif
 				
 			}
 		}
