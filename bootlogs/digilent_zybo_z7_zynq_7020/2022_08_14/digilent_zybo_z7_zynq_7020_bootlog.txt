@@ -1,0 +1,383 @@
+........ TIMEOUT !
+Hit any key to stop autoboot:  0
+Device: sdhci@e0100000
+Manufacturer ID: 27
+OEM: 5048
+Name: SD32G
+Tran Speed: 50000000
+Rd Block Len: 512
+SD version 3.0
+High Capacity: Yes
+Capacity: 28.8 GiB
+Bus Width: 4-bit
+Erase Group Size: 512 Bytes
+reading image.ub
+3914300 bytes read in 346 ms (10.8 MiB/s)
+## Loading kernel from FIT Image at 10000000 ...
+   Using 'conf@2' configuration
+   Verifying Hash Integrity ... OK
+   Trying 'kernel@0' kernel subimage
+     Description:  Linux Kernel
+     Type:         Kernel Image
+     Compression:  uncompressed
+     Data Start:   0x100000d4
+     Data Size:    3886376 Bytes = 3.7 MiB
+     Architecture: ARM
+     OS:           Linux
+     Load Address: 0x00008000
+     Entry Point:  0x00008000
+     Hash algo:    sha1
+     Hash value:   eeb596f98efc4411d33bc870bec8da03eb334c5e
+   Verifying Hash Integrity ... sha1+ OK
+## Loading fdt from FIT Image at 10000000 ...
+   Using 'conf@2' configuration
+   Trying 'fdt@0' fdt subimage
+     Description:  Flattened Device Tree blob
+     Type:         Flat Device Tree
+     Compression:  uncompressed
+     Data Start:   0x103b4ef0
+     Data Size:    26629 Bytes = 26 KiB
+     Architecture: ARM
+     Hash algo:    sha1
+     Hash value:   69e048d4691966895c9837cc83ca9abcf16a3444
+   Verifying Hash Integrity ... sha1+ OK
+   Booting using the fdt blob at 0x103b4ef0
+   Loading Kernel Image ... OK
+   Loading Device Tree to 07ff6000, end 07fff804 ... OK
+
+Starting kernel ...
+
+Uncompressing Linux... done, booting the kernel.
+Booting Linux on physical CPU 0x0
+Linux version 4.9.0-xilinx-v2017.4 (zybo@zybovm) (gcc version 6.2.1 20161016 (Linaro GCC 6.2-2016.11)) #1 SMP PREEMPT Sat May 22 15:16:30 EEST 2021
+CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=18c5387d
+CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+OF: fdt: Machine model: Zynq Zybo Z7 Development Board
+bootconsole [earlycon0] enabled
+Memory policy: Data cache writealloc
+cma: Reserved 128 MiB at 0x38000000
+random: fast init done
+percpu: Embedded 16 pages/cpu @ef7c7000 s34764 r8192 d22580 u65536
+Built 1 zonelists, mobility grouping on.  Total pages: 260608
+Kernel command line: console=ttyPS0,115200 earlyprintk uio_pdrv_genirq.of_id=generic-uio root=/dev/mmcblk0p2 rw rootwait
+PID hash table entries: 4096 (order: 2, 16384 bytes)
+Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
+Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
+Memory: 898052K/1048576K available (6144K kernel code, 237K rwdata, 1548K rodata, 1024K init, 264K bss, 19452K reserved, 131072K cma-reserved, 131072K highmem)
+Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+    vmalloc : 0xf0800000 - 0xff800000   ( 240 MB)
+    lowmem  : 0xc0000000 - 0xf0000000   ( 768 MB)
+    pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+    modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+      .text : 0xc0008000 - 0xc0700000   (7136 kB)
+      .init : 0xc0900000 - 0xc0a00000   (1024 kB)
+      .data : 0xc0a00000 - 0xc0a3b6c0   ( 238 kB)
+       .bss : 0xc0a3b6c0 - 0xc0a7d944   ( 265 kB)
+Preemptible hierarchical RCU implementation.
+        RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=2.
+        Tasks RCU enabled.
+RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+efuse mapped to f0802000
+slcr mapped to f0804000
+L2C: platform modifies aux control register: 0x72360000 -> 0x72760000
+L2C: DT/platform modifies aux control register: 0x72360000 -> 0x72760000
+L2C-310 erratum 769419 enabled
+L2C-310 enabling early BRESP for Cortex-A9
+L2C-310 full line of zeros enabled for Cortex-A9
+L2C-310 ID prefetch enabled, offset 1 lines
+L2C-310 dynamic clock gating enabled, standby mode enabled
+L2C-310 cache controller enabled, 8 ways, 512 kB
+L2C-310: CACHE_ID 0x410000c8, AUX_CTRL 0x76760001
+zynq_clock_init: clkc starts at f0804100
+Zynq clock init
+sched_clock: 64 bits at 333MHz, resolution 3ns, wraps every 4398046511103ns
+clocksource: arm_global_timer: mask: 0xffffffffffffffff max_cycles: 0x4ce07af025, max_idle_ns: 440795209040 ns
+Switching to timer-based delay loop, resolution 3ns
+clocksource: ttc_clocksource: mask: 0xffff max_cycles: 0xffff, max_idle_ns: 537538477 ns
+timer #0 at f080c000, irq=17
+Console: colour dummy device 80x30
+Calibrating delay loop (skipped), value calculated using timer frequency.. 666.66 BogoMIPS (lpj=3333333)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 2048 (order: 1, 8192 bytes)
+Mountpoint-cache hash table entries: 2048 (order: 1, 8192 bytes)
+CPU: Testing write buffer coherency: ok
+CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+Setting up static identity map for 0x100000 - 0x100060
+Hierarchical SRCU implementation.
+smp: Bringing up secondary CPUs ...
+CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+smp: Brought up 1 node, 2 CPUs
+SMP: Total of 2 processors activated (1333.33 BogoMIPS).
+CPU: All CPU(s) started in SVC mode.
+devtmpfs: initialized
+VFP support v0.3: implementor 41 architecture 3 part 30 variant 9 rev 4
+clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+futex hash table entries: 512 (order: 3, 32768 bytes)
+pinctrl core: initialized pinctrl subsystem
+NET: Registered protocol family 16
+DMA: preallocated 256 KiB pool for atomic coherent allocations
+cpuidle: using governor menu
+hw-breakpoint: found 5 (+1 reserved) breakpoint and 1 watchpoint registers.
+hw-breakpoint: maximum watchpoint size is 4 bytes.
+zynq-ocm f800c000.ocmc: ZYNQ OCM pool: 256 KiB @ 0xf0880000
+zynq-pinctrl 700.pinctrl: zynq pinctrl initialized
+e0001000.serial: ttyPS0 at MMIO 0xe0001000 (irq = 27, base_baud = 6249999) is a xuartps
+console [ttyPS0] enabled
+console [ttyPS0] enabled
+bootconsole [earlycon0] disabled
+bootconsole [earlycon0] disabled
+XGpio: /amba_pl/gpio@41230000: registered, base is 1023
+vgaarb: loaded
+SCSI subsystem initialized
+usbcore: registered new interface driver usbfs
+usbcore: registered new interface driver hub
+usbcore: registered new device driver usb
+media: Linux media interface: v0.10
+Linux video capture interface: v2.00
+pps_core: LinuxPPS API ver. 1 registered
+pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+PTP clock support registered
+EDAC MC: Ver: 3.0.0
+FPGA manager framework
+fpga-region fpga-full: FPGA Region probed
+clocksource: Switched to clocksource arm_global_timer
+NET: Registered protocol family 2
+TCP established hash table entries: 8192 (order: 3, 32768 bytes)
+TCP bind hash table entries: 8192 (order: 4, 65536 bytes)
+TCP: Hash tables configured (established 8192 bind 8192)
+UDP hash table entries: 512 (order: 2, 16384 bytes)
+UDP-Lite hash table entries: 512 (order: 2, 16384 bytes)
+NET: Registered protocol family 1
+RPC: Registered named UNIX socket transport module.
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+hw perfevents: no interrupt-affinity property for /pmu@f8891000, guessing.
+hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7 counters available
+workingset: timestamp_bits=30 max_order=18 bucket_order=0
+jffs2: version 2.2. (NAND) (SUMMARY)  © 2001-2006 Red Hat, Inc.
+bounce: pool size: 64 pages
+io scheduler noop registered
+io scheduler deadline registered
+io scheduler cfq registered (default)
+io scheduler mq-deadline registered
+io scheduler kyber registered
+dma-pl330 f8003000.dmac: Loaded driver for PL330 DMAC-241330
+dma-pl330 f8003000.dmac:        DBUFF-128x8bytes Num_Chans-8 Num_Peri-4 Num_Events-16
+xilinx-vdma 43010000.dma: Xilinx AXI VDMA Engine Driver Probed!!
+[drm] load() is defered & will be called again
+brd: module loaded
+loop: module loaded
+m25p80 spi0.0: found s25fl128s, expected m25p80
+m25p80 spi0.0: s25fl128s (16384 Kbytes)
+4 ofpart partitions found on MTD device spi0.0
+Creating 4 MTD partitions on "spi0.0":
+0x000000000000-0x000000500000 : "boot"
+0x000000500000-0x000000520000 : "bootenv"
+0x000000520000-0x000000fa0000 : "kernel"
+0x000000fa0000-0x000001000000 : "spare"
+libphy: Fixed MDIO Bus: probed
+CAN device driver interface
+libphy: MACB_mii_bus: probed
+macb e000b000.ethernet eth0: Cadence GEM rev 0x00020118 at 0xe000b000 irq 29 (00:18:3e:03:3d:42)
+RTL8211E Gigabit Ethernet e000b000.ethernet-ffffffff:01: attached PHY driver [RTL8211E Gigabit Ethernet] (mii_bus:phy_addr=e000b000.ethernet-ffffffff:01, irq=POLL)
+e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
+e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+ehci-pci: EHCI PCI platform driver
+usbcore: registered new interface driver cdc_acm
+cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters
+usbcore: registered new interface driver usb-storage
+chipidea-usb2 e0002000.usb: e0002000.usb supply vbus not found, using dummy regulator
+ULPI transceiver vendor/product ID 0x0424/0x0007
+Found SMSC USB3320 ULPI transceiver.
+ULPI integrity check: passed.
+ci_hdrc ci_hdrc.0: EHCI Host Controller
+ci_hdrc ci_hdrc.0: new USB bus registered, assigned bus number 1
+ci_hdrc ci_hdrc.0: USB 2.0 started, EHCI 1.00
+hub 1-0:1.0: USB hub found
+hub 1-0:1.0: 1 port detected
+i2c /dev entries driver
+cdns-i2c e0004000.i2c: 100 kHz mmio e0004000 irq 23
+cdns-i2c e0005000.i2c: 400 kHz mmio e0005000 irq 24
+IR NEC protocol handler initialized
+IR RC5(x/sz) protocol handler initialized
+IR RC6 protocol handler initialized
+IR JVC protocol handler initialized
+IR Sony protocol handler initialized
+IR SANYO protocol handler initialized
+IR Sharp protocol handler initialized
+IR MCE Keyboard/mouse protocol handler initialized
+IR XMP protocol handler initialized
+xilinx-vtc: probe of 43c00000.v_tc failed with error -2
+cdns-wdt f8005000.watchdog: Xilinx Watchdog Timer at f09f1000 with timeout 10s
+EDAC MC: ECC not enabled
+Xilinx Zynq CpuIdle Driver started
+sdhci: Secure Digital Host Controller Interface driver
+sdhci: Copyright(c) Pierre Ossman
+sdhci-pltfm: SDHCI platform and OF driver helper
+mmc0: SDHCI controller on e0100000.sdhci [e0100000.sdhci] using ADMA
+ledtrig-cpu: registered to indicate activity on CPUs
+usbcore: registered new interface driver usbhid
+usbhid: USB HID core driver
+fpga_manager fpga0: Xilinx Zynq FPGA Manager registered
+NET: Registered protocol family 10
+Segment Routing with IPv6
+sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+NET: Registered protocol family 17
+can: controller area network core (rev 20170425 abi 9)
+NET: Registered protocol family 29
+can: raw protocol (rev 20170425)
+can: broadcast manager protocol (rev 20170425 t)
+can: netlink gateway (rev 20170425) max_hops=1
+Registering SWP/SWPB emulation handler
+[drm] No max horizontal width in DT, using default 1920
+[drm] No max vertical height in DT, using default 1080
+OF: graph: no port node found in /amba_pl/xilinx_drm
+[drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[drm] No driver support for vblank timestamp query.
+mmc0: new high speed SDHC card at address 0007
+mmcblk0: mmc0:0007 SD32G 28.8 GiB
+ mmcblk0: p1 p2
+Console: switching to colour frame buffer device 240x67
+xilinx-drm amba_pl:xilinx_drm: fb0:  frame buffer device
+[drm] Initialized xilinx_drm 1.0.0 20130509 for amba_pl:xilinx_drm on minor 0
+hctosys: unable to open rtc device (rtc0)
+of_cfs_init
+of_cfs_init: OK
+DOVDD_reg: disabling
+AVDD_reg: disabling
+DVDD_reg: disabling
+EXT4-fs (mmcblk0p2): couldn't mount as ext3 due to feature incompatibilities
+EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
+VFS: Mounted root (ext4 filesystem) on device 179:2.
+devtmpfs: mounted
+Freeing unused kernel memory: 1024K
+systemd[1]: System time before build time, advancing clock.
+systemd[1]: Failed to insert module 'autofs4': No such file or directory
+systemd[1]: systemd 229 running in system mode. (+PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ -LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN)
+systemd[1]: Detected architecture arm.
+
+Welcome to Ubuntu 16.04.6 LTS!
+
+systemd[1]: Set hostname to <localhost.localdomain>.
+systemd[1]: Listening on udev Kernel Socket.
+[  OK  ] Listening on udev Kernel Socket.
+systemd[1]: Listening on Journal Socket (/dev/log).
+[  OK  ] Listening on Journal Socket (/dev/log).
+systemd[1]: Created slice System Slice.
+[  OK  ] Created slice System Slice.
+systemd[1]: Created slice system-serial\x2dgetty.slice.
+[  OK  ] Created slice system-serial\x2dgetty.slice.
+systemd[1]: Reached target Slices.
+[  OK  ] Reached target Slices.
+systemd[1]: Reached target Swap.
+[  OK  ] Reached target Swap.
+systemd[1]: Listening on udev Control Socket.
+[  OK  ] Listening on udev Control Socket.
+[  OK  ] Started Dispatch Password Requests to Console Directory Watch.
+[  OK  ] Reached target Encrypted Volumes.
+[  OK  ] Created slice system-getty.slice.
+[  OK  ] Reached target Remote File Systems (Pre).
+[  OK  ] Reached target Remote File Systems.
+[  OK  ] Started Forward Password Requests to Wall Directory Watch.
+[  OK  ] Reached target Paths.
+[  OK  ] Listening on /dev/initctl Compatibility Named Pipe.
+[  OK  ] Listening on Journal Socket.
+[  OK  ] Reached target Sockets.
+         Starting Remount Root and Kernel File Systems...
+         Starting Load Kernel Modules...
+         Starting Journal Service...
+         Starting Create Static Device Nodes in /dev...
+[  OK  ] Started Remount Root and Kernel File Systems.
+[  OK  ] Started Load Kernel Modules.
+[  OK  ] Started Journal Service.
+[  OK  ] Started Create Static Device Nodes in /dev.
+         Starting udev Kernel Device Manager...
+         Mounting Configuration File System...
+         Starting Apply Kernel Variables...
+         Starting udev Coldplug all Devices...
+         Starting Load/Save Random Seed...
+[  OK  ] Reached target Local File Systems (Pre).
+[  OK  ] Reached target Local File Systems.
+         Starting Flush Journal to Persistent Storage...
+[  OK  ] Mounted Configuration File System.
+[  OK  ] Started udev Kernel Device Manager.
+[  OK  ] Started Apply Kernel Variables.
+[  OK  ] Started Load/Save Random Seed.
+         Starting Raise network interfaces...
+[  OK  ] Started Flush Journal to Persistent Storage.
+[  OK  ] Found device /dev/ttyPS0.
+[  OK  ] Started udev Coldplug all Devices.
+         Starting Create Volatile Files and Directories...
+[FAILED] Failed to start Create Volatile Files and Directories.
+See 'systemctl status systemd-tmpfiles-setup.service' for details.
+         Starting Update UTMP about System Boot/Shutdown...
+         Starting Network Time Synchronization...
+[  OK  ] Started Update UTMP about System Boot/Shutdown.
+[  OK  ] Started Network Time Synchronization.
+[  OK  ] Started Raise network interfaces.
+[  OK  ] Reached target Network.
+[  OK  ] Reached target System Time Synchronized.
+[  OK  ] Reached target System Initialization.
+[  OK  ] Started Daily Cleanup of Temporary Directories.
+[  OK  ] Started Daily apt download activities.
+[  OK  ] Started Daily apt upgrade and clean activities.
+[  OK  ] Reached target Timers.
+[  OK  ] Reached target Basic System.
+         Starting OpenBSD Secure Shell server...
+         Starting Permit User Sessions...
+         Starting LSB: Set the CPU Frequency Scaling governor to "ondemand"...
+         Starting /etc/rc.local Compatibility...
+         Starting getty on tty2-tty6 if dbus and logind are not available...
+[  OK  ] Started Permit User Sessions.
+[  OK  ] Started /etc/rc.local Compatibility.
+[FAILED] Failed to start OpenBSD Secure Shell server.
+See 'systemctl status ssh.service' for details.
+[  OK  ] Started LSB: Set the CPU Frequency Scaling governor to "ondemand".
+[  OK  ] Stopped OpenBSD Secure Shell server.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Started Getty on tty3.
+[  OK  ] Started Getty on tty2.
+[  OK  ] Started Getty on tty1.
+[  OK  ] Started Serial Getty on ttyPS0.
+[FAILED] Failed to start OpenBSD Secure Shell server.
+See 'systemctl status ssh.service' for details.
+[  OK  ] Started Getty on tty5.
+[  OK  ] Started Getty on tty4.
+[  OK  ] Stopped OpenBSD Secure Shell server.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Started Getty on tty6.
+[FAILED] Failed to start OpenBSD Secure Shell server.
+See 'systemctl status ssh.service' for details.
+[  OK  ] Started getty on tty2-tty6 if dbus and logind are not available.
+[  OK  ] Stopped OpenBSD Secure Shell server.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Reached target Login Prompts.
+[FAILED] Failed to start OpenBSD Secure Shell server.
+See 'systemctl status ssh.service' for details.
+[  OK  ] Reached target Multi-User System.
+[  OK  ] Reached target Graphical Interface.
+         Starting Update UTMP about System Runlevel Changes...
+[  OK  ] Stopped OpenBSD Secure Shell server.
+         Starting OpenBSD Secure Shell server...
+[  OK  ] Started Update UTMP about System Runlevel Changes.
+[FAILED] Failed to start OpenBSD Secure Shell server.
+See 'systemctl status ssh.service' for details.
+
+Ubuntu 16.04.6 LTS localhost.localdomain ttyPS0
+
+localhost login: ubuntu
+Password:
+Last login: Sun May 23 11:14:20 UTC 2021 on ttyPS0
+Welcome to Ubuntu 16.04.6 LTS (GNU/Linux 4.9.0-xilinx-v2017.4 armv7l)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+ubuntu@localhost:~$ su root
+Password:
+root@localhost:/home/ubuntu#
