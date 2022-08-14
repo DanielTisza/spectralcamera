@@ -1,3 +1,19 @@
+
+This is the bootlog with Zybo Z7 Zynq 7020 on 2022.08.14
+
+Connected "J12" (PROG UART) serial port with USB cable to laptop for capturing this bootlog with Putty.
+
+Connected "HDMI TX" with HDMI cable and HDMI-to-DVI adapter to HP EliteDisplay E231.
+
+Turning power on to Zybo.
+
+Text login console comes up on display connected to HDMI TX port and it is possible to enter login information
+with USB keyboard and login to Zybo command line.
+
+
+-----------------------------------------------------------
+
+
 ........ TIMEOUT !
 Hit any key to stop autoboot:  0
 Device: sdhci@e0100000
