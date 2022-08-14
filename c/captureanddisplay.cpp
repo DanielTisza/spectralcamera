@@ -4,7 +4,11 @@
 -- Capture image and display it
 -- Based on SingleCapture.cpp
 --
--- g++ captureanddisplay.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -o captureanddisplay
+-- Tested with:
+--  Genesys ZU 3EG
+--  Zybo Z7 Zynq 7020
+--
+-- g++ captureanddisplay.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -std=c++11 -o captureanddisplay
 --
 -- Copyright: Daniel Tisza, 2022, GPLv3 or later
 -----------------------------------------------------------*/
@@ -35,6 +39,9 @@ int main( void )
     uint8_t         imgGreen;
     uint8_t         imgBlue;
     uint32_t        leftoffset;
+
+    uint32_t		displayWidth;
+    uint32_t		displayHeight;
 
     DeviceManager devMgr;
     Device* pDev = getDeviceFromUserInput( devMgr );
@@ -111,7 +118,7 @@ int main( void )
 
 
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
-    ac.exposureTime.writeS("8000");
+    ac.exposureTime.writeS("60000");
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
 
 
@@ -195,6 +202,22 @@ int main( void )
         width = 2592;	//1280; 
         height = 1944;	//1024;
 
+        /*
+         * Genesys ZU 3EG
+         */
+#if 0
+        displayWidth = 1280;
+        displayHeight = 1024;
+#endif
+
+        /*
+         * Zybo Z7 Zynq 7020
+         */
+#if 1
+        displayWidth = 1920;
+        displayHeight = 1080;
+#endif
+
         leftoffset = 0; //700;
 
         for (row=0;row<height;row++) {
@@ -210,13 +233,17 @@ int main( void )
                 imgBlue = *pData++;
 
                 if (    col >= leftoffset 
-                    &&  col < (leftoffset + 1280)
+                    &&  col < (leftoffset + displayWidth)
                     &&	row >= 0
-                    && 	row < (0 + 1024)
+                    && 	row < (0 + displayHeight)
                 ) {
                     /*
                      * Draw pixel to screen
-                     * 
+                     */
+
+                    /*
+                     * Genesys ZU 3EG
+                     *
                      * Format seems to be
                      * ABRG
                      * 
@@ -224,7 +251,7 @@ int main( void )
                      * | 1 5 2 | 3 5 |
                      * 
                      */
-                    
+#if 0
                     imgBlue = (imgBlue >> 3) & 0x1F;
                     imgGreen = (imgGreen >> 3) & 0x1F;
                     imgRed = (imgRed >> 3) & 0x1F;
@@ -237,6 +264,24 @@ int main( void )
                         |   imgGreen;
 
                     bytesWritten = write(fd, databuf, 2);
+#endif
+
+                    /*
+                     * Zybo Z7 Zynq 7020
+                     *
+                     * Format seems to be BGR with 24-bit colors (BGR888)
+                     * using the default framebuffer /dev/fb0
+                     * 
+                     * | B | G | R |
+                     * | 8 | 8 | 8 |
+                     * 
+                     * (This corresponds to little-endian RGB)
+                     */
+                    databuf[0] = imgBlue;
+                    databuf[1] = imgGreen;
+                    databuf[2] = imgRed;
+
+                    bytesWritten = write(fd, databuf, 3);
                 } 
             }
 
@@ -244,7 +289,7 @@ int main( void )
              * Stop reading file when outside
              * display row size
              */
-            if (row > 1024) {
+            if (row > displayHeight) {
                 break;
             }
         }

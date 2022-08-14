@@ -352,6 +352,7 @@ int main()
 				 * | B | G | R |
 				 * | 8 | 8 | 8 |
 				 * 
+				 * (This corresponds to little-endian RGB)
 				 * (BRG on ultrascale)
 				 */
 				 
