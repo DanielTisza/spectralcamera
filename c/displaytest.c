@@ -3,6 +3,8 @@
 --
 -- Displayport display framebuffer testing program
 --
+-- gcc displaytest.c -o displaytest
+--
 -- Copyright: Daniel Tisza, 2022, GPLv3 or later
 -----------------------------------------------------------*/
 
@@ -28,8 +30,19 @@ int main()
 		printf("\r\n");
 		printf("Successfully opened /dev/fb0");
 			
+		/*
 		width = 1280;
 		height = 1024;
+		*/
+
+		/*
+		 * Zybo 7020
+		 *
+		 * Frambuffer should be rgb888
+		 */
+		width = 1920;
+		height = 1080;
+
 
 		for (row=0;row<height;row++) {
 			
@@ -213,7 +226,7 @@ int main()
 				 }
 #endif
 
-#if 1
+#if 0
 				/*
 				 * Format seems to be
 				 * ABRG
@@ -263,6 +276,72 @@ int main()
 					bytesWritten = write(fd, &data, 1);
 				 } 
 #endif
+
+			/*
+			 * Zybo Z7 7020
+			 *
+			 * Pixel format is fixed bgr888
+			 */
+
+#if 0
+				/*
+				 * Fill with white
+				 */
+				 
+				data = 255;
+				bytesWritten = write(fd, &data, 1);
+				
+				data = 255;
+				bytesWritten = write(fd, &data, 1);
+
+				data = 255;
+				bytesWritten = write(fd, &data, 1);
+#endif	
+
+#if 0
+				/*
+				 * Fill with blue
+				 */
+				 
+				data = 255;
+				bytesWritten = write(fd, &data, 1);
+				
+				data = 0;
+				bytesWritten = write(fd, &data, 1);
+
+				data = 0;
+				bytesWritten = write(fd, &data, 1);
+#endif	
+
+#if 0
+				/*
+				 * Fill with green
+				 */
+				 
+				data = 0;
+				bytesWritten = write(fd, &data, 1);
+				
+				data = 255;
+				bytesWritten = write(fd, &data, 1);
+
+				data = 0;
+				bytesWritten = write(fd, &data, 1);
+#endif	
+
+#if 1
+				/*
+				 * Fill with red
+				 */
+				 
+				data = 0;
+				bytesWritten = write(fd, &data, 1);
+				
+				data = 0;
+				bytesWritten = write(fd, &data, 1);
+
+				data = 255;
+				bytesWritten = write(fd, &data, 1);
+#endif	
 				
 			}
 		}
