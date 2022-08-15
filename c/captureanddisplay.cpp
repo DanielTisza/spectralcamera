@@ -32,7 +32,7 @@ int main( void )
     uint32_t        col;
     uint32_t        row;
     uint8_t         data;
-    uint8_t         databuf[2];
+    uint8_t         databuf[3];
     ssize_t         bytesWritten;
 
     uint8_t         imgRed;
