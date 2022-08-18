@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------
 -- SingleCapture.cpp
 --
--- g++ SingleCapture.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -o SingleCapture
+-- g++ SingleCapture.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -std=c++11 -o SingleCapture
 --
 --
 -----------------------------------------------------------*/
@@ -22,6 +22,11 @@ using namespace mvIMPACT::acquire::display;
 
 using namespace mvIMPACT::acquire;
 using namespace std;
+
+#include <apps/Common/exampleHelper.h>
+#include <mvIMPACT_CPP/mvIMPACT_acquire.h>
+#include <mvIMPACT_CPP/mvIMPACT_acquire_GenICam.h>
+#include <mvIMPACT_CPP/mvIMPACT_acquire_helper.h>
 
 //-----------------------------------------------------------------------------
 int main( void )
@@ -48,6 +53,61 @@ int main( void )
         cin.get();
         return 1;
     }
+
+
+    /*
+     * Test settings
+     */
+    mvIMPACT::acquire::GenICam::AcquisitionControl ac(pDev);
+    mvIMPACT::acquire::GenICam::ImageFormatControl ifc(pDev);
+    mvIMPACT::acquire::ImageProcessing imgp(pDev);
+    mvIMPACT::acquire::GenICam::AnalogControl anlgc(pDev);
+
+    cout    << "ac.exposureAuto: " << ac.exposureAuto.readS() << endl;
+    ac.exposureAuto.writeS("Off");
+    cout    << "ac.exposureAuto: " << ac.exposureAuto.readS() << endl;
+
+    cout    << "ifc.pixelFormat: " << ifc.pixelFormat.readS() << endl;
+    //"BayerGB12"
+    //"RGB8"
+    ifc.pixelFormat.writeS("RGB8");
+    cout    << "ifc.pixelFormat: " << ifc.pixelFormat.readS() << endl;
+
+    cout    << "ifc.pixelColorFilter: " << ifc.pixelColorFilter.readS() << endl;
+    //"BayerRG" ?
+    cout    << "ifc.pixelColorFilter: " << ifc.pixelColorFilter.readS() << endl;
+
+    cout    << "imgp.colorProcessing: " << imgp.colorProcessing.readS() << endl;
+    imgp.colorProcessing.writeS("Raw");
+    cout    << "imgp.colorProcessing: " << imgp.colorProcessing.readS() << endl;
+
+
+    cout    << "anlgc.balanceWhiteAuto: " << anlgc.balanceWhiteAuto.readS() << endl;
+    anlgc.balanceWhiteAuto.writeS("Off");
+    cout    << "anlgc.balanceWhiteAuto: " << anlgc.balanceWhiteAuto.readS() << endl;
+
+
+    cout    << "anlgc.gamma: " << anlgc.gamma.readS() << endl;
+    anlgc.gamma.writeS("1");
+    cout    << "anlgc.gamma: " << anlgc.gamma.readS() << endl;
+
+
+    cout    << "anlgc.gain: " << anlgc.gain.readS() << endl;
+    anlgc.gain.writeS("1.9382002601");
+    cout    << "anlgc.gain: " << anlgc.gain.readS() << endl;
+
+
+    cout    << "anlgc.gainAuto: " << anlgc.gainAuto.readS() << endl;
+    anlgc.gainAuto.writeS("Off");
+    cout    << "anlgc.gainAuto: " << anlgc.gainAuto.readS() << endl;
+
+
+    cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
+    ac.exposureTime.writeS("60000");
+    cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
+    
+
+
 
     FunctionInterface fi( pDev );
 
