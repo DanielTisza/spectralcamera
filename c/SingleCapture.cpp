@@ -62,6 +62,7 @@ int main( void )
     mvIMPACT::acquire::GenICam::ImageFormatControl ifc(pDev);
     mvIMPACT::acquire::ImageProcessing imgp(pDev);
     mvIMPACT::acquire::GenICam::AnalogControl anlgc(pDev);
+    mvIMPACT::acquire::GenICam::DeviceControl devc(pDev);
 
     cout    << "ac.exposureAuto: " << ac.exposureAuto.readS() << endl;
     ac.exposureAuto.writeS("Off");
@@ -105,8 +106,15 @@ int main( void )
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
     ac.exposureTime.writeS("60000");
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
-    
 
+    //cout    << "devc.deviceConnectionSpeed: " << devc.deviceConnectionSpeed.readS() << endl;
+    
+    cout    << "devc.deviceLinkSpeed: " << devc.deviceLinkSpeed.readS() << endl;
+    cout    << "devc.deviceLinkThroughputLimitMode: " << devc.deviceLinkThroughputLimitMode.readS() << endl;
+
+    cout    << "devc.deviceLinkThroughputLimit: " << devc.deviceLinkThroughputLimit.readS() << endl;
+    //devc.deviceLinkThroughputLimit.writeS("60000");
+    cout    << "devc.deviceLinkThroughputLimit: " << devc.deviceLinkThroughputLimit.readS() << endl;
 
 
     FunctionInterface fi( pDev );
