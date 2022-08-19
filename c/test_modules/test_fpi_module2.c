@@ -57,6 +57,10 @@ void initFpiSerial(
 	void
 );
 
+void readHardwareId(
+	void
+);
+
 void readFpiEeprom(
 	void
 );
@@ -102,6 +106,11 @@ void main(
 	/*
 	 * Write '!\r\n' and expect '!' in reply
 	 */
+
+	/*
+	 * Read hardware id
+	 */
+	readHardwareId();
 
 	/*
 	 * FPI get EEPROM
@@ -193,6 +202,34 @@ void initFpiSerial(
 	 * Clear TX, RX buffers
 	 */
 	PurgeComm(hComm, PURGE_RXCLEAR | PURGE_TXCLEAR);
+}
+/***************************************************************************//**
+ *
+ *	\brief		Reads FPI filter EEPROM
+ *
+ * 	\param		
+ * 
+ *	\return		
+ *
+ *	\details	
+ *
+ * 	\note		Must be called before trying to set setpoint.
+ *	
+ ******************************************************************************/
+void readHardwareId(
+	void
+) {
+	char					dummy;
+
+	printf("Read hardware id\r\n");
+	printf("Press to activate\r\n");
+	scanf("%c", &dummy);
+
+	fpi_command(10000);	
+	
+	printf("\r\n\r\nReceived response string:\r\n");
+	printf("[%s]\r\n", szReceiveBuf);
+
 }
 /***************************************************************************//**
  *
@@ -339,6 +376,7 @@ void fpi_command(
 	char					szReadEeprom0[] = "R0\r\n";
 	char					szReadEeprom13[] = "R13\r\n";
 	char					szReadEeprom14[] = "R14\r\n";
+	char					szReadHardwareId[] = "!!\r\n";
 
 	switch (command) {
 
@@ -355,6 +393,11 @@ void fpi_command(
 		case 14:
 			szSendBuf = szReadEeprom14;
 			sendBytes = strlen(szReadEeprom14);
+			break;
+
+		case 10000:
+			szSendBuf = szReadHardwareId;
+			sendBytes = strlen(szReadHardwareId);
 			break;
 
 		default:
