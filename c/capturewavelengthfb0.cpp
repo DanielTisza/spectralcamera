@@ -54,9 +54,12 @@ using namespace std;
 /*
  * Display modes
  */
+
+
 #if 1
 int					selectedMode = 0;
-uint32_t			displayWidth = 1920;
+#define				DISPLAY_WIDTH	(1920)
+uint32_t			displayWidth = DISPLAY_WIDTH;
 uint32_t			displayHeight = 1080;
 #endif
 
@@ -116,6 +119,10 @@ double							sinvN3;
 long							useSinvGray;
 
 int			fdLed;
+
+#define DISPLAY_ROW_BYTES		(3*DISPLAY_WIDTH)
+
+uint8_t							displayRowBuf[DISPLAY_ROW_BYTES];
 
 /* FPI */
 int			fdFpi;
@@ -545,6 +552,7 @@ int main(
     mvIMPACT::acquire::GenICam::ImageFormatControl ifc(pDev);
     mvIMPACT::acquire::ImageProcessing imgp(pDev);
     mvIMPACT::acquire::GenICam::AnalogControl anlgc(pDev);
+	mvIMPACT::acquire::GenICam::DeviceControl devc(pDev);
 
     cout    << "ac.exposureAuto: " << ac.exposureAuto.readS() << endl;
     ac.exposureAuto.writeS("Off");
@@ -592,6 +600,18 @@ int main(
     ac.exposureTime.writeS("60000");
     cout    << "ac.exposureTime: " << ac.exposureTime.readS() << endl;
 
+	cout    << "devc.deviceLinkSpeed: " << devc.deviceLinkSpeed.readS() << endl;
+    cout    << "devc.deviceLinkThroughputLimitMode: " << devc.deviceLinkThroughputLimitMode.readS() << endl;
+
+	/*
+	 * Values 27000000 and above result in 'Frame Corrupt'
+	 * with daA2500-14uc and Zybo Z7 Zynq 7020
+	 */
+    cout    << "devc.deviceLinkThroughputLimit: " << devc.deviceLinkThroughputLimit.readS() << endl;
+	devc.deviceLinkThroughputLimit.writeS("26000000");
+    cout    << "devc.deviceLinkThroughputLimit: " << devc.deviceLinkThroughputLimit.readS() << endl;
+
+
 	FunctionInterface fi(pDev);
 	
 	/*
@@ -633,25 +653,12 @@ int main(
 	while (running) {
 
 		/*
-		 * Close LED, MFPI control
-		 */
-		close(fdLed);
-		close(fdFpi);
-
-		/*
 		 * Take image and draw to display
 		 */
 		cout << endl;
 		cout << "Taking image" << endl;
 
 		takeImageAndDraw(pDev, fi, (uint8_t *)pMap);
-
-		/*
-		 * Open LED and MFPI control
-		 */
-		initLedSerial();
-		initFpiSerial();
-		readFpiEeprom();
 
 		/*
 		 * Loop handling user commands
@@ -1622,7 +1629,7 @@ void takeImageAndDraw(
 	// the device has been triggered this might happen as well.
 	// If waiting with an infinite timeout(-1) it will be necessary to call 'imageRequestReset' from another thread
 	// to force 'imageRequestWaitFor' to return when no data is coming from the device/can be captured.
-	int requestNr = fi.imageRequestWaitFor( 10000 );
+	int requestNr = fi.imageRequestWaitFor( 15000 );
 
 	manuallyStopAcquisitionIfNeeded( pDev, fi );
 
@@ -1681,6 +1688,10 @@ void takeImageAndDraw(
 	lseek(fdFb0, 0, SEEK_SET);
 
 	for (row=0;row<height;row++) {
+
+		uint8_t * pRowBuf;
+		
+		pRowBuf = &displayRowBuf[0];
 
 		for (col=0;col<width;col++) {
 
@@ -1800,12 +1811,22 @@ void takeImageAndDraw(
 				databuf[1] = imgGreen;
 				databuf[2] = imgRed;
 				*/
+				/*
 				databuf[0] = imgRed;
 				databuf[1] = imgGreen;
 				databuf[2] = imgBlue;
+				*/
 
-				write(fdFb0, databuf, 3);
+				*pRowBuf++ = imgRed;
+				*pRowBuf++ = imgGreen;
+				*pRowBuf++ = imgBlue;
+
+				/*
+				 * Write to display row buffer
+				 */
+				//write(fdFb0, databuf, 3);
 			} 
+
 		}
 
 		/*
@@ -1824,6 +1845,11 @@ void takeImageAndDraw(
 				pBuf += fillByteCount;
 			}
 			*/
+
+			/*
+			 * Write filled row buffer to display
+			 */
+			write(fdFb0, &displayRowBuf[0], DISPLAY_ROW_BYTES);
 		}
 
 		/*
