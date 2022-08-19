@@ -596,9 +596,12 @@ int main(
 	cout    << "devc.deviceLinkSpeed: " << devc.deviceLinkSpeed.readS() << endl;
     cout    << "devc.deviceLinkThroughputLimitMode: " << devc.deviceLinkThroughputLimitMode.readS() << endl;
 
+	/*
+	 * Values 27000000 and above result in 'Frame Corrupt'
+	 * with daA2500-14uc and Zybo Z7 Zynq 7020
+	 */
     cout    << "devc.deviceLinkThroughputLimit: " << devc.deviceLinkThroughputLimit.readS() << endl;
-    //devc.deviceLinkThroughputLimit.writeS("32000000");
-	devc.deviceLinkThroughputLimit.writeS("8000000");
+	devc.deviceLinkThroughputLimit.writeS("26000000");
     cout    << "devc.deviceLinkThroughputLimit: " << devc.deviceLinkThroughputLimit.readS() << endl;
 
 
