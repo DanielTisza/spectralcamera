@@ -1,5 +1,4 @@
-
-/dev/mmcblk0p1
+dev/mmcblk0p1
 /dev/mmcblk0p2
 
 
@@ -50,5 +49,113 @@ cd /media/rootfs
 
 sudo tar -czf /ubuntu_minimal_zybo7k_rootfs_2021_05_23_leddriver.tar.gz ./
 
+
+--------------
+
+Ubuntu Live CD
+
+ls /media/ubuntu/
+
+9650922C509212DB  BOOT
+
+
+*** Ubuntu Live USB and Transcend SD card reader
+
+dmesg | grep sd
+
+[  483.846729] sd 7:0:0:0: [sdc] 31116288 512-byte logical blocks: (15.9 GB/14.8 GiB)
+[  483.879630]  sdc: sdc1 sdc2
+[  484.308485] FAT-fs (sdc1): Volume was not properly unmounted. Some data may be corrupt. Please run fsck.
+[  484.343586] EXT4-fs (sdc2): mounted filesystem with ordered data mode. Opts: (null)
+
+
+sudo mkdir /media/rootfs
+
+-----
+
+sudo mount /dev/sdc2 /media/rootfs/
+cd /media/rootfs
+sudo tar -czf /media/ubuntu/9650922C509212DB/tldati/zyboz7/SD/genesys_rootfs_2022_08_23.tar.gz ./
+cd ..
+sudo umount rootfs
+
+-----
+
+sudo mount /dev/sdc2 /media/rootfs/
+cd /media/rootfs
+sudo tar -czf /media/ubuntu/9650922C509212DB/tldati/zyboz7/SD/zynq7020_rootfs_2022_08_23.tar.gz ./
+cd ..
+sudo umount rootfs
+
+-----
+
+Zynq-7020 SD card information
+
+(Sandisk adapter 2020-06-01)
+
+Device information
+
+Partition table: msdos
+Heads: 255
+Sectors/track: 2
+Cylinders: 118510
+Total sectors: 60440576
+Sector size: 512
+
+/dev/sdc1
+
+File system: fat32
+label: BOOT
+Flags: boot
+Size: 1 GiB
+First sector: 2048
+Last sector: 2099199
+Total sectors: 2097152
+
+/dev/sdc2
+
+File system: ext4
+label: 
+Flags: 
+Size: 27.82 GiB
+First sector: 2099200
+Last sector: 60440575
+Total sectors: 58341376
+
+---
+
+
+Ultrascale+ 3EG SD card information
+
+(Sandisk adapter 2021-07-03)
+
+Device information
+
+Partition table: msdos
+Heads: 255
+Sectors/track: 2
+Cylinders: 61012
+Total sectors: 31116288
+Sector size: 512
+
+/dev/sdc1
+
+File system: fat32
+label: BOOT
+Flags: 
+Size: 1023.00 MiB
+First sector: 2048
+Last sector: 2097151
+Total sectors: 2095104
+
+/dev/sdc2
+
+File system: ext4
+label: 
+Flags: 
+Size: 13.84 GiB
+First sector: 2097152
+Last sector: 31115263
+Total sectors: 29018112
 
 
