@@ -161,14 +161,6 @@ int main( void )
         return 1;
     }
 
-#ifdef USE_DISPLAY
-    cout << "Please note that there will be just one refresh for the display window, so if it is" << endl
-         << "hidden under another window the result will not be visible." << endl;
-    // everything went well. Display the result
-    ImageDisplayWindow display( "mvIMPACT_acquire sample" );
-    display.GetImageDisplay().SetImage( pRequest );
-    display.GetImageDisplay().Update();
-#endif // USE_DISPLAY
     cout << "Image captured(" << pRequest->imagePixelFormat.readS() << " " << pRequest->imageWidth.read() << "x" << pRequest->imageHeight.read() << ")" << endl;
 
     // unlock the buffer to let the driver know that you no longer need this buffer.
