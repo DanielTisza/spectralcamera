@@ -3,6 +3,9 @@
 --
 -- g++ SingleCapture.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -std=c++11 -o SingleCapture
 --
+-- Visual Studio 2017 Developer Command Prompt v15.9.40
+--
+-- cl SingleCapture.cpp /EHsc /I "C:\Program Files\MATRIX VISION\mvIMPACT Acquire" /link /LIBPATH:"C:\Program Files\MATRIX VISION\mvIMPACT Acquire\lib"
 --
 -----------------------------------------------------------*/
 
@@ -14,11 +17,14 @@
 #include <iostream>
 #include <apps/Common/exampleHelper.h>
 #include <mvIMPACT_CPP/mvIMPACT_acquire.h>
+
+/*
 #ifdef _WIN32
 #   define USE_DISPLAY
 #   include <mvDisplay/Include/mvIMPACT_acquire_display.h>
 using namespace mvIMPACT::acquire::display;
 #endif // #ifdef _WIN32
+*/
 
 using namespace mvIMPACT::acquire;
 using namespace std;
@@ -54,7 +60,7 @@ int main( void )
         return 1;
     }
 
-
+#if 1
     /*
      * Test settings
      */
@@ -71,7 +77,8 @@ int main( void )
     cout    << "ifc.pixelFormat: " << ifc.pixelFormat.readS() << endl;
     //"BayerGB12"
     //"RGB8"
-    ifc.pixelFormat.writeS("RGB8");
+    //ifc.pixelFormat.writeS("RGB8");
+    ifc.pixelFormat.writeS("BayerGB12");
     cout    << "ifc.pixelFormat: " << ifc.pixelFormat.readS() << endl;
 
     cout    << "ifc.pixelColorFilter: " << ifc.pixelColorFilter.readS() << endl;
@@ -116,6 +123,7 @@ int main( void )
     //devc.deviceLinkThroughputLimit.writeS("60000");
     cout    << "devc.deviceLinkThroughputLimit: " << devc.deviceLinkThroughputLimit.readS() << endl;
 
+#endif
 
     FunctionInterface fi( pDev );
 
