@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------
--- SingleCapture.cpp
+-- SingleUserMemCapture.cpp
 --
--- g++ SingleCapture.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -std=c++11 -o SingleCapture
+-- g++ SingleUserMemCapture.cpp -I/opt/mvIMPACT_Acquire -L/opt/mvIMPACT_Acquire/lib/armhf -l mvDeviceManager -std=c++11 -o SingleUserMemCapture
 --
 -- Visual Studio 2017 Developer Command Prompt v15.9.40
 --
--- cl SingleCapture.cpp /EHsc /I "C:\Program Files\MATRIX VISION\mvIMPACT Acquire" /link /LIBPATH:"C:\Program Files\MATRIX VISION\mvIMPACT Acquire\lib"
+-- cl SingleUserMemCapture.cpp /EHsc /I "C:\Program Files\MATRIX VISION\mvIMPACT Acquire" /link /LIBPATH:"C:\Program Files\MATRIX VISION\mvIMPACT Acquire\lib"
 --
 -----------------------------------------------------------*/
 
@@ -17,7 +17,6 @@
 #include <iostream>
 #include <apps/Common/exampleHelper.h>
 #include <mvIMPACT_CPP/mvIMPACT_acquire.h>
-
 
 using namespace mvIMPACT::acquire;
 using namespace std;
@@ -120,6 +119,113 @@ int main( void )
 
     FunctionInterface fi( pDev );
 
+
+    /*
+     * User supplied capture buffer
+	 *
+	 * https://www.matrix-vision.com/manuals/SDK_CPP/classmvIMPACT_1_1acquire_1_1FunctionInterface.html#a749fd22991f052f7c324b0ba4105f33c
+     */
+	ImageRequestControl		irc( pDev );
+
+    Request * 				pCurrentCaptureBufferLayout = NULL;
+	int 					bufferAlignment = {0};
+
+    int result = fi.getCurrentCaptureBufferLayout(
+		irc,
+		&pCurrentCaptureBufferLayout,
+		&bufferAlignment
+	);
+
+    if( result != 0 )
+    {
+        cout << "An error occurred while querying the current capture buffer layout for device " << endl
+             << "Press [ENTER] to end the application..." << endl;
+        cin.get();
+        return 1;
+    }
+
+    int bufferSize =
+			pCurrentCaptureBufferLayout->imageSize.read()
+		+	pCurrentCaptureBufferLayout->imageFooterSize.read();
+
+    int bufferPitch = pCurrentCaptureBufferLayout->imageLinePitch.read();
+
+	cout << "Buffer size: " << bufferSize << endl;
+
+	cout << "Buffer pitch: " << bufferPitch << endl;
+
+	/*
+	 * Allocate user buffer pointer
+	 */
+	Request* pReq = fi.getRequest( 0 );
+
+	char * pUserBuf = (char *)_aligned_malloc(bufferSize, bufferAlignment);
+
+	// the buffer assigned to the request object must be aligned accordingly
+	// the size of the user supplied buffer MUST NOT include the additional size
+	// caused by the alignment
+	if( pReq->attachUserBuffer( pUserBuf, bufferSize ) == DMR_NO_ERROR )
+	{
+		irc.requestToUse.write( 0 ); // use the buffer just configured for the next image request
+
+		// now the next image will be captured into the user supplied memory
+		
+		fi.imageRequestSingle( &irc ); // this will send request '0' to the driver
+
+		// wait for the buffer. Once it has been returned by the driver AND the user buffer shall no
+		// longer be used call
+
+		manuallyStartAcquisitionIfNeeded( pDev, fi );
+
+		int requestNr = fi.imageRequestWaitFor( 10000 );
+
+		cout << "Got after waiting reqNr: " << requestNr << endl;
+
+		manuallyStopAcquisitionIfNeeded( pDev, fi );
+
+		
+		// check if the image has been captured without any problems.
+		if( !fi.isRequestNrValid( requestNr ) )
+		{
+			// If the error code is -2119(DEV_WAIT_FOR_REQUEST_FAILED), the documentation will provide
+			// additional information under TDMR_ERROR in the interface reference
+			cout << "imageRequestWaitFor failed maybe the timeout value has been too small?" << endl;
+			return 1;
+		}
+
+		Request* pRequest = fi.getRequest( requestNr );
+
+		if( !pRequest->isOK() )
+		{
+			cout << "Error: " << pRequest->requestResult.readS() << endl;
+			return 1;
+		}
+
+		cout << "Image captured(" 
+			<<	pRequest->imagePixelFormat.readS()
+			<<	" " 
+			<<	pRequest->imageWidth.read() 
+			<< 	"x" 
+			<<	pRequest->imageHeight.read()
+			<<	")"
+			<<	endl;
+
+		
+		if( pRequest->detachUserBuffer() != DMR_NO_ERROR )
+		{
+			// handle error
+		}
+
+		// now this request will use internal memory again.
+	}
+	else
+	{
+		// handle error
+	}
+
+
+
+#if 0
     // send a request to the default request queue of the device and wait for the result.
     fi.imageRequestSingle();
 
@@ -164,6 +270,8 @@ int main( void )
 
     // unlock the buffer to let the driver know that you no longer need this buffer.
     fi.imageRequestUnlock( requestNr );
+#endif
+
 
     cout << "Press [ENTER] to end the application" << endl;
     cin.get();
