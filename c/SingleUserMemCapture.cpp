@@ -15,7 +15,13 @@
 #   endif // #if _MSC_VER < 1300
 #endif // #ifdef _MSC_VER
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
 #include <iostream>
+
 #include <apps/Common/exampleHelper.h>
 #include <mvIMPACT_CPP/mvIMPACT_acquire.h>
 #include <mvIMPACT_CPP/mvIMPACT_acquire_GenICam.h>
@@ -23,6 +29,31 @@
 
 using namespace mvIMPACT::acquire;
 using namespace std;
+
+/*------------------------------------------------------------------------------
+ * Definitions
+ *----------------------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------
+ * Global variables
+ *----------------------------------------------------------------------------*/
+
+#define bytesPerPixel			3 	// red, green, blue
+#define fileHeaderSize			14
+#define infoHeaderSize			40
+
+/*------------------------------------------------------------------------------
+ * Function declarations
+ *----------------------------------------------------------------------------*/
+
+void saveBitmapImage(
+	unsigned char *			pBuf, 
+	int 					height, 
+	int 					width, 
+	int 					pitch, 
+	const char * 			szFileName
+);
+
 
 //-----------------------------------------------------------------------------
 int main( void )
@@ -155,7 +186,7 @@ int main( void )
 	cout << "Buffer size: " << bufferSize << endl;
 	cout << "Buffer pitch: " << bufferPitch << endl;
     cout << "Buffer alignment: " << bufferAlignment << endl;
-    cout << "Buffer pointer: " << pUserBuf << endl;
+    cout << "Buffer pointer: " << (long)pUserBuf << endl;
 
 	/*
 	 * Allocate user buffer pointer
@@ -214,6 +245,15 @@ int main( void )
 			<<	")"
 			<<	endl;
 
+
+
+		saveBitmapImage(
+			(unsigned char *)pUserBuf, 
+			(int)1942, //height, 
+			(int)2590, //width, 
+			(int)5180, //pitchBytes, 
+			"test.bmp"
+		);
 		
 		if( pRequest->detachUserBuffer() != DMR_NO_ERROR )
 		{
@@ -227,7 +267,226 @@ int main( void )
 		// handle error
 	}
 
-    cout << "Press [ENTER] to end the application" << endl;
-    cin.get();
+    cout << "End the application" << endl;
+    //cin.get();
     return 0;
+}
+
+
+/***************************************************************************//**
+ *
+ *	\brief		Save bitmap image
+ *
+ * 	\param		pBuf	Ptr to image pixels buffer
+ * 	\param		height	Image height in pixels
+ * 	\param		width	Image width in pixels
+ * 	\param		pitch	Distance in bytes between successive rows in image
+ * 	\param		szFileName	File name string, null-terminated
+ * 
+ *	\return		
+ *
+ *	\details	Save bitmap image
+ *
+ * 	\note
+ *	
+ ******************************************************************************/
+void saveBitmapImage(
+	unsigned char *			pBuf, 
+	int 					height, 
+	int 					width, 
+	int 					pitch, 
+	const char * 			szFileName
+) {
+	int 					i;
+	FILE * 					imageFile;
+	int						paddingSize;
+	int						fileSize;
+
+	/*
+		0,0,0,0, /// header size
+		0,0,0,0, /// image width
+		0,0,0,0, /// image height
+		0,0, /// number of color planes
+		0,0, /// bits per pixel
+		0,0,0,0, /// compression
+		0,0,0,0, /// image size
+		0,0,0,0, /// horizontal resolution
+		0,0,0,0, /// vertical resolution
+		0,0,0,0, /// colors in color table
+		0,0,0,0, /// important color count
+	 */
+	unsigned char infoHeader[infoHeaderSize];
+
+	/*
+		0,0, /// signature
+		0,0,0,0, /// image file size in bytes
+		0,0,0,0, /// reserved
+		0,0,0,0, /// start of pixel array
+	*/
+	unsigned char fileHeader[fileHeaderSize];
+
+	/*
+	 * Dummy buffer for writing padding values
+	 */
+	unsigned char padding[3] = { 0, 0, 0 };
+
+	/*
+	 * Bitmap file header
+	 */
+	memset(&fileHeader[0], 0, fileHeaderSize);
+
+	//paddingSize = (4 - (pitch) % 4) % 4;
+	paddingSize = 2;
+
+	fileSize = 
+			fileHeaderSize
+		+ 	infoHeaderSize
+		+ 	(pitch + paddingSize) * height;
+
+	fileHeader[0] = (unsigned char)('B');
+	fileHeader[1] = (unsigned char)('M');
+
+	fileHeader[2] = (unsigned char)(fileSize);
+	fileHeader[3] = (unsigned char)(fileSize >> 8);
+	fileHeader[4] = (unsigned char)(fileSize >> 16);
+	fileHeader[5] = (unsigned char)(fileSize >> 24);
+
+	fileHeader[10] = (unsigned char)(fileHeaderSize + infoHeaderSize);
+
+	/*
+	 * Bitmap info header
+	 */
+	memset(&infoHeader[0], 0, infoHeaderSize);
+
+	infoHeader[0] = (unsigned char)(infoHeaderSize);
+
+	infoHeader[4] = (unsigned char)(width);
+	infoHeader[5] = (unsigned char)(width >> 8);
+	infoHeader[6] = (unsigned char)(width >> 16);
+	infoHeader[7] = (unsigned char)(width >> 24);
+
+	infoHeader[8] = (unsigned char)(height);
+	infoHeader[9] = (unsigned char)(height >> 8);
+	infoHeader[10] = (unsigned char)(height >> 16);
+	infoHeader[11] = (unsigned char)(height >> 24);
+
+	infoHeader[12] = (unsigned char)(1);
+
+	infoHeader[14] = (unsigned char)24;
+
+	/*
+	 * Create file
+	 */
+	imageFile = fopen(szFileName, "wb");
+
+	/*
+	 * Bitmap file header
+	 * Bitmap info header
+	 */
+	fwrite(&fileHeader[0], 1, fileHeaderSize, imageFile);
+	fwrite(&infoHeader[0], 1, infoHeaderSize, imageFile);
+
+	/*
+	 * Pixels
+	 *
+	 * 0 - 1941
+	 */
+	for (i = 0; i < height; i++) {
+
+		/*
+		 * Pixel row
+		 */
+		uint16_t * pEven;
+		uint16_t * pOdd;
+
+		/*
+		 * Need to convert from BayerGB12
+		 *
+		 * 2590
+		 * 1942
+		 * 
+		 * 2590 * 3 bytes = 7770 bytes
+		 * 7770 / 4 bytes = 1942.5
+		 * 1943 * 4 = 7772 bytes
+		 * 
+		 * => padding = 2 bytes
+		 */
+		if ( (i & 1) == 0) {
+
+			/*
+			 * Current row is even
+			 */
+			pEven = (uint16_t *)(pBuf + (i * pitch));
+			pOdd = (uint16_t *)(pBuf + ( (i+1) * pitch));
+
+		} else {
+
+			/*
+			 * Current row is odd
+			 * Last row index should also be odd, we trust that here
+			 */
+			pEven = (uint16_t *)(pBuf + ( (i-1) * pitch));
+			pOdd = (uint16_t *)(pBuf + ( i * pitch));
+		}
+
+		uint16_t * pBlue = pEven + 1;
+		uint16_t * pRed = pOdd;
+		uint16_t * pGreen = pEven;
+
+		/*
+		 * Pixels in row
+		 *
+		 * 0 - 2589
+		 * 
+		 * 12-bit color value
+		 */
+		for (int j=0;j<width;j++) {
+
+			uint16_t red = *pRed;
+			uint16_t blue = *pBlue;
+
+			if ((j & 1) == 0) {
+
+				/*
+				 * Odd pixel row index
+				 */
+				pGreen = pEven + j;
+
+				pRed += 2;
+				pBlue += 2;
+
+			} else {
+
+				/*
+				 * Even pixel row index
+				 */
+				pGreen = pOdd + j + 1;
+			}
+
+			uint16_t green = *pGreen;
+
+			padding[0] = blue >> 4;
+			padding[1] = green >> 4;
+			padding[2] = red >> 4;
+
+			fwrite(
+				padding,
+				1,
+				3,
+				imageFile
+			);
+		}
+		
+		/*
+		 * Padding to multiple of 4
+		 */
+		fwrite(
+			padding,
+			1,
+			paddingSize,
+			imageFile
+		);
+	}
+
+	fclose(imageFile);
 }
