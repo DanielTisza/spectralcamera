@@ -10,6 +10,21 @@
 		bootargs = "console=ttyPS0,115200 earlyprintk uio_pdrv_genirq.of_id=generic-uio root=/dev/mmcblk0p2 rw rootwait";
 	};
 
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		reserved: buffer@0x3C000000 {
+			reg = <0x3C000000 0x4000000>;
+		};
+	};
+
+	reserved-driver@0 {
+		compatible = "xlnx,reserved-memory";
+		memory-region = <&reserved>;
+	};
+
 	usb_phy0: usb_phy@0 {
 		compatible = "ulpi-phy";
 		#phy-cells = <0>;

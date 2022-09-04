@@ -26,3 +26,4 @@
 #define CONFIG_PREBOOT	"echo U-BOOT for Zybo Z7; setenv preboot; setenv bootenv uEnv.txt;  setenv loadbootenv_addr 0x3EE00000; if test $modeboot = sdboot && env run sd_uEnvtxt_existence_test; then if env run loadbootenv; then env run importbootenv; fi; fi; dhcp"
 #endif
 
+#define CONFIG_NR_DRAM_BANKS 1
