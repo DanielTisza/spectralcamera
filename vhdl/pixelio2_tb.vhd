@@ -5,9 +5,10 @@
 --
 -- Copyright: Daniel Tisza, 2022, GPLv3 or later
 --
--- ghdl -a pixelio2.vhd
--- ghdl -e pixelio2
--- ghdl -r pixelio2
+-- ghdl -a -v pixelio2_tb.vhd
+-- ghdl -e -v pixelio2_tb
+-- ghdl -r pixelio2_tb --vcd=out.vcd
+-- gtkwave
 --
 -----------------------------------------------------------
 library ieee;
@@ -15,7 +16,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 -- Describe the I/O of this "chip"
-entity pixelio2 is
+entity pixelio2_tb is
 
 	generic(
 		C_M_AXI_ADDR_WIDTH	: integer	:= 32;
@@ -32,8 +33,9 @@ entity pixelio2 is
 		----------------------------------------
 
 		-- Clock and reset
-		AXI_ACLK	: in std_logic;
-		AXI_ARESETN	: in std_logic;
+
+		-- AXI_ACLK	: in std_logic;
+		-- AXI_ARESETN	: in std_logic;
 
 		-- AXI master read address
 		AXI_ARADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
@@ -90,10 +92,10 @@ entity pixelio2 is
 		AXI_BRESP	: in std_logic_vector(1 downto 0)
 	);
 
-end pixelio2;
+end pixelio2_tb;
 
 -- Describe the contents of this "chip"
-architecture rtl of pixelio2 is
+architecture rtl of pixelio2_tb is
 
 	signal AXI_ARVALID_int : std_logic;
 	signal AXI_ARADDR_int : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
@@ -109,6 +111,15 @@ architecture rtl of pixelio2 is
 	signal AXI_WLAST_int : std_logic;
 
 	signal statebits : std_logic_vector(7 downto 0);
+
+
+	-- Testbench signals
+	signal AXI_ACLK	: std_logic;
+	signal AXI_ARESETN : std_logic;
+
+	signal finished : std_logic;
+	signal clk : std_logic;
+	signal reset : std_logic;
 
 begin
 	
@@ -249,6 +260,70 @@ begin
 
 	AXI_WVALID <= AXI_WVALID_int;
 	AXI_WDATA <= AXI_WDATA_int;
+	AXI_WLAST <= AXI_WLAST_int;
+
+
+
+	------------------------------------------------
+	-- Test bench part
+	------------------------------------------------
+
+	AXI_ARESETN <= not(reset);
+	AXI_ACLK <= clk;
+
+	-- Generate reset pulse for global reset
+	testbench_reset_proc : process
+	begin
+	
+		reset <= '1';
+		wait for 5 us;
+		reset <= '0';
+		wait;
+	
+	end process;
+
+	-- Generate finished signal
+	testbench_finish_proc : process
+	begin
+	
+		-- Initial finished state
+		finished <= '0';
+		
+		-- Set finished after a delay
+		wait for 50 us;
+		finished <= '1';
+		
+		-- Wait a while after finishing
+		wait for 3 us;
+		wait;
+	
+	end process;
+	
+	-- Generate clock signal
+	testbench_clock_proc : process
+	begin
+	
+		-- Initial clock signal state
+		clk <= '0';
+		
+		clockloop : loop
+		
+			-- Clock ticks
+			wait for 1 us;
+			clk <= not(clk);
+			
+			-- Exit loop when finished
+			if (finished='1') then
+				exit;
+			else
+			end if;
+		
+		end loop clockloop;
+		
+		wait;
+	
+	end process;
+	
 
 	
 end architecture;
