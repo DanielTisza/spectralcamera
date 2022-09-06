@@ -64,7 +64,7 @@ entity pixelio2_tb is
 		-- AXI master write address
 		AXI_AWADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
 		AXI_AWVALID	: out std_logic;
-		AXI_AWREADY	: in std_logic;
+		-- AXI_AWREADY	: in std_logic;
 		AXI_AWID	: out std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
 		AXI_AWLOCK	: out std_logic;
 		AXI_AWCACHE	: out std_logic_vector(3 downto 0);
@@ -116,10 +116,12 @@ architecture rtl of pixelio2_tb is
 	-- Testbench signals
 	signal AXI_ACLK	: std_logic;
 	signal AXI_ARESETN : std_logic;
+	signal AXI_AWREADY : std_logic;
 
 	signal finished : std_logic;
 	signal clk : std_logic;
 	signal reset : std_logic;
+	signal tb_awready : std_logic;
 
 begin
 	
@@ -238,17 +240,33 @@ begin
 	end process;
 
 	-- Default values
-	AXI_ARID <= (others => '0');
-	AXI_ARCACHE <= (others => '0');
 
-	AXI_AWID <= (others => '0');
-	AXI_AWLOCK <= '0';
+	-- Zynq 7000 supports incrementing
+	AXI_AWBURST <= "01";
+	AXI_AWLEN <= X"0"; -- 1 transfer in the burst (1-16 data beats)
+	AXI_AWSIZE <= "11"; -- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+
+	-- Zynq TRM p. 299
+	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
+	-- AWPROT/ARPROT[1] bit is used for trust zone support, AWPROT/ARPROT[0], and
+	-- AWPROT/ARPROT[2] bits are ignored and do not have any effect.
+	--
+	-- Zynq UltraScale MPSoC Cache Coherency
+	-- AxPROT[1] should be 1 for non-secure access for Linux
+	AXI_AWPROT <= "010";
+
+	-- Zynq TRM p. 299
+	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
+	-- ARCACHE[3:0]/AWCACHE[3:0] (cache support) are ignored, and do not have any effect.
+	AXI_ARCACHE <= (others => '0');
 	AXI_AWCACHE <= (others => '0');
-	AXI_AWPROT <= "000";	
-	AXI_AWLEN <= X"0"; -- 1 transfer
-	AXI_AWSIZE <= "11"; -- 8 octets = 64 bits (would increment address by 8)
-	AXI_AWBURST <= "01"; -- Incrementing
+
+
+	AXI_ARID <= (others => '0');
+	AXI_AWID <= (others => '0');
+	AXI_AWLOCK <= '0';	
 	AXI_AWQOS <= (others => '0');
+	AXI_WID <= (others => '0');
 
 	-- Connect internal signals to interface signals
 
@@ -261,15 +279,17 @@ begin
 	AXI_WVALID <= AXI_WVALID_int;
 	AXI_WDATA <= AXI_WDATA_int;
 	AXI_WLAST <= AXI_WLAST_int;
+	AXI_WSTRB <= AXI_WSTRB_int;
 
-
-
+	AXI_BREADY <= AXI_BREADY_int;
+	
 	------------------------------------------------
 	-- Test bench part
 	------------------------------------------------
 
 	AXI_ARESETN <= not(reset);
 	AXI_ACLK <= clk;
+	AXI_AWREADY <= tb_awready;
 
 	-- Generate reset pulse for global reset
 	testbench_reset_proc : process
@@ -323,6 +343,44 @@ begin
 		wait;
 	
 	end process;
+
+	-- Generate finished signal
+	testbench_awready_proc : process
+	begin
+	
+		-- Initial axi_wready
+		tb_awready <= '0';
+		
+		-- Set finished after a delay
+		wait for 10 us;
+		tb_awready <= '1';
+
+		wait for 2 us;
+		tb_awready <= '0';
+		
+		-- Wait a while after finishing
+		wait;
+	
+	end process;
+
+	-- Generate finished signal
+--	testbench_wready_proc : process
+--	begin
+--	
+--		-- Initial axi_wready
+--		tb_wready <= '0';
+--		
+--		-- Set finished after a delay
+--		wait for 10 us;
+--		tb_wready <= '1';
+--
+--		wait for 2 us;
+--		tb_wready <= '0';
+--		
+--		-- Wait a while after finishing
+--		wait;
+--	
+--	end process;
 	
 
 	
