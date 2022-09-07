@@ -10,12 +10,23 @@
 		bootargs = "console=ttyPS0,115200 earlyprintk uio_pdrv_genirq.of_id=generic-uio root=/dev/mmcblk0p2 rw rootwait";
 	};
 
+	/*
+	 * From system-top.dts
+	 */
+	/*
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x40000000>;
+	};
+	*/
+
 	reserved-memory {
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
 
 		reserved: buffer@0x3C000000 {
+			no-map;
 			reg = <0x3C000000 0x4000000>;
 		};
 	};

@@ -253,7 +253,8 @@ begin
 	--
 	-- Zynq UltraScale MPSoC Cache Coherency
 	-- AxPROT[1] should be 1 for non-secure access for Linux
-	AXI_AWPROT <= "010";
+	-- AXI_AWPROT <= "010";
+	AXI_AWPROT <= "000";
 
 	-- Zynq TRM p. 299
 	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
@@ -383,5 +384,11 @@ begin
 --	end process;
 	
 
+	AXI_ARLEN <= (others => '0');
+	AXI_ARLOCK <= (others => '0');
+	AXI_ARPROT <= (others => '0');
+	AXI_ARQOS <= (others => '0');
+	AXI_ARSIZE <= (others => '0');
+	AXI_RREADY <= '0';
 	
 end architecture;

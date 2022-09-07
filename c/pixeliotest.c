@@ -22,6 +22,8 @@ int main()
 	unsigned int 	ram_size = 0x4000000;
 	uint32_t *		ram_vptr;
 	int 			fd;
+	uint8_t *		pShared;
+	uint32_t		ii;
 
 	if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
 
@@ -34,6 +36,7 @@ int main()
 			ram_pbase
 		);
 
+		/*
 		//Read from DDR reserved area
 		printf("\r\n");
 		printf("Reading value from reserved DDR at address 0x0: [%X]\r\n", ram_vptr[0]);
@@ -47,6 +50,27 @@ int main()
 		printf("\r\n");
 		printf("Reading back value 0xAABBCCDD from DDR reserved area at address 0x1: [%X]\r\n", ram_vptr[1]);
 		printf("\r\n");
+		*/
+
+		//Read data from DDR reserved area
+
+		printf("\r\n");
+
+		pShared = (uint8_t *)ram_vptr;
+
+		for (ii=0;ii<64;ii++) {
+
+			printf(
+				"Reading from DDR reserved area at address (0x3C000000 + %d): [%X]\r\n",
+				ii,
+				pShared[ii]
+			);
+
+			//pShared[ii] = 0xA5;
+		}
+		
+		printf("\r\n");
+
 
 		close(fd);
 	}

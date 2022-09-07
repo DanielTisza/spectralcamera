@@ -5,9 +5,10 @@
 --
 -- Copyright: Daniel Tisza, 2022, GPLv3 or later
 --
--- ghdl -a pixelio2.vhd
--- ghdl -e pixelio2
--- ghdl -r pixelio2
+-- ghdl -a -v pixelio2.vhd
+-- ghdl -e -v pixelio2
+-- ghdl -r pixelio2 --vcd=out.vcd
+-- gtkwave
 --
 -----------------------------------------------------------
 library ieee;
@@ -227,17 +228,34 @@ begin
 	end process;
 
 	-- Default values
-	AXI_ARID <= (others => '0');
-	AXI_ARCACHE <= (others => '0');
 
+	-- Zynq 7000 supports incrementing
+	AXI_AWBURST <= "01";
+	AXI_AWLEN <= X"0"; -- 1 transfer in the burst (1-16 data beats)
+	AXI_AWSIZE <= "11"; -- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+
+	-- Zynq TRM p. 299
+	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
+	-- AWPROT/ARPROT[1] bit is used for trust zone support, AWPROT/ARPROT[0], and
+	-- AWPROT/ARPROT[2] bits are ignored and do not have any effect.
+	--
+	-- Zynq UltraScale MPSoC Cache Coherency
+	-- AxPROT[1] should be 1 for non-secure access for Linux
+	-- AXI_AWPROT <= "010";
+	AXI_AWPROT <= "000";
+
+	-- Zynq TRM p. 299
+	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
+	-- ARCACHE[3:0]/AWCACHE[3:0] (cache support) are ignored, and do not have any effect.
+	AXI_ARCACHE <= (others => '0');
+	AXI_AWCACHE <= (others => '0');
+
+
+	AXI_ARID <= (others => '0');
 	AXI_AWID <= (others => '0');
 	AXI_AWLOCK <= '0';
-	AXI_AWCACHE <= (others => '0');
-	AXI_AWPROT <= "000";	
-	AXI_AWLEN <= X"0"; -- 1 transfer
-	AXI_AWSIZE <= "11"; -- 8 octets = 64 bits (would increment address by 8)
-	AXI_AWBURST <= "01"; -- Incrementing
 	AXI_AWQOS <= (others => '0');
+	AXI_WID <= (others => '0');
 
 	-- Connect internal signals to interface signals
 
@@ -249,6 +267,18 @@ begin
 
 	AXI_WVALID <= AXI_WVALID_int;
 	AXI_WDATA <= AXI_WDATA_int;
+	AXI_WLAST <= AXI_WLAST_int;
+	AXI_WSTRB <= AXI_WSTRB_int;
 
+	AXI_BREADY <= AXI_BREADY_int;
+
+
+	AXI_ARLEN <= (others => '0');
+	AXI_ARLOCK <= (others => '0');
+	AXI_ARPROT <= (others => '0');
+	AXI_ARQOS <= (others => '0');
+	AXI_ARSIZE <= (others => '0');
+	AXI_RREADY <= '0';
+	AXI_ARBURST <= "01";
 	
 end architecture;
