@@ -58,7 +58,7 @@ int main()
 
 		pShared = (uint8_t *)ram_vptr;
 
-		for (ii=0;ii<64;ii++) {
+		for (ii=0;ii<16;ii++) {
 
 			printf(
 				"Reading from DDR reserved area at address (0x3C000000 + %d): [%X]\r\n",

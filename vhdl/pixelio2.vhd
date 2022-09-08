@@ -45,7 +45,7 @@ entity pixelio2 is
 		AXI_ARCACHE	: out std_logic_vector(3 downto 0);
 		AXI_ARPROT	: out std_logic_vector(2 downto 0);
 		AXI_ARLEN	: out std_logic_vector(3 downto 0);
-		AXI_ARSIZE	: out std_logic_vector(2 downto 0);
+		AXI_ARSIZE	: out std_logic_vector(1 downto 0);
 		AXI_ARBURST	: out std_logic_vector(1 downto 0);
 		AXI_ARQOS	: out std_logic_vector(3 downto 0);
 
@@ -109,7 +109,14 @@ architecture rtl of pixelio2 is
 
 	signal AXI_WLAST_int : std_logic;
 
+	signal AXI_RDATA_int : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal AXI_RREADY_int : std_logic;
+
 	signal statebits : std_logic_vector(7 downto 0);
+	signal readstatebits : std_logic_vector(7 downto 0);
+
+	signal termA : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal result : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 begin
 	
@@ -142,7 +149,14 @@ begin
 			-- AXI master write response
 			AXI_BREADY_int <= '0';
 
+			AXI_RDATA_int <= (others => '0');
+			AXI_RREADY_int <= '0';
+
 			statebits <= "00000001";
+			readstatebits <= "00000001";
+
+			termA <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			result <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
 		else
 
@@ -151,6 +165,10 @@ begin
 				-- AXI master read address
 				AXI_ARVALID_int <= AXI_ARVALID_int;
 				AXI_ARADDR_int <= AXI_ARADDR_int;
+
+				-- AXI master read
+				AXI_RDATA_int <= AXI_RDATA_int;
+				AXI_RREADY_int <= AXI_RREADY_int;
 
 				-- AXI master write address
 				AXI_AWVALID_int <= AXI_AWVALID_int;
@@ -165,15 +183,67 @@ begin
 				-- AXI master write response
 				AXI_BREADY_int <= AXI_BREADY_int;
 
+				-- Computations
+				termA <= unsigned(AXI_RDATA_int);
+				result <= termA + termA;
 
 				-- Read data A from 0x3C000000, 64-bits (8 bytes)
 				-- Read data B from 0x3C000008, 64-bits (8 bytes)
 				-- Perform operation on C = A + B
 
+				--------------------------------------
+				-- Read data B from 0x3C000008, 64-bits (8 bytes)
+				--------------------------------------
+				readstatebits <= readstatebits;
+
+				if (readstatebits="00000001") then
+
+					AXI_ARVALID_int <= '0';
+					AXI_RREADY_int <= '0';
+					readstatebits <= "00000010";
+
+				elsif (readstatebits="00000010") then
+
+					AXI_ARADDR_int <= X"3C000008";
+					AXI_ARVALID_int <= '1';
+					readstatebits <= "00000100";
+
+				elsif (readstatebits="00000100") then			
+
+					-- Wait for ready
+					if (AXI_ARREADY='1') then
+						AXI_ARVALID_int <= '0';
+						AXI_RREADY_int <= '1';
+						readstatebits <= "00001000";
+
+					else
+					end if;
+
+				elsif (readstatebits="00001000") then	
+
+					-- Receive read data
+					if (AXI_RVALID='1') then
+						AXI_RDATA_int <= AXI_RDATA;
+					else
+					end if;
+
+					-- Received last read data
+					if (AXI_RLAST='1') then
+						readstatebits <= "00000001";
+					else
+					end if;
+
+				end if;
+				
+				--------------------------------------
 				-- Write result C to 0x3C000000
+				--------------------------------------
+
 				AXI_AWADDR_int <= X"3C000000";
 
-				AXI_WDATA_int <= X"0123456789ABCDEF";
+				-- AXI_WDATA_int <= X"0123456789ABCDEF";
+				AXI_WDATA_int <= std_logic_vector(result);
+
 				AXI_WSTRB_int <= X"FF";
 
 				statebits <= statebits;
@@ -229,10 +299,14 @@ begin
 
 	-- Default values
 
-	-- Zynq 7000 supports incrementing
-	AXI_AWBURST <= "01";
+	AXI_AWBURST <= "01"; 	-- Zynq 7000 supports incrementing burst
 	AXI_AWLEN <= X"0"; -- 1 transfer in the burst (1-16 data beats)
 	AXI_AWSIZE <= "11"; -- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+
+	AXI_ARBURST <= "01";	-- Zynq 7000 supports incrementing burst
+	AXI_ARLEN <= X"0"; 		-- 1 transfer in the burst (1-16 data beats)
+	AXI_ARSIZE <= "11";	-- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+
 
 	-- Zynq TRM p. 299
 	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
@@ -244,41 +318,43 @@ begin
 	-- AXI_AWPROT <= "010";
 	AXI_AWPROT <= "000";
 
+	AXI_ARPROT <= "000";
+
 	-- Zynq TRM p. 299
 	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
 	-- ARCACHE[3:0]/AWCACHE[3:0] (cache support) are ignored, and do not have any effect.
 	AXI_ARCACHE <= (others => '0');
 	AXI_AWCACHE <= (others => '0');
 
-
-	AXI_ARID <= (others => '0');
 	AXI_AWID <= (others => '0');
 	AXI_AWLOCK <= '0';
 	AXI_AWQOS <= (others => '0');
 	AXI_WID <= (others => '0');
 
+	AXI_ARID <= (others => '0');
+	AXI_ARLOCK <= (others => '0');
+	AXI_ARQOS <= (others => '0');
+
 	-- Connect internal signals to interface signals
 
+	-- AXI read address
 	AXI_ARVALID <= AXI_ARVALID_int;
 	AXI_ARADDR <= AXI_ARADDR_int;
 
+	-- AXI read
+	AXI_RREADY <= AXI_RREADY_int;
+
+	-- AXI write address
 	AXI_AWVALID <= AXI_AWVALID_int;
 	AXI_AWADDR <= AXI_AWADDR_int;
 
+	-- AXI write
 	AXI_WVALID <= AXI_WVALID_int;
 	AXI_WDATA <= AXI_WDATA_int;
 	AXI_WLAST <= AXI_WLAST_int;
 	AXI_WSTRB <= AXI_WSTRB_int;
 
+	-- AXI write result
 	AXI_BREADY <= AXI_BREADY_int;
-
-
-	AXI_ARLEN <= (others => '0');
-	AXI_ARLOCK <= (others => '0');
-	AXI_ARPROT <= (others => '0');
-	AXI_ARQOS <= (others => '0');
-	AXI_ARSIZE <= (others => '0');
-	AXI_RREADY <= '0';
-	AXI_ARBURST <= "01";
 	
 end architecture;
