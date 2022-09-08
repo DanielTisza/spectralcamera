@@ -20,14 +20,15 @@ int main()
 {
 	off_t 			ram_pbase = 0x3C000000;
 	unsigned int 	ram_size = 0x4000000;
-	uint32_t *		ram_vptr;
+	uint64_t *		ram_vptr;
 	int 			fd;
 	uint8_t *		pShared;
 	uint32_t		ii;
+	uint64_t		newValue;
 
 	if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
 
-		ram_vptr = (uint32_t *)mmap(
+		ram_vptr = (uint64_t *)mmap(
 			NULL, 
 			ram_size, 
 			PROT_READ | PROT_WRITE, 
@@ -36,21 +37,22 @@ int main()
 			ram_pbase
 		);
 
-		/*
+		
 		//Read from DDR reserved area
 		printf("\r\n");
-		printf("Reading value from reserved DDR at address 0x0: [%X]\r\n", ram_vptr[0]);
+		printf("Reading value from reserved DDR at address (0x3C000000 + 0x8): [%llX]\r\n", ram_vptr[1]);
 
 		//Write to DDR reserved area
+
+		newValue = 0x12345678;
 		printf("\r\n");
-		printf("Writing value 0xAABBCCDD to DDR reserved area at address 0x1\r\n");
-		ram_vptr[1] = 0xAABBCCDD;
+		printf("Writing value to DDR reserved area at address (0x3C000000 + 0x8): [%llX]\r\n", newValue);
+		ram_vptr[1] = newValue;
 
 		//Read back data written to DDR reserved area
 		printf("\r\n");
-		printf("Reading back value 0xAABBCCDD from DDR reserved area at address 0x1: [%X]\r\n", ram_vptr[1]);
+		printf("Reading value from reserved DDR at address (0x3C000000 + 0x8): [%llX]\r\n", ram_vptr[1]);
 		printf("\r\n");
-		*/
 
 		//Read data from DDR reserved area
 
