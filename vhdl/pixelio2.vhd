@@ -100,7 +100,7 @@ architecture rtl of pixelio2 is
 	signal AXI_ARADDR_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
 
 	signal AXI_AWVALID_int : std_logic;
-	signal AXI_AWADDR_int : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+	signal AXI_AWADDR_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
 
 	signal AXI_WVALID_int : std_logic;
 	signal AXI_WDATA_int : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
@@ -112,8 +112,7 @@ architecture rtl of pixelio2 is
 	signal AXI_RDATA_int : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal AXI_RREADY_int : std_logic;
 
-	signal statebits : std_logic_vector(7 downto 0);
-
+	-- Source reading
 	signal readstatebits : std_logic_vector(7 downto 0);
 	signal read_done : std_logic;
 	
@@ -136,6 +135,12 @@ architecture rtl of pixelio2 is
 	-- Destionation data to DDR memory
 	signal result : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
+	-- Destination writing
+	signal pipelinedelay : std_logic_vector(3 downto 0);
+	signal statebits : std_logic_vector(7 downto 0);
+	signal dstoffset : unsigned(23 downto 0);
+	signal dstwriteena : std_logic;
+
 begin
 	
 	
@@ -156,7 +161,7 @@ begin
 
 			-- AXI master write address
 			AXI_AWVALID_int <= '0';
-			AXI_AWADDR_int <= (others => '0');
+			AXI_AWADDR_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH); --X"3EB3FB00"
 
 			-- AXI master write
 			AXI_WVALID_int <= '0';			
@@ -193,6 +198,10 @@ begin
 
 			-- Destionation data to DDR memory
 			result <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+
+			pipelinedelay <= (others => '0');
+			dstoffset <= to_unsigned(0, 24);
+			dstwriteena <= '0';
 
 		else
 
@@ -240,49 +249,58 @@ begin
 				result2 <= src2A + src2B;
 				result3 <= src3A + src3B;
 
-				-- Destionation data to DDR memory
+				-- Destination data to DDR memory
 				result <= result1 + result2 + result3;
+
+				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
+				dstoffset <= dstoffset;
+				dstwriteena <= '0';
 
 				--------------------------------------
 				-- Read data B from 0x3C000008, 64-bits (8 bytes)
 				--------------------------------------
-				if (readstatebits="00000001") then
+				case readstatebits is
 
-					AXI_ARVALID_int <= '0';
-					AXI_RREADY_int <= '0';
-					readstatebits <= "00000010";
+					when "00000001" =>
 
-				elsif (readstatebits="00000010") then
-
-					--AXI_ARADDR_int <= X"3C000008";
-					AXI_ARVALID_int <= '1';
-					readstatebits <= "00000100";
-
-				elsif (readstatebits="00000100") then			
-
-					-- Wait for ready
-					if (AXI_ARREADY='1') then
 						AXI_ARVALID_int <= '0';
-						AXI_RREADY_int <= '1';
-						readstatebits <= "00001000";
+						AXI_RREADY_int <= '0';
+						readstatebits <= "00000010";
 
-					else
-					end if;
+					when "00000010" =>
 
-				elsif (readstatebits="00001000") then	
+						--AXI_ARADDR_int <= X"3C000008";
+						AXI_ARVALID_int <= '1';
+						readstatebits <= "00000100";
 
-					-- Receive read data
-					-- Received last read data
-					if (AXI_RVALID='1' and AXI_RLAST='1') then
+					when "00000100" =>
 
-						AXI_RDATA_int <= AXI_RDATA;
-						read_done <= '1';
-						readstatebits <= "00000001";
+						-- Wait for ready
+						if (AXI_ARREADY='1') then
+							AXI_ARVALID_int <= '0';
+							AXI_RREADY_int <= '1';
+							readstatebits <= "00001000";
 
-					else
-					end if;
+						else
+						end if;
 
-				end if;
+					when "00001000" =>
+
+						-- Receive read data
+						-- Received last read data
+						if (AXI_RVALID='1' and AXI_RLAST='1') then
+
+							AXI_RDATA_int <= AXI_RDATA;
+							read_done <= '1';
+							readstatebits <= "00000001";
+
+						else
+						end if;
+
+					when others =>
+						null;
+
+				end case;
 				
 				--------------------------------------
 				-- Capture read data and prepare next address
@@ -352,6 +370,9 @@ begin
 								srcoffset <= to_unsigned(0, 24);
 							else
 							end if;
+
+							-- Trigger writing after pipeline delay
+							pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
 							
 						when others =>
 							null;
@@ -364,59 +385,92 @@ begin
 				else
 				end if;
 				
+
 				--------------------------------------
-				-- Write result C to 0x3C000000
+				-- Write result to DDR memory
 				--------------------------------------
 
-				-- AXI_AWADDR_int <= X"3C000000";
-				AXI_AWADDR_int <= X"3EB3FB00";
+				-- AXI_AWADDR_int <= X"3EB3FB00";
+				-- When do you want to change write address?
+				-- When writable data appears from pipeline
 
-				-- AXI_WDATA_int <= X"0123456789ABCDEF";
 				AXI_WDATA_int <= std_logic_vector(result);
 
 				AXI_WSTRB_int <= X"FF";
 
-				if (statebits="00000001") then
+				case statebits is
 
-					AXI_AWVALID_int <= '1';
-					statebits <= "00000010";
+					when "00000001" =>
 
-				elsif (statebits="00000010") then
+						if (dstwriteena='1') then
 
-					-- Wait for ready
-					if (AXI_AWREADY='1') then
-						AXI_AWVALID_int <= '0';
-						AXI_WVALID_int <= '1';
-						AXI_WLAST_int <= '1';
-						statebits <= "00000100";
+							AXI_AWVALID_int <= '1';
+							statebits <= "00000010";
+						else
+						end if;
 
+					when "00000010" =>
+
+						-- Wait for ready
+						if (AXI_AWREADY='1') then
+							AXI_AWVALID_int <= '0';
+							AXI_WVALID_int <= '1';
+							AXI_WLAST_int <= '1';
+							statebits <= "00000100";
+
+						else
+						end if;
+
+
+					when "00000100" =>
+
+						if (AXI_WREADY='1') then
+							AXI_WVALID_int <= '0';
+							AXI_WLAST_int <= '0';
+							statebits <= "00001000";
+						else
+						end if;
+
+					when "00001000" =>
+
+						if (AXI_BVALID='1') then
+							AXI_BREADY_int <= '1';
+							statebits <= "00010000";
+						else
+						end if;
+
+					when "00010000" =>
+
+						AXI_BREADY_int <= '0';
+						statebits <= "00000001";
+
+					when others =>
+						null;
+
+				end case;
+
+				--------------------------------------
+				-- Prepare next destination address for write
+				--------------------------------------
+				if (pipelinedelay(pipelinedelay'length-1)='1') then
+
+					pipelinedelay <= (others => '0');
+					dstwriteena <= '1';
+
+					-- For next write
+					AXI_AWADDR_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH) + dstoffset + to_unsigned(8, 4); --X"3EB3FB00"
+
+					dstoffset <= dstoffset + to_unsigned(8, 4);
+
+					-- Detect when all data has been written
+					if (dstoffset=to_unsigned(10059552, 24)) then  --X"997F20"
+						dstoffset <= to_unsigned(0, 24);
 					else
 					end if;
-
-
-				elsif (statebits="00000100") then
-
-					if (AXI_WREADY='1') then
-						AXI_WVALID_int <= '0';
-						AXI_WLAST_int <= '0';
-						statebits <= "00001000";
-					else
-					end if;
-
-				elsif (statebits="00001000") then
-
-					if (AXI_BVALID='1') then
-						AXI_BREADY_int <= '1';
-						statebits <= "00010000";
-					else
-					end if;
-
-				elsif (statebits="00010000") then
-
-					AXI_BREADY_int <= '0';
-					statebits <= "00000001";
-
+					
+				else
 				end if;
+
 
 			else		
 			end if;
@@ -474,7 +528,7 @@ begin
 
 	-- AXI write address
 	AXI_AWVALID <= AXI_AWVALID_int;
-	AXI_AWADDR <= AXI_AWADDR_int;
+	AXI_AWADDR <= std_logic_vector(AXI_AWADDR_int);
 
 	-- AXI write
 	AXI_WVALID <= AXI_WVALID_int;
