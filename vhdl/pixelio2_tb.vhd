@@ -51,8 +51,8 @@ entity pixelio2_tb is
 		AXI_ARQOS	: out std_logic_vector(3 downto 0);
 
 		-- AXI master read
-		AXI_RDATA	: in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
-		AXI_RVALID	: in std_logic;
+		-- AXI_RDATA	: in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+		-- AXI_RVALID	: in std_logic;
 		AXI_RREADY	: out std_logic;
 		AXI_RID	: in std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
 		AXI_RLAST	: in std_logic;
@@ -98,7 +98,7 @@ end pixelio2_tb;
 architecture rtl of pixelio2_tb is
 
 	signal AXI_ARVALID_int : std_logic;
-	signal AXI_ARADDR_int : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+	signal AXI_ARADDR_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
 
 	signal AXI_AWVALID_int : std_logic;
 	signal AXI_AWADDR_int : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
@@ -114,9 +114,27 @@ architecture rtl of pixelio2_tb is
 	signal AXI_RREADY_int : std_logic;
 
 	signal statebits : std_logic_vector(7 downto 0);
-	signal readstatebits : std_logic_vector(7 downto 0);
 
-	signal termA : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal readstatebits : std_logic_vector(7 downto 0);
+	signal read_done : std_logic;
+	
+	signal sourceselectstatebits : std_logic_vector(5 downto 0);
+	signal srcoffset : unsigned(23 downto 0);
+
+	-- Source data from DDR memory
+	signal src1A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal src1B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal src2A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal src2B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal src3A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal src3B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+
+	-- Computations
+	signal result1 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal result2 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal result3 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+
+	-- Destionation data to DDR memory
 	signal result : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 	-- Testbench signals
@@ -124,12 +142,15 @@ architecture rtl of pixelio2_tb is
 	signal AXI_ARESETN : std_logic;
 	signal AXI_AWREADY : std_logic;
 	signal AXI_ARREADY : std_logic;
+	signal AXI_RDATA : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal AXI_RVALID : std_logic;
 
 	signal finished : std_logic;
 	signal clk : std_logic;
 	signal reset : std_logic;
 	signal tb_awready : std_logic;
 	signal tb_arready : std_logic;
+	signal tb_rvalid : std_logic;
 
 begin
 	
@@ -147,7 +168,7 @@ begin
 
 			-- AXI master read address
 			AXI_ARVALID_int <= '0';
-			AXI_ARADDR_int <= (others => '0');
+			AXI_ARADDR_int <= to_unsigned(1006632960, C_M_AXI_ADDR_WIDTH); --X"3C000000"
 
 			-- AXI master write address
 			AXI_AWVALID_int <= '0';
@@ -166,11 +187,29 @@ begin
 			AXI_RREADY_int <= '0';
 
 			statebits <= "00000001";
+
 			readstatebits <= "00000001";
+			read_done <= '0';
 
-			termA <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			sourceselectstatebits <= "000001";
+			srcoffset <= to_unsigned(0, 24);
+
+			-- Source data from DDR memory
+			src1A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			src1B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			src2A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			src2B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			src3A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			src3B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+
+			-- Computations
+			result1 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			result2 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			result3 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+
+			-- Destionation data to DDR memory
 			result <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-
+			
 		else
 
 			if (AXI_ACLK'event and AXI_ACLK='1') then
@@ -196,19 +235,33 @@ begin
 				-- AXI master write response
 				AXI_BREADY_int <= AXI_BREADY_int;
 
-				-- Computations
-				termA <= unsigned(AXI_RDATA_int);
-				result <= termA + termA;
+				statebits <= statebits;
 
-				-- Read data A from 0x3C000000, 64-bits (8 bytes)
-				-- Read data B from 0x3C000008, 64-bits (8 bytes)
-				-- Perform operation on C = A + B
-
-				--------------------------------------
-				-- Read data B from 0x3C000008, 64-bits (8 bytes)
-				--------------------------------------
 				readstatebits <= readstatebits;
+				read_done <= '0';
 
+				sourceselectstatebits <= sourceselectstatebits;
+				srcoffset <= srcoffset;
+
+				-- Source data from DDR memory
+				src1A <= src1A;
+				src1B <= src1B;
+				src2A <= src2A;
+				src2B <= src2B;
+				src3A <= src3A;
+				src3B <= src3B;
+
+				-- Computations
+				result1 <= src1A + src1B;
+				result2 <= src2A + src2B;
+				result3 <= src3A + src3B;
+
+				-- Destionation data to DDR memory
+				result <= result1 + result2 + result3;
+
+				--------------------------------------
+				-- Read data B from 0x3C000008, 64-bits (8 bytes)
+				--------------------------------------
 				if (readstatebits="00000001") then
 
 					AXI_ARVALID_int <= '0';
@@ -217,11 +270,11 @@ begin
 
 				elsif (readstatebits="00000010") then
 
-					AXI_ARADDR_int <= X"3C000008";
+					--AXI_ARADDR_int <= X"3C000008";
 					AXI_ARVALID_int <= '1';
 					readstatebits <= "00000100";
 
-				elsif (readstatebits="00000100") then			
+				elsif (readstatebits="00000100") then
 
 					-- Wait for ready
 					if (AXI_ARREADY='1') then
@@ -237,6 +290,7 @@ begin
 					-- Receive read data
 					if (AXI_RVALID='1') then
 						AXI_RDATA_int <= AXI_RDATA;
+						read_done <= '1';
 					else
 					end if;
 
@@ -247,19 +301,98 @@ begin
 					end if;
 
 				end if;
+
+				--------------------------------------
+				-- Capture read data and prepare next address
+				--------------------------------------
+				if (read_done='1') then
+
+					-- 2592 pixels * 2 bytes = 5184 (0x1440)
+					-- 2590 pixels * 2 bytes = 5180 (0x143C)
+
+					-- First source image
+					-- 3C000000
+					-- 3C00143C
+
+					-- Second source image
+					-- 3CE6A900
+					-- 3CE6BD3C
+
+					-- Third source image
+					-- 3DCD5200
+					-- 3DCD663C
+
+					case sourceselectstatebits is
+
+						-- First source image
+						when "000001" =>
+							src1A <= unsigned(AXI_RDATA_int);
+
+							-- For next read
+							AXI_ARADDR_int <= to_unsigned(1006638140, C_M_AXI_ADDR_WIDTH) + srcoffset; --X"3C00143C"
+
+						when "000010" =>
+							src1B <= unsigned(AXI_RDATA_int);
+
+							-- For next read
+							AXI_ARADDR_int <= to_unsigned(1021749504, C_M_AXI_ADDR_WIDTH) + srcoffset; --X"3CE6A900"
+
+						-- Second source image
+						when "000100" =>
+							src2A <= unsigned(AXI_RDATA_int);
+							
+							-- For next read
+							AXI_ARADDR_int <= to_unsigned(1021754684, C_M_AXI_ADDR_WIDTH) + srcoffset; --X"3CE6BD3C"
+
+						when "001000" =>
+							src2B <= unsigned(AXI_RDATA_int);
+
+							-- For next read
+							AXI_ARADDR_int <= to_unsigned(1036866048, C_M_AXI_ADDR_WIDTH) + srcoffset; --X"3DCD5200"
+
+						-- Third source image
+						when "010000" =>
+							src3A <= unsigned(AXI_RDATA_int);
+							
+							-- For next read
+							AXI_ARADDR_int <= to_unsigned(1036871228, C_M_AXI_ADDR_WIDTH) + srcoffset; --X"3DCD663C"
+
+						when "100000" =>
+							src3B <= unsigned(AXI_RDATA_int);
+							
+							-- For next read
+							AXI_ARADDR_int <= to_unsigned(1006632960, C_M_AXI_ADDR_WIDTH) + srcoffset + to_unsigned(8, 4); --X"3C000000"
+
+							srcoffset <= srcoffset + to_unsigned(8, 4);
+
+							-- Detect when all data has been read
+							if (srcoffset=to_unsigned(10059552, 24)) then  --X"997F20"
+								srcoffset <= to_unsigned(0, 24);
+							else
+							end if;
+							
+						when others =>
+							null;
+
+					end case;
+
+					-- Move to next read
+					sourceselectstatebits <= sourceselectstatebits(sourceselectstatebits'length-2 downto 0) & sourceselectstatebits(sourceselectstatebits'length-1);
+
+				else
+				end if;
 				
 				--------------------------------------
 				-- Write result C to 0x3C000000
 				--------------------------------------
 
-				AXI_AWADDR_int <= X"3C000000";
+				-- AXI_AWADDR_int <= X"3C000000";
+				AXI_AWADDR_int <= X"3EB3FB00";
 
 				-- AXI_WDATA_int <= X"0123456789ABCDEF";
 				AXI_WDATA_int <= std_logic_vector(result);
 
 				AXI_WSTRB_int <= X"FF";
-
-				statebits <= statebits;
 
 				if (statebits="00000001") then
 
@@ -352,7 +485,7 @@ begin
 
 	-- AXI read address
 	AXI_ARVALID <= AXI_ARVALID_int;
-	AXI_ARADDR <= AXI_ARADDR_int;
+	AXI_ARADDR <= std_logic_vector(AXI_ARADDR_int);
 
 	-- AXI read
 	AXI_RREADY <= AXI_RREADY_int;
@@ -378,6 +511,8 @@ begin
 	AXI_ACLK <= clk;
 	AXI_AWREADY <= tb_awready;
 	AXI_ARREADY <= tb_arready;
+	AXI_RDATA <= X"0807060504030201";
+	AXI_RVALID <= tb_rvalid;
 
 	-- Generate reset pulse for global reset
 	testbench_reset_proc : process
@@ -474,7 +609,8 @@ begin
 	testbench_arready_proc : process
 	begin
 	
-		-- Initial axi_wready
+		-- Initial values
+		tb_rvalid <= '0';
 		tb_arready <= '0';
 		
 		-- Set finished after a delay
@@ -483,6 +619,12 @@ begin
 
 		wait for 2 us;
 		tb_arready <= '0';
+
+		wait for 2 us;
+		tb_rvalid <= '1';
+
+		wait for 2 us;
+		tb_rvalid <= '0';
 		
 		-- Wait a while after finishing
 		wait;
