@@ -62,7 +62,7 @@ int main()
 		 * Filling with 2's gives 0xC = 12 (2 * 6, ok)
 		 */
 		for (ii=0;ii<45349631;ii++) {
-			ram_vptr[ii] = 2;
+			ram_vptr[ii] = 1;
 		}
 
 		printf("\r\n");

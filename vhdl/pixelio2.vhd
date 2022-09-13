@@ -458,7 +458,7 @@ begin
 					dstwriteena <= '1';
 
 					-- For next write
-					AXI_AWADDR_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH) + dstoffset + to_unsigned(8, 4); --X"3EB3FB00"
+					AXI_AWADDR_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH) + dstoffset; --X"3EB3FB00"
 
 					dstoffset <= dstoffset + to_unsigned(8, 4);
 
