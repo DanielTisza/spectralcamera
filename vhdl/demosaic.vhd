@@ -18,12 +18,30 @@ use ieee.numeric_std.all;
 -- Describe the I/O of this "chip"
 entity demosaic is
 
+	generic(
+		C_M_AXI_ADDR_WIDTH	: integer	:= 32;
+		C_M_AXI_DATA_WIDTH	: integer	:= 64
+	);
+
 	port (
 
 		-- Clock and reset
 		clk : in std_logic;
-		resetn	: in std_logic
+		resetn	: in std_logic;
 
+		src1A : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+		src1B : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+
+		src2A : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+		src2B : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+
+		src3A : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+		src3B : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+
+		read_done : in std_logic;
+
+		sourceselectstatebits : in std_logic_vector(5 downto 0)
+		
 	);
 
 end demosaic;

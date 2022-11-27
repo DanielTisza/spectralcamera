@@ -132,7 +132,7 @@ architecture rtl of pixelio2 is
 	signal result2 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal result3 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
-	-- Destionation data to DDR memory
+	-- Destination data to DDR memory
 	signal result : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 	-- Destination writing
