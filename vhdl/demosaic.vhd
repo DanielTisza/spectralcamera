@@ -29,6 +29,7 @@ entity demosaic is
 		clk : in std_logic;
 		resetn	: in std_logic;
 
+		-- Input data
 		src1A : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 		src1B : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
@@ -39,9 +40,12 @@ entity demosaic is
 		src3B : in unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 		read_done : in std_logic;
+		sourceselectstatebits : in std_logic_vector(5 downto 0);
 
-		sourceselectstatebits : in std_logic_vector(5 downto 0)
-		
+		-- Output data
+		result : out unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+		statebits : out std_logic_vector(7 downto 0);
+		dstwriteena : out std_logic
 	);
 
 end demosaic;
@@ -67,6 +71,26 @@ begin
 
 			if (clk'event and clk='1') then
 
+
+				-- 2592 x 1944
+				-- 2592 pixels * 2 bytes = 5184 (0x1440) pitch bytes
+				-- 5184 / 8 bytes = 648 transfers
+
+				-- 2590 x 1942
+				-- 2590 pixels * 2 bytes = 5180 (0x143C) pitch bytes
+				-- 5184 / 8 bytes = 647.5 transfers
+
+				-- 0 - 1941 rows
+
+				-- First row first pixel is green
+				-- First row second pixel is blue
+				-- Second row first pixel is red
+
+				-- 0 - 2589 pixels
+
+				
+
+				
 
 
 			else		
