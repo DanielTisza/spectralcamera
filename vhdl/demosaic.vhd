@@ -72,10 +72,16 @@ begin
 			if (clk'event and clk='1') then
 
 
+				--
+				-- Spectral camera
+				--
 				-- 2592 x 1944
 				-- 2592 pixels * 2 bytes = 5184 (0x1440) pitch bytes
 				-- 5184 / 8 bytes = 648 transfers
 
+				--
+				-- Boxed camera module
+				--
 				-- 2590 x 1942
 				-- 2590 pixels * 2 bytes = 5180 (0x143C) pitch bytes
 				-- 5184 / 8 bytes = 647.5 transfers
