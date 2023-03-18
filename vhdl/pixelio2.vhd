@@ -39,7 +39,7 @@ entity pixelio2 is
 		AXI_ACLK	: in std_logic;
 		AXI_ARESETN	: in std_logic;
 
-		-- AXI master read address
+		-- AXI master read address channel "AR"
 		AXI_ARADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
 		AXI_ARVALID	: out std_logic;
 		AXI_ARREADY	: in std_logic;
@@ -52,7 +52,7 @@ entity pixelio2 is
 		AXI_ARBURST	: out std_logic_vector(1 downto 0);
 		AXI_ARQOS	: out std_logic_vector(3 downto 0);
 
-		-- AXI master read
+		-- AXI master read channel "R"
 		AXI_RDATA	: in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
 		AXI_RVALID	: in std_logic;
 		AXI_RREADY	: out std_logic;
@@ -63,7 +63,7 @@ entity pixelio2 is
 		AXI_RACOUNT	: in std_logic_vector(2 downto 0);
 		AXI_RDISSUECAP1EN : out std_logic;
 
-		-- AXI master write address
+		-- AXI master write address channel "AW"
 		AXI_AWADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
 		AXI_AWVALID	: out std_logic;
 		AXI_AWREADY	: in std_logic;
@@ -76,7 +76,7 @@ entity pixelio2 is
 		AXI_AWBURST	: out std_logic_vector(1 downto 0);
 		AXI_AWQOS	: out std_logic_vector(3 downto 0);
 
-		-- AXI master write
+		-- AXI master write data channel "W"
 		AXI_WDATA	: out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
 		AXI_WVALID	: out std_logic;
 		AXI_WREADY	: in std_logic;
@@ -87,7 +87,7 @@ entity pixelio2 is
 		AXI_WACOUNT	: in std_logic_vector(5 downto 0);
 		AXI_WRISSUECAP1EN : out std_logic;
 
-		-- AXI master write response
+		-- AXI master write response channel "B"
 		AXI_BVALID	: in std_logic;
 		AXI_BREADY	: out std_logic;
 		AXI_BID	: in std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
@@ -470,7 +470,7 @@ begin
 
 						-- Waiting for write response channel to indicate
 						-- valid write response
-						
+
 						if (AXI_BVALID='1') then
 							AXI_BREADY_int <= '1';
 							statebits <= "00010000";
