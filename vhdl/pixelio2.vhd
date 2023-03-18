@@ -422,7 +422,8 @@ begin
 					when "00000001" =>
 
 						-- Waiting for write request
-						-- Indicate that write address is valid
+						-- Indicate to write address channel that 
+						-- write address is valid
 
 						if (dstwriteena='1') then
 
@@ -433,8 +434,13 @@ begin
 
 					when "00000010" =>
 
-						-- Waiting for indication that write address was accepted
-						-- Indicate that write data is valid and this is last write data
+						-- Waiting for write address channel to indicate that
+						-- write address was accepted
+
+						-- Indicate to write data channel that write data
+						-- is valid and this is last write data in the
+						-- write burst
+
 						if (AXI_AWREADY='1') then
 							AXI_AWVALID_int <= '0';
 							AXI_WVALID_int <= '1';
@@ -447,8 +453,12 @@ begin
 
 					when "00000100" =>
 
-						-- Waiting for indication that write data was accepted
-						-- Turn off write data valid and last write data indications
+						-- Waiting for write data channel to indicate that 
+						-- write data was accepted
+						
+						-- Turn off indications for write data channel that
+						-- write data valid and last write data in write burst
+
 						if (AXI_WREADY='1') then
 							AXI_WVALID_int <= '0';
 							AXI_WLAST_int <= '0';
@@ -458,8 +468,9 @@ begin
 
 					when "00001000" =>
 
-						-- Waiting for write response channel indicating valid
-						-- write response
+						-- Waiting for write response channel to indicate
+						-- valid write response
+						
 						if (AXI_BVALID='1') then
 							AXI_BREADY_int <= '1';
 							statebits <= "00010000";
