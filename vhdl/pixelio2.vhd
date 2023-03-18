@@ -263,11 +263,17 @@ begin
 
 					when "00000001" =>
 
+						-- Initial state
+						-- Read address is not ready
+						-- Not ready to accept read data
 						AXI_ARVALID_int <= '0';
 						AXI_RREADY_int <= '0';
 						readstatebits <= "00000010";
 
 					when "00000010" =>
+
+						-- Setting address and indicating
+						-- that address is now valid
 
 						--AXI_ARADDR_int <= X"3C000008";
 						AXI_ARVALID_int <= '1';
@@ -275,7 +281,11 @@ begin
 
 					when "00000100" =>
 
-						-- Wait for ready
+						-- Waiting for indication that read address is ready
+						-- that it has been accepted
+
+						-- Indicating also that we are ready to accept read data
+
 						if (AXI_ARREADY='1') then
 							AXI_ARVALID_int <= '0';
 							AXI_RREADY_int <= '1';
@@ -286,8 +296,11 @@ begin
 
 					when "00001000" =>
 
-						-- Receive read data
-						-- Received last read data
+						-- Waiting for indication that read data is valid
+						-- and it is the last read data
+
+						-- Indicating the read has completed
+						
 						if (AXI_RVALID='1' and AXI_RLAST='1') then
 
 							AXI_RDATA_int <= AXI_RDATA;
