@@ -10,6 +10,9 @@
 -- ghdl -r pixelio2 --vcd=out.vcd
 -- gtkwave
 --
+-- AMBA AXI and ACE Protocol Specification Version E
+-- https://developer.arm.com/documentation/ihi0022/e/AMBA-AXI3-and-AXI4-Protocol-Specification
+--
 -----------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
@@ -264,16 +267,17 @@ begin
 					when "00000001" =>
 
 						-- Initial state
-						-- Read address is not ready
-						-- Not ready to accept read data
+						-- Indicate not ready to read address channel
+						-- Indicate not ready to read data channel
+
 						AXI_ARVALID_int <= '0';
 						AXI_RREADY_int <= '0';
 						readstatebits <= "00000010";
 
 					when "00000010" =>
 
-						-- Setting address and indicating
-						-- that address is now valid
+						-- Here we assume that read address has been set correctly
+						-- Indicate ready to read address channel
 
 						--AXI_ARADDR_int <= X"3C000008";
 						AXI_ARVALID_int <= '1';
@@ -281,10 +285,11 @@ begin
 
 					when "00000100" =>
 
-						-- Waiting for indication that read address is ready
-						-- that it has been accepted
+						-- Waiting for indication that read address channel
+						-- has accepted read address
 
-						-- Indicating also that we are ready to accept read data
+						-- Indicate to read data channel that we are ready to 
+						-- accept read data
 
 						if (AXI_ARREADY='1') then
 							AXI_ARVALID_int <= '0';
@@ -296,11 +301,12 @@ begin
 
 					when "00001000" =>
 
-						-- Waiting for indication that read data is valid
-						-- and it is the last read data
+						-- Waiting for indication from read data channel
+						-- that read data is valid and it is the last read data
+						-- in a read burst
 
-						-- Indicating the read has completed
-						
+						-- Indicate that the read has completed
+
 						if (AXI_RVALID='1' and AXI_RLAST='1') then
 
 							AXI_RDATA_int <= AXI_RDATA;
@@ -415,6 +421,9 @@ begin
 
 					when "00000001" =>
 
+						-- Waiting for write request
+						-- Indicate that write address is valid
+
 						if (dstwriteena='1') then
 
 							AXI_AWVALID_int <= '1';
@@ -424,7 +433,8 @@ begin
 
 					when "00000010" =>
 
-						-- Wait for ready
+						-- Waiting for indication that write address was accepted
+						-- Indicate that write data is valid and this is last write data
 						if (AXI_AWREADY='1') then
 							AXI_AWVALID_int <= '0';
 							AXI_WVALID_int <= '1';
@@ -437,6 +447,8 @@ begin
 
 					when "00000100" =>
 
+						-- Waiting for indication that write data was accepted
+						-- Turn off write data valid and last write data indications
 						if (AXI_WREADY='1') then
 							AXI_WVALID_int <= '0';
 							AXI_WLAST_int <= '0';
@@ -446,6 +458,8 @@ begin
 
 					when "00001000" =>
 
+						-- Waiting for write response channel indicating valid
+						-- write response
 						if (AXI_BVALID='1') then
 							AXI_BREADY_int <= '1';
 							statebits <= "00010000";
