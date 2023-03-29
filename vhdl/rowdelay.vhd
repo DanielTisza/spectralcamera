@@ -49,6 +49,7 @@ end rowdelay;
 -- Describe the contents of this "chip"
 architecture rtl of rowdelay is
 
+	-- Delayed signals
 	signal src1B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal src2B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal src3B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
@@ -68,6 +69,7 @@ begin
 
 		if (resetn='0') then
 
+			-- Delayed signals
 			src1B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			src2B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			src3B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
