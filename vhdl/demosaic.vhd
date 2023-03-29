@@ -329,7 +329,7 @@ begin
 				else 
 				end if;
 
-
+				-- Convert read_done to image-specific read_done signal
 				if (read_done='1') then
 
 					if (imgIdxPrev=to_unsigned(0,2)) then
@@ -350,6 +350,7 @@ begin
 				else
 				end if;
 
+				-- Capture image read data 
 				if (read_done_a='1') then
 					src1A <= unsigned(read_data);
 				else
