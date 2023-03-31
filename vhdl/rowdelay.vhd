@@ -76,6 +76,22 @@ architecture rtl of rowdelay is
 	signal pipelinedelay : std_logic_vector(3 downto 0);
 	signal dstoffset : unsigned(23 downto 0);
 
+
+	-- Delay RAM
+
+	-- RAM definitions
+	subtype ram_word_type is std_logic_vector(7 downto 0);
+	subtype ram_addr_type is unsigned(2 downto 0);
+	type ram_type is array(0 to 7) of ram_word_type ;
+	
+	-- RAM signals
+	signal ram1 : ram_type;
+	
+	signal ram1_addr : ram_addr_type;
+	signal ram1_rd_data : ram_word_type;
+	signal ram1_wr_data : ram_word_type;
+	signal ram1_wr : std_logic;
+
 begin
 	
 	io_proc : process(
