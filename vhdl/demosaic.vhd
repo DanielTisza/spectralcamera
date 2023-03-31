@@ -235,7 +235,9 @@ begin
 				-- reset column index when maximum reached
 				if (imgsync_ena_int='1') then
 
-					if (colIdx=to_unsigned(2590,12)) then
+					-- 2590 pixels / 4 pixels per 64 bits transfer
+					-- 2590/4 = 647.5 = 648
+					if (colIdx=to_unsigned(648,12)) then
 						colIdx <= to_unsigned(0,12);
 						hsync_ena_int <= '1';
 					else
