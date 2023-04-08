@@ -130,6 +130,10 @@ begin
 		end if;
 	end process;
 
+	ram1_wr_data <= read_data(59 downto 48) & read_data(43 downto 32) & read_data(27 downto 16) & read_data(11 downto 0);
+	ram1_wr <= read_done_a;
+	src1A <= unsigned(ram1_rd_data);
+
 	------------------------------------------
 	-- IO process
 	------------------------------------------
@@ -142,7 +146,6 @@ begin
 		if (resetn='0') then
 
 			-- Direct read
-			src1A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			src2A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			src3A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
@@ -169,7 +172,6 @@ begin
 			if (clk'event and clk='1') then
 
 				-- Direct read
-				src1A <= src1A;
 				src2A <= src2A;
 				src3A <= src3A;
 
@@ -194,7 +196,7 @@ begin
 
 				-- Capture image read data 
 				if (read_done_a='1') then
-					src1A <= unsigned(read_data);
+
 				else
 				end if;
 
