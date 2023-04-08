@@ -120,6 +120,26 @@ architecture rtl of rowdelay is
 	signal ram1_wr_data : ram_word_type;
 	signal ram1_wr : std_logic;
 
+	signal firstrowhandled : std_logic;
+	signal readrowodd : std_logic;
+
+	signal img1pix1r : unsigned(11 downto 0);
+	signal img1pix1g : unsigned(11 downto 0);
+	signal img1pix1b : unsigned(11 downto 0);
+
+	signal img1pix2r : unsigned(11 downto 0);
+	signal img1pix2g : unsigned(11 downto 0);
+	signal img1pix2b : unsigned(11 downto 0);
+
+	signal img1pix3r : unsigned(11 downto 0);
+	signal img1pix3g : unsigned(11 downto 0);
+	signal img1pix3b : unsigned(11 downto 0);
+
+	signal img1pix4r : unsigned(11 downto 0);
+	signal img1pix4g : unsigned(11 downto 0);
+	signal img1pix4b : unsigned(11 downto 0);
+
+
 begin
 
 	rowdelayram1 : rowdelayram port map(
@@ -172,6 +192,25 @@ begin
 			write_data_int <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			write_ena_int <= '0';
 
+			firstrowhandled <= '0';
+			readrowodd <= '1';
+
+			img1pix1g <= to_unsigned(0, 12);
+			img1pix1b <= to_unsigned(0, 12);
+			img1pix1r <= to_unsigned(0, 12);
+
+			img1pix2b <= to_unsigned(0, 12);
+			img1pix2r <= to_unsigned(0, 12);
+			img1pix2g <= to_unsigned(0, 12);
+
+			img1pix3g <= to_unsigned(0, 12);
+			img1pix3b <= to_unsigned(0, 12);
+			img1pix3r <= to_unsigned(0, 12);
+
+			img1pix4b <= to_unsigned(0, 12);
+			img1pix4r <= to_unsigned(0, 12);
+			img1pix4g <= to_unsigned(0, 12);
+
 		else
 
 			if (clk'event and clk='1') then
@@ -200,6 +239,24 @@ begin
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
 				dstoffset <= dstoffset;
 
+				firstrowhandled <= firstrowhandled;
+				readrowodd <= readrowodd;
+
+				img1pix1g <= img1pix1g;
+				img1pix1b <= img1pix1b;
+				img1pix1r <= img1pix1r;
+
+				img1pix2b <= img1pix2b;
+				img1pix2r <= img1pix2r;
+				img1pix2g <= img1pix2g;
+
+				img1pix3g <= img1pix3g;
+				img1pix3b <= img1pix3b;
+				img1pix3r <= img1pix3r;
+				
+				img1pix4b <= img1pix4b;
+				img1pix4r <= img1pix4r;
+				img1pix4g <= img1pix4g;
 
 				-- Capture image read data 
 				if (read_done_a='1') then
@@ -207,12 +264,60 @@ begin
 					-- Increment row delay ram address
 					if (ram1_addr=to_unsigned(648,10)) then
 						ram1_addr <= to_unsigned(0,10);
+						firstrowhandled <= '1';
+						readrowodd <= not(readrowodd);
 					else
 						ram1_addr <= ram1_addr + to_unsigned(1,10);
 					end if;
 
 				else
 				end if;
+
+
+				if (readrowodd='1') then
+
+					img1pix1g <= unsigned(ram1_rd_data(47 downto 36));		-- delayed
+					img1pix1b <= unsigned(ram1_rd_data(35 downto 24));		-- delayed
+					img1pix1r <= unsigned(read_data(59 downto 48));		-- direct
+
+					img1pix2b <= unsigned(ram1_rd_data(35 downto 24));		-- delayed
+					img1pix2r <= unsigned(read_data(59 downto 48));		-- direct
+					img1pix2g <= unsigned(read_data(43 downto 32));		-- direct
+
+					img1pix3g <= unsigned(ram1_rd_data(23 downto 12));		-- delayed
+					img1pix3b <= unsigned(ram1_rd_data(11 downto 0));		-- delayed
+					img1pix3r <= unsigned(read_data(27 downto 16));		-- direct
+
+					img1pix4b <= unsigned(ram1_rd_data(11 downto 0));		-- delayed
+					img1pix4r <= unsigned(read_data(27 downto 16));		-- direct
+					img1pix4g <= unsigned(read_data(11 downto 0));		-- direct
+
+				else
+					
+					-- 47 downto 36
+					-- 35 downto 24
+					-- 23 downto 12
+					-- 11 downto 0
+
+					img1pix1g <= unsigned(read_data(59 downto 48));		-- direct
+					img1pix1b <= unsigned(read_data(43 downto 32));		-- direct
+					img1pix1r <= unsigned(ram1_rd_data(47 downto 36));	-- delayed
+
+					img1pix2b <= unsigned(read_data(43 downto 32));		-- direct
+					img1pix2r <= unsigned(ram1_rd_data(47 downto 36));	-- delayed
+					img1pix2g <= unsigned(ram1_rd_data(35 downto 24));	-- delayed
+
+					img1pix3g <= unsigned(read_data(27 downto 16));		-- direct
+					img1pix3b <= unsigned(read_data(11 downto 0));		-- direct
+					img1pix3r <= unsigned(ram1_rd_data(23 downto 12));	-- delayed
+
+					img1pix4b <= unsigned(read_data(11 downto 0));		-- direct
+					img1pix4r <= unsigned(ram1_rd_data(23 downto 12));	-- delayed
+					img1pix4g <= unsigned(ram1_rd_data(11 downto 0));	-- delayed
+
+				end if;		
+
+
 
 				if (read_done_b='1') then
 					src2A <= unsigned(read_data);
