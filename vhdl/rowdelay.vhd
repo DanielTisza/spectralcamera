@@ -191,6 +191,7 @@ begin
 	------------------------------------------
 	rowdelayram1 : rowdelayram port map(
 
+		-- Clock and reset
 		clk => clk,
 	
 		-- RAM signals
@@ -203,6 +204,38 @@ begin
 	ram1_wr_data <= read_data(59 downto 48) & read_data(43 downto 32) & read_data(27 downto 16) & read_data(11 downto 0);
 	ram1_wr <= read_done_a;
 	src1A <= unsigned(ram1_rd_data);
+
+	------------------------------------------
+	-- rowdelayram1
+	------------------------------------------
+	cfarows2rgb1 : cfarows2rgb port map(
+	
+		-- Clock and reset
+		clk => clk,
+		resetn => resetn,
+
+		-- Input data signals
+		readrowodd => readrowodd,
+		ram1_rd_data => ram1_rd_data,
+		read_data => read_data,
+
+		-- Output data signals
+		pix1r => img1pix1r,
+		pix1g => img1pix1g,
+		pix1b => img1pix1b,
+
+		pix2r => img1pix2r,
+		pix2g => img1pix2g,
+		pix2b => img1pix2b,
+
+		pix3r => img1pix3r,
+		pix3g => img1pix3g,
+		pix3b => img1pix3b,
+
+		pix4r => img1pix4r,
+		pix4g => img1pix4g,
+		pix4b => img1pix4b
+ 	);
 
 	------------------------------------------
 	-- IO process
@@ -240,23 +273,7 @@ begin
 			write_ena_int <= '0';
 
 			firstrowhandled <= '0';
-			readrowodd <= '1';
-
-			img1pix1g <= to_unsigned(0, 12);
-			img1pix1b <= to_unsigned(0, 12);
-			img1pix1r <= to_unsigned(0, 12);
-
-			img1pix2b <= to_unsigned(0, 12);
-			img1pix2r <= to_unsigned(0, 12);
-			img1pix2g <= to_unsigned(0, 12);
-
-			img1pix3g <= to_unsigned(0, 12);
-			img1pix3b <= to_unsigned(0, 12);
-			img1pix3r <= to_unsigned(0, 12);
-
-			img1pix4b <= to_unsigned(0, 12);
-			img1pix4r <= to_unsigned(0, 12);
-			img1pix4g <= to_unsigned(0, 12);
+			readrowodd <= '0';
 
 		else
 
@@ -289,22 +306,6 @@ begin
 				firstrowhandled <= firstrowhandled;
 				readrowodd <= readrowodd;
 
-				img1pix1g <= img1pix1g;
-				img1pix1b <= img1pix1b;
-				img1pix1r <= img1pix1r;
-
-				img1pix2b <= img1pix2b;
-				img1pix2r <= img1pix2r;
-				img1pix2g <= img1pix2g;
-
-				img1pix3g <= img1pix3g;
-				img1pix3b <= img1pix3b;
-				img1pix3r <= img1pix3r;
-				
-				img1pix4b <= img1pix4b;
-				img1pix4r <= img1pix4r;
-				img1pix4g <= img1pix4g;
-
 				-- Capture image read data 
 				if (read_done_a='1') then
 
@@ -319,51 +320,6 @@ begin
 
 				else
 				end if;
-
-
-				if (readrowodd='1') then
-
-					img1pix1g <= unsigned(ram1_rd_data(47 downto 36));		-- delayed
-					img1pix1b <= unsigned(ram1_rd_data(35 downto 24));		-- delayed
-					img1pix1r <= unsigned(read_data(59 downto 48));		-- direct
-
-					img1pix2b <= unsigned(ram1_rd_data(35 downto 24));		-- delayed
-					img1pix2r <= unsigned(read_data(59 downto 48));		-- direct
-					img1pix2g <= unsigned(read_data(43 downto 32));		-- direct
-
-					img1pix3g <= unsigned(ram1_rd_data(23 downto 12));		-- delayed
-					img1pix3b <= unsigned(ram1_rd_data(11 downto 0));		-- delayed
-					img1pix3r <= unsigned(read_data(27 downto 16));		-- direct
-
-					img1pix4b <= unsigned(ram1_rd_data(11 downto 0));		-- delayed
-					img1pix4r <= unsigned(read_data(27 downto 16));		-- direct
-					img1pix4g <= unsigned(read_data(11 downto 0));		-- direct
-
-				else
-					
-					-- 47 downto 36
-					-- 35 downto 24
-					-- 23 downto 12
-					-- 11 downto 0
-
-					img1pix1g <= unsigned(read_data(59 downto 48));		-- direct
-					img1pix1b <= unsigned(read_data(43 downto 32));		-- direct
-					img1pix1r <= unsigned(ram1_rd_data(47 downto 36));	-- delayed
-
-					img1pix2b <= unsigned(read_data(43 downto 32));		-- direct
-					img1pix2r <= unsigned(ram1_rd_data(47 downto 36));	-- delayed
-					img1pix2g <= unsigned(ram1_rd_data(35 downto 24));	-- delayed
-
-					img1pix3g <= unsigned(read_data(27 downto 16));		-- direct
-					img1pix3b <= unsigned(read_data(11 downto 0));		-- direct
-					img1pix3r <= unsigned(ram1_rd_data(23 downto 12));	-- delayed
-
-					img1pix4b <= unsigned(read_data(11 downto 0));		-- direct
-					img1pix4r <= unsigned(ram1_rd_data(23 downto 12));	-- delayed
-					img1pix4g <= unsigned(ram1_rd_data(11 downto 0));	-- delayed
-
-				end if;		
-
 
 
 				if (read_done_b='1') then
