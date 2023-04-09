@@ -53,6 +53,9 @@ end rowdelay;
 -- Describe the contents of this "chip"
 architecture rtl of rowdelay is
 
+	------------------------------------------
+	-- rowdelayram
+	------------------------------------------
 	component rowdelayram is
 
 		generic(
@@ -73,6 +76,47 @@ architecture rtl of rowdelay is
 		);
 	
 	end component rowdelayram;
+
+	------------------------------------------
+	-- cfarows2rgb
+	------------------------------------------
+	component cfarows2rgb is
+
+		generic(
+			C_M_AXI_ADDR_WIDTH	: integer	:= 32;
+			C_M_AXI_DATA_WIDTH	: integer	:= 64
+		);
+	
+		port (
+	
+			-- Clock and reset
+			clk : in std_logic;
+			resetn	: in std_logic;
+	
+			-- Input data signals
+			readrowodd : in std_logic;
+			ram1_rd_data : in std_logic_vector(47 downto 0);
+			read_data : in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+	
+			-- Output data signals
+			pix1r : out unsigned(11 downto 0);
+			pix1g : out unsigned(11 downto 0);
+			pix1b : out unsigned(11 downto 0);
+	
+			pix2r : out unsigned(11 downto 0);
+			pix2g : out unsigned(11 downto 0);
+			pix2b : out unsigned(11 downto 0);
+	
+			pix3r : out unsigned(11 downto 0);
+			pix3g : out unsigned(11 downto 0);
+			pix3b : out unsigned(11 downto 0);
+	
+			pix4r : out unsigned(11 downto 0);
+			pix4g : out unsigned(11 downto 0);
+			pix4b : out unsigned(11 downto 0)
+		);
+	
+	end component cfarows2rgb;
 
 	-- Direct read
 	signal src1A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
@@ -142,6 +186,9 @@ architecture rtl of rowdelay is
 
 begin
 
+	------------------------------------------
+	-- rowdelayram1
+	------------------------------------------
 	rowdelayram1 : rowdelayram port map(
 
 		clk => clk,
