@@ -473,7 +473,6 @@ begin
 
 				else
 				end if;
-				
 
 				if (read_done_c='1') then
 					src3A <= unsigned(read_data);
@@ -482,6 +481,11 @@ begin
 
 				-- Trigger writing after pipeline delay
 				-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
+
+				-- Need to write
+				-- 4 * 3 * 12-bits = 144 bits
+				-- Can write 64-bits at a time
+				-- (4*3*12) / 64 = 2.25 transfers needed to write back processed pixel data in 36-bit RGB format
 
 				--------------------------------------
 				-- Wait for pipeline data to become available
