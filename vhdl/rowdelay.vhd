@@ -183,9 +183,9 @@ architecture rtl of rowdelay is
 	signal pix4g : unsigned(11 downto 0);
 	signal pix4b : unsigned(11 downto 0);
 
-	-- Image 1 pixel data for four pixels
-	signal read_done_a_delayed : std_logic;
-	
+	-- Image 1 pixel data for four pixels in 36-bit RGB format
+	signal read_done_img1_delayed : std_logic;
+
 	signal img1pix1r : unsigned(11 downto 0);
 	signal img1pix1g : unsigned(11 downto 0);
 	signal img1pix1b : unsigned(11 downto 0);
@@ -201,6 +201,25 @@ architecture rtl of rowdelay is
 	signal img1pix4r : unsigned(11 downto 0);
 	signal img1pix4g : unsigned(11 downto 0);
 	signal img1pix4b : unsigned(11 downto 0);
+
+	-- Image 2 pixel data for four pixels in 36-bit RGB format
+	signal read_done_img2_delayed : std_logic;
+	
+	signal img2pix1r : unsigned(11 downto 0);
+	signal img2pix1g : unsigned(11 downto 0);
+	signal img2pix1b : unsigned(11 downto 0);
+
+	signal img2pix2r : unsigned(11 downto 0);
+	signal img2pix2g : unsigned(11 downto 0);
+	signal img2pix2b : unsigned(11 downto 0);
+
+	signal img2pix3r : unsigned(11 downto 0);
+	signal img2pix3g : unsigned(11 downto 0);
+	signal img2pix3b : unsigned(11 downto 0);
+
+	signal img2pix4r : unsigned(11 downto 0);
+	signal img2pix4g : unsigned(11 downto 0);
+	signal img2pix4b : unsigned(11 downto 0);
 
 	
 
@@ -295,7 +314,8 @@ begin
 			firstrowhandled <= '0';
 			readrowodd <= '0';
 
-			read_done_a_delayed <= '0';
+			-- Image 1 pixel data for four pixels in 36-bit RGB format
+			read_done_img1_delayed <= '0';
 
 			img1pix1r <= to_unsigned(0, 12);
 			img1pix1g <= to_unsigned(0, 12);
@@ -309,6 +329,22 @@ begin
 			img1pix4r <= to_unsigned(0, 12);
 			img1pix4g <= to_unsigned(0, 12);
 			img1pix4b <= to_unsigned(0, 12);
+
+			-- Image 2 pixel data for four pixels in 36-bit RGB format
+			read_done_img2_delayed <= '0';
+
+			img2pix1r <= to_unsigned(0, 12);
+			img2pix1g <= to_unsigned(0, 12);
+			img2pix1b <= to_unsigned(0, 12);
+			img2pix2r <= to_unsigned(0, 12);
+			img2pix2g <= to_unsigned(0, 12);
+			img2pix2b <= to_unsigned(0, 12);
+			img2pix3r <= to_unsigned(0, 12);
+			img2pix3g <= to_unsigned(0, 12);
+			img2pix3b <= to_unsigned(0, 12);
+			img2pix4r <= to_unsigned(0, 12);
+			img2pix4g <= to_unsigned(0, 12);
+			img2pix4b <= to_unsigned(0, 12);
 
 		else
 
@@ -341,7 +377,8 @@ begin
 				firstrowhandled <= firstrowhandled;
 				readrowodd <= readrowodd;
 
-				read_done_a_delayed <= '0';
+				-- Image 1 pixel data for four pixels in 36-bit RGB format
+				read_done_img1_delayed <= '0';
 
 				img1pix1r <= img1pix1r;
 				img1pix1g <= img1pix1g;
@@ -355,6 +392,22 @@ begin
 				img1pix4r <= img1pix4r;
 				img1pix4g <= img1pix4g;
 				img1pix4b <= img1pix4b;
+
+				-- Image 2 pixel data for four pixels in 36-bit RGB format
+				read_done_img2_delayed <= '0';
+
+				img2pix1r <= img1pix1r;
+				img2pix1g <= img1pix1g;
+				img2pix1b <= img1pix1b;
+				img2pix2r <= img1pix2r;
+				img2pix2g <= img1pix2g;
+				img2pix2b <= img1pix2b;
+				img2pix3r <= img1pix3r;
+				img2pix3g <= img1pix3g;
+				img2pix3b <= img1pix3b;
+				img2pix4r <= img1pix4r;
+				img2pix4g <= img1pix4g;
+				img2pix4b <= img1pix4b;
 
 				-- Capture image read data 
 				if (read_done_a='1' or read_done_b='1' or read_done_c='1') then
@@ -371,13 +424,14 @@ begin
 				else
 				end if;
 
-				-- Capture image 1 data
+				-- Capture image 1
+				-- Image 1 pixel data for four pixels in 36-bit RGB format
 				if (read_done_a='1') then
-					read_done_a_delayed <= '1';
+					read_done_img1_delayed <= '1';
 				else
 				end if;
 
-				if (read_done_a_delayed='1') then
+				if (read_done_img1_delayed='1') then
 
 					img1pix1r <= pix1r;
 					img1pix1g <= pix1g;
@@ -395,11 +449,31 @@ begin
 				else
 				end if;
 
-
+				-- Capture image 2
+				-- Image 2 pixel data for four pixels in 36-bit RGB format
 				if (read_done_b='1') then
-					src2A <= unsigned(read_data);
+					read_done_img2_delayed <= '1';
 				else
 				end if;
+
+				if (read_done_img2_delayed='1') then
+
+					img2pix1r <= pix1r;
+					img2pix1g <= pix1g;
+					img2pix1b <= pix1b;
+					img2pix2r <= pix2r;
+					img2pix2g <= pix2g;
+					img2pix2b <= pix2b;
+					img2pix3r <= pix3r;
+					img2pix3g <= pix3g;
+					img2pix3b <= pix3b;
+					img2pix4r <= pix4r;
+					img2pix4g <= pix4g;
+					img2pix4b <= pix4b;
+
+				else
+				end if;
+				
 
 				if (read_done_c='1') then
 					src3A <= unsigned(read_data);
