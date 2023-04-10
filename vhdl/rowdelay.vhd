@@ -221,6 +221,22 @@ architecture rtl of rowdelay is
 	signal img2pix4g : unsigned(11 downto 0);
 	signal img2pix4b : unsigned(11 downto 0);
 
+	-- Step 1 calculation result
+	signal res1pix1r : unsigned(11 downto 0);
+	signal res1pix1g : unsigned(11 downto 0);
+	signal res1pix1b : unsigned(11 downto 0);
+
+	signal res1pix2r : unsigned(11 downto 0);
+	signal res1pix2g : unsigned(11 downto 0);
+	signal res1pix2b : unsigned(11 downto 0);
+
+	signal res1pix3r : unsigned(11 downto 0);
+	signal res1pix3g : unsigned(11 downto 0);
+	signal res1pix3b : unsigned(11 downto 0);
+
+	signal res1pix4r : unsigned(11 downto 0);
+	signal res1pix4g : unsigned(11 downto 0);
+	signal res1pix4b : unsigned(11 downto 0);
 	
 
 begin
@@ -346,6 +362,22 @@ begin
 			img2pix4g <= to_unsigned(0, 12);
 			img2pix4b <= to_unsigned(0, 12);
 
+			-- Step 1 calculation result
+			res1pix1r <= to_unsigned(0, 12);
+			res1pix1g <= to_unsigned(0, 12);
+			res1pix1b <= to_unsigned(0, 12);
+			res1pix2r <= to_unsigned(0, 12);
+			res1pix2g <= to_unsigned(0, 12);
+			res1pix2b <= to_unsigned(0, 12);
+			res1pix3r <= to_unsigned(0, 12);
+			res1pix3g <= to_unsigned(0, 12);
+			res1pix3b <= to_unsigned(0, 12);
+			res1pix4r <= to_unsigned(0, 12);
+			res1pix4g <= to_unsigned(0, 12);
+			res1pix4b <= to_unsigned(0, 12);
+
+			
+
 		else
 
 			if (clk'event and clk='1') then
@@ -408,6 +440,7 @@ begin
 				img2pix4r <= img1pix4r;
 				img2pix4g <= img1pix4g;
 				img2pix4b <= img1pix4b;
+				
 
 				-- Capture image read data 
 				if (read_done_a='1' or read_done_b='1' or read_done_c='1') then
@@ -478,6 +511,20 @@ begin
 					src3A <= unsigned(read_data);
 				else
 				end if;
+
+				-- Step 1 calculation result
+				res1pix1r <= img1pix1r - img2pix1r;
+				res1pix1g <= img1pix1g - img2pix1g;
+				res1pix1b <= img1pix1b - img2pix1b;
+				res1pix2r <= img1pix2r - img2pix2r;
+				res1pix2g <= img1pix2g - img2pix2g;
+				res1pix2b <= img1pix2b - img2pix2b;
+				res1pix3r <= img1pix3r - img2pix3r;
+				res1pix3g <= img1pix3g - img2pix3g;
+				res1pix3b <= img1pix3b - img2pix3b;
+				res1pix4r <= img1pix4r - img2pix4r;
+				res1pix4g <= img1pix4g - img2pix4g;
+				res1pix4b <= img1pix4b - img2pix4b;
 
 				-- Trigger writing after pipeline delay
 				-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
