@@ -167,6 +167,25 @@ architecture rtl of rowdelay is
 	signal firstrowhandled : std_logic;
 	signal readrowodd : std_logic;
 
+	signal pix1r : unsigned(11 downto 0);
+	signal pix1g : unsigned(11 downto 0);
+	signal pix1b : unsigned(11 downto 0);
+
+	signal pix2r : unsigned(11 downto 0);
+	signal pix2g : unsigned(11 downto 0);
+	signal pix2b : unsigned(11 downto 0);
+
+	signal pix3r : unsigned(11 downto 0);
+	signal pix3g : unsigned(11 downto 0);
+	signal pix3b : unsigned(11 downto 0);
+
+	signal pix4r : unsigned(11 downto 0);
+	signal pix4g : unsigned(11 downto 0);
+	signal pix4b : unsigned(11 downto 0);
+
+	-- Image 1 pixel data for four pixels
+	signal read_done_a_delayed : std_logic;
+	
 	signal img1pix1r : unsigned(11 downto 0);
 	signal img1pix1g : unsigned(11 downto 0);
 	signal img1pix1b : unsigned(11 downto 0);
@@ -183,6 +202,7 @@ architecture rtl of rowdelay is
 	signal img1pix4g : unsigned(11 downto 0);
 	signal img1pix4b : unsigned(11 downto 0);
 
+	
 
 begin
 
@@ -220,21 +240,21 @@ begin
 		read_data => read_data,
 
 		-- Output data signals
-		pix1r => img1pix1r,
-		pix1g => img1pix1g,
-		pix1b => img1pix1b,
+		pix1r => pix1r,
+		pix1g => pix1g,
+		pix1b => pix1b,
 
-		pix2r => img1pix2r,
-		pix2g => img1pix2g,
-		pix2b => img1pix2b,
+		pix2r => pix2r,
+		pix2g => pix2g,
+		pix2b => pix2b,
 
-		pix3r => img1pix3r,
-		pix3g => img1pix3g,
-		pix3b => img1pix3b,
+		pix3r => pix3r,
+		pix3g => pix3g,
+		pix3b => pix3b,
 
-		pix4r => img1pix4r,
-		pix4g => img1pix4g,
-		pix4b => img1pix4b
+		pix4r => pix4r,
+		pix4g => pix4g,
+		pix4b => pix4b
  	);
 
 	------------------------------------------
@@ -275,6 +295,21 @@ begin
 			firstrowhandled <= '0';
 			readrowodd <= '0';
 
+			read_done_a_delayed <= '0';
+
+			img1pix1r <= to_unsigned(0, 12);
+			img1pix1g <= to_unsigned(0, 12);
+			img1pix1b <= to_unsigned(0, 12);
+			img1pix2r <= to_unsigned(0, 12);
+			img1pix2g <= to_unsigned(0, 12);
+			img1pix2b <= to_unsigned(0, 12);
+			img1pix3r <= to_unsigned(0, 12);
+			img1pix3g <= to_unsigned(0, 12);
+			img1pix3b <= to_unsigned(0, 12);
+			img1pix4r <= to_unsigned(0, 12);
+			img1pix4g <= to_unsigned(0, 12);
+			img1pix4b <= to_unsigned(0, 12);
+
 		else
 
 			if (clk'event and clk='1') then
@@ -306,8 +341,23 @@ begin
 				firstrowhandled <= firstrowhandled;
 				readrowodd <= readrowodd;
 
+				read_done_a_delayed <= '0';
+
+				img1pix1r <= img1pix1r;
+				img1pix1g <= img1pix1g;
+				img1pix1b <= img1pix1b;
+				img1pix2r <= img1pix2r;
+				img1pix2g <= img1pix2g;
+				img1pix2b <= img1pix2b;
+				img1pix3r <= img1pix3r;
+				img1pix3g <= img1pix3g;
+				img1pix3b <= img1pix3b;
+				img1pix4r <= img1pix4r;
+				img1pix4g <= img1pix4g;
+				img1pix4b <= img1pix4b;
+
 				-- Capture image read data 
-				if (read_done_a='1') then
+				if (read_done_a='1' or read_done_b='1' or read_done_c='1') then
 
 					-- Increment row delay ram address
 					if (ram1_addr=to_unsigned(648,10)) then
@@ -317,6 +367,30 @@ begin
 					else
 						ram1_addr <= ram1_addr + to_unsigned(1,10);
 					end if;
+
+				else
+				end if;
+
+				-- Capture image 1 data
+				if (read_done_a='1') then
+					read_done_a_delayed <= '1';
+				else
+				end if;
+
+				if (read_done_a_delayed='1') then
+
+					img1pix1r <= pix1r;
+					img1pix1g <= pix1g;
+					img1pix1b <= pix1b;
+					img1pix2r <= pix2r;
+					img1pix2g <= pix2g;
+					img1pix2b <= pix2b;
+					img1pix3r <= pix3r;
+					img1pix3g <= pix3g;
+					img1pix3b <= pix3b;
+					img1pix4r <= pix4r;
+					img1pix4g <= pix4g;
+					img1pix4b <= pix4b;
 
 				else
 				end if;
