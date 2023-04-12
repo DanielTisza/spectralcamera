@@ -376,7 +376,8 @@ begin
 			res1pix4g <= to_unsigned(0, 12);
 			res1pix4b <= to_unsigned(0, 12);
 
-			
+			-- Pipeline processing delay shift register trigger
+			pipelinedelay <= (others => '0');
 
 		else
 
@@ -440,7 +441,9 @@ begin
 				img2pix4r <= img1pix4r;
 				img2pix4g <= img1pix4g;
 				img2pix4b <= img1pix4b;
-				
+
+				-- Pipeline processing delay shift register trigger
+				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '0';
 
 				-- Capture image read data 
 				if (read_done_a='1' or read_done_b='1' or read_done_c='1') then
@@ -504,6 +507,10 @@ begin
 					img2pix4g <= pix4g;
 					img2pix4b <= pix4b;
 
+					-- Last data read for pipeline processing
+					-- Trigger writing after pipeline delay
+					pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
+
 				else
 				end if;
 
@@ -526,9 +533,6 @@ begin
 				res1pix4g <= img1pix4g - img2pix4g;
 				res1pix4b <= img1pix4b - img2pix4b;
 
-				-- Trigger writing after pipeline delay
-				-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
-
 				-- Need to write
 				-- 4 * 3 * 12-bits = 144 bits
 				-- Can write 64-bits at a time
@@ -540,10 +544,7 @@ begin
 				if (pipelinedelay(pipelinedelay'length-1)='1') then
 
 					-- Wait for write interface to be available
-					if (write_ready='1') then
-
-						-- This signaling can be reworked later
-						pipelinedelay <= (others => '0');
+					if (write_ready='1') then						
 
 						-- Set address and request write
 						write_addr_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH) + dstoffset; --X"3EB3FB00"
