@@ -119,7 +119,6 @@ architecture rtl of rowdelay is
 	end component cfarows2rgb;
 
 	-- Direct read
-	signal src1A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal src2A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal src3A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
@@ -129,7 +128,6 @@ architecture rtl of rowdelay is
 	signal src3B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 	-- Computations
-	signal result1 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal result2 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal result3 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
@@ -258,7 +256,6 @@ begin
 	
 	ram1_wr_data <= read_data(59 downto 48) & read_data(43 downto 32) & read_data(27 downto 16) & read_data(11 downto 0);
 	ram1_wr <= read_done_a;
-	src1A <= unsigned(ram1_rd_data);
 
 	------------------------------------------
 	-- rowdelayram1
@@ -315,7 +312,6 @@ begin
 			src3B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			
 			-- Computations
-			result1 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			result2 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			result3 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
@@ -395,13 +391,12 @@ begin
 				src3B <= src3B;
 
 				-- Computations
-				result1 <= src1A + src1B;
 				result2 <= src2A + src2B;
 				result3 <= src3A + src3B;
 
 				-- Destination data to DDR memory
 				write_addr_int <= write_addr_int;
-				write_data_int <= result1 + result2 + result3;
+				write_data_int <= result2 + result3;
 				write_ena_int <= '0';
 
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
@@ -544,7 +539,7 @@ begin
 				if (pipelinedelay(pipelinedelay'length-1)='1') then
 
 					-- Wait for write interface to be available
-					if (write_ready='1') then						
+					if (write_ready='1') then
 
 						-- Set address and request write
 						write_addr_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH) + dstoffset; --X"3EB3FB00"
