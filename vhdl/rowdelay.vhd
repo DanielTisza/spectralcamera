@@ -538,6 +538,14 @@ begin
 				--------------------------------------
 				if (pipelinedelay(pipelinedelay'length-1)='1') then
 
+					-- Capture the result from pipeline
+					-- Request write1
+					-- Request write2
+					-- Request write3
+
+					-- Make 144 bits shift register where highest 64-bits connected
+					-- to write port
+
 					-- Wait for write interface to be available
 					if (write_ready='1') then
 
