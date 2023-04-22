@@ -529,9 +529,10 @@ begin
 				res1pix4b <= img1pix4b - img2pix4b;
 
 				-- Need to write
-				-- 4 * 3 * 12-bits = 144 bits
+				-- 4 * 3 * 12-bits = 144 bits (18 bytes)
 				-- Can write 64-bits at a time
 				-- (4*3*12) / 64 = 2.25 transfers needed to write back processed pixel data in 36-bit RGB format
+				-- 8 bytes, 8 bytes, 2 bytes
 
 				--------------------------------------
 				-- Wait for pipeline data to become available
