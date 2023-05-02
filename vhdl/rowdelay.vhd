@@ -572,6 +572,10 @@ begin
 				else
 				end if;
 
+				--if (write_req1='1') then
+				--else
+				--end if;
+
 
 			else		
 			end if;
