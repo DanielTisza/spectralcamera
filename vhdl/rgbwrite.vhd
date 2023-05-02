@@ -30,12 +30,6 @@ entity rgbwrite is
 		resetn	: in std_logic;
 
 		-- Input data signals
-		read_data : in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
-
-		read_done_a : in std_logic;
-		read_done_b : in std_logic;
-		read_done_c : in std_logic;
-
 		imgsync_ena : in std_logic;
 		hsync_ena : in std_logic;
 		vsync_ena : in std_logic;
@@ -88,87 +82,10 @@ architecture rtl of rgbwrite is
 	signal write_ena_int : std_logic;
 
 	signal pipelinedelay : std_logic_vector(3 downto 0);
-	signal dstoffset : unsigned(23 downto 0);
-
-
-	-- Delay RAM definition
-
-	-- RAM definitions
-
-	-- RAM data word size
-	-- 64 bits contains 4 pixels * 16 bits
-	-- Each 16 bits contain only 12 bits effective data
-	-- So we get 4 pixels * 12 bits = 48 bits effective data
-
-	-- RAM data word count
-	-- 2590 pixels / 4 pixels per 64 bits transfer
-	-- 2590/4 = 647.5 = 648
-
-	subtype ram_word_type is std_logic_vector(47 downto 0);
-	subtype ram_addr_type is unsigned(9 downto 0);
-	
-	-- RAM1 signals
-	signal ram1_addr : ram_addr_type;
-	signal ram1_rd_data : ram_word_type;
-	signal ram1_wr_data : ram_word_type;
-	signal ram1_wr : std_logic;
+	signal dstoffset : unsigned(23 downto 0);	
 
 	signal firstrowhandled : std_logic;
 	signal readrowodd : std_logic;
-
-	signal pix1r : unsigned(11 downto 0);
-	signal pix1g : unsigned(11 downto 0);
-	signal pix1b : unsigned(11 downto 0);
-
-	signal pix2r : unsigned(11 downto 0);
-	signal pix2g : unsigned(11 downto 0);
-	signal pix2b : unsigned(11 downto 0);
-
-	signal pix3r : unsigned(11 downto 0);
-	signal pix3g : unsigned(11 downto 0);
-	signal pix3b : unsigned(11 downto 0);
-
-	signal pix4r : unsigned(11 downto 0);
-	signal pix4g : unsigned(11 downto 0);
-	signal pix4b : unsigned(11 downto 0);
-
-	-- Image 1 pixel data for four pixels in 36-bit RGB format
-	signal read_done_img1_delayed : std_logic;
-
-	signal img1pix1r : unsigned(11 downto 0);
-	signal img1pix1g : unsigned(11 downto 0);
-	signal img1pix1b : unsigned(11 downto 0);
-
-	signal img1pix2r : unsigned(11 downto 0);
-	signal img1pix2g : unsigned(11 downto 0);
-	signal img1pix2b : unsigned(11 downto 0);
-
-	signal img1pix3r : unsigned(11 downto 0);
-	signal img1pix3g : unsigned(11 downto 0);
-	signal img1pix3b : unsigned(11 downto 0);
-
-	signal img1pix4r : unsigned(11 downto 0);
-	signal img1pix4g : unsigned(11 downto 0);
-	signal img1pix4b : unsigned(11 downto 0);
-
-	-- Image 2 pixel data for four pixels in 36-bit RGB format
-	signal read_done_img2_delayed : std_logic;
-	
-	signal img2pix1r : unsigned(11 downto 0);
-	signal img2pix1g : unsigned(11 downto 0);
-	signal img2pix1b : unsigned(11 downto 0);
-
-	signal img2pix2r : unsigned(11 downto 0);
-	signal img2pix2g : unsigned(11 downto 0);
-	signal img2pix2b : unsigned(11 downto 0);
-
-	signal img2pix3r : unsigned(11 downto 0);
-	signal img2pix3g : unsigned(11 downto 0);
-	signal img2pix3b : unsigned(11 downto 0);
-
-	signal img2pix4r : unsigned(11 downto 0);
-	signal img2pix4g : unsigned(11 downto 0);
-	signal img2pix4b : unsigned(11 downto 0);	
 
 begin
     
@@ -182,8 +99,6 @@ begin
 	begin
 
 		if (resetn='0') then
-
-			ram1_addr <= to_unsigned(0,10);
 
 			-- Direct read
 			src2A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
@@ -209,46 +124,12 @@ begin
 			firstrowhandled <= '0';
 			readrowodd <= '0';
 
-			-- Image 1 pixel data for four pixels in 36-bit RGB format
-			read_done_img1_delayed <= '0';
-
-			img1pix1r <= to_unsigned(0, 12);
-			img1pix1g <= to_unsigned(0, 12);
-			img1pix1b <= to_unsigned(0, 12);
-			img1pix2r <= to_unsigned(0, 12);
-			img1pix2g <= to_unsigned(0, 12);
-			img1pix2b <= to_unsigned(0, 12);
-			img1pix3r <= to_unsigned(0, 12);
-			img1pix3g <= to_unsigned(0, 12);
-			img1pix3b <= to_unsigned(0, 12);
-			img1pix4r <= to_unsigned(0, 12);
-			img1pix4g <= to_unsigned(0, 12);
-			img1pix4b <= to_unsigned(0, 12);
-
-			-- Image 2 pixel data for four pixels in 36-bit RGB format
-			read_done_img2_delayed <= '0';
-
-			img2pix1r <= to_unsigned(0, 12);
-			img2pix1g <= to_unsigned(0, 12);
-			img2pix1b <= to_unsigned(0, 12);
-			img2pix2r <= to_unsigned(0, 12);
-			img2pix2g <= to_unsigned(0, 12);
-			img2pix2b <= to_unsigned(0, 12);
-			img2pix3r <= to_unsigned(0, 12);
-			img2pix3g <= to_unsigned(0, 12);
-			img2pix3b <= to_unsigned(0, 12);
-			img2pix4r <= to_unsigned(0, 12);
-			img2pix4g <= to_unsigned(0, 12);
-			img2pix4b <= to_unsigned(0, 12);
-
 			-- Pipeline processing delay shift register trigger
 			pipelinedelay <= (others => '0');
 
 		else
 
 			if (clk'event and clk='1') then
-
-				ram1_addr <= ram1_addr;
 
 				-- Direct read
 				src2A <= src2A;
@@ -274,114 +155,17 @@ begin
 				firstrowhandled <= firstrowhandled;
 				readrowodd <= readrowodd;
 
-				-- Image 1 pixel data for four pixels in 36-bit RGB format
-				read_done_img1_delayed <= '0';
-
-				img1pix1r <= img1pix1r;
-				img1pix1g <= img1pix1g;
-				img1pix1b <= img1pix1b;
-				img1pix2r <= img1pix2r;
-				img1pix2g <= img1pix2g;
-				img1pix2b <= img1pix2b;
-				img1pix3r <= img1pix3r;
-				img1pix3g <= img1pix3g;
-				img1pix3b <= img1pix3b;
-				img1pix4r <= img1pix4r;
-				img1pix4g <= img1pix4g;
-				img1pix4b <= img1pix4b;
-
-				-- Image 2 pixel data for four pixels in 36-bit RGB format
-				read_done_img2_delayed <= '0';
-
-				img2pix1r <= img1pix1r;
-				img2pix1g <= img1pix1g;
-				img2pix1b <= img1pix1b;
-				img2pix2r <= img1pix2r;
-				img2pix2g <= img1pix2g;
-				img2pix2b <= img1pix2b;
-				img2pix3r <= img1pix3r;
-				img2pix3g <= img1pix3g;
-				img2pix3b <= img1pix3b;
-				img2pix4r <= img1pix4r;
-				img2pix4g <= img1pix4g;
-				img2pix4b <= img1pix4b;
-
 				-- Pipeline processing delay shift register trigger
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '0';
 
-				-- Capture image read data 
-				if (read_done_a='1' or read_done_b='1' or read_done_c='1') then
-
-					-- Increment row delay ram address
-					if (ram1_addr=to_unsigned(648,10)) then
-						ram1_addr <= to_unsigned(0,10);
-						firstrowhandled <= '1';
-						readrowodd <= not(readrowodd);
-					else
-						ram1_addr <= ram1_addr + to_unsigned(1,10);
-					end if;
-
-				else
-				end if;
-
-				-- Capture image 1
-				-- Image 1 pixel data for four pixels in 36-bit RGB format
-				if (read_done_a='1') then
-					read_done_img1_delayed <= '1';
-				else
-				end if;
-
-				if (read_done_img1_delayed='1') then
-
-					img1pix1r <= pix1r;
-					img1pix1g <= pix1g;
-					img1pix1b <= pix1b;
-					img1pix2r <= pix2r;
-					img1pix2g <= pix2g;
-					img1pix2b <= pix2b;
-					img1pix3r <= pix3r;
-					img1pix3g <= pix3g;
-					img1pix3b <= pix3b;
-					img1pix4r <= pix4r;
-					img1pix4g <= pix4g;
-					img1pix4b <= pix4b;
-
-				else
-				end if;
-
-				-- Capture image 2
-				-- Image 2 pixel data for four pixels in 36-bit RGB format
-				if (read_done_b='1') then
-					read_done_img2_delayed <= '1';
-				else
-				end if;
-
-				if (read_done_img2_delayed='1') then
-
-					img2pix1r <= pix1r;
-					img2pix1g <= pix1g;
-					img2pix1b <= pix1b;
-					img2pix2r <= pix2r;
-					img2pix2g <= pix2g;
-					img2pix2b <= pix2b;
-					img2pix3r <= pix3r;
-					img2pix3g <= pix3g;
-					img2pix3b <= pix3b;
-					img2pix4r <= pix4r;
-					img2pix4g <= pix4g;
-					img2pix4b <= pix4b;
+				-- if (read_done_img2_delayed='1') then
 
 					-- Last data read for pipeline processing
 					-- Trigger writing after pipeline delay
-					pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
+					-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
 
-				else
-				end if;
-
-				if (read_done_c='1') then
-					src3A <= unsigned(read_data);
-				else
-				end if;
+				-- else
+				-- end if;
 
 
 				-- Need to write
