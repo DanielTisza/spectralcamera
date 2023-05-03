@@ -130,13 +130,9 @@ architecture rtl of rowdelay is
 	end component cfarows2rgb;
 
 	-- Direct read
-	signal src2A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal src3A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal read_data_dark : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
-	-- Delayed signals
-	signal src1B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal src2B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal src3B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal src3A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 	signal pipelinedelay : std_logic_vector(3 downto 0);
 
@@ -303,13 +299,9 @@ begin
 			ram1_addr <= to_unsigned(0,10);
 
 			-- Direct read
-			src2A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			src3A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			read_data_dark <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
-			-- Delayed signals
-			src1B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			src2B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			src3B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			src3A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
 			pipelinedelay <= (others => '0');
 
@@ -372,13 +364,9 @@ begin
 				ram1_addr <= ram1_addr;
 
 				-- Direct read
-				src2A <= src2A;
-				src3A <= src3A;
+				read_data_dark <= read_data_dark;
 
-				-- Delayed signals
-				src1B <= src1B;
-				src2B <= src2B;
-				src3B <= src3B;
+				src3A <= src3A;
 
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
 
@@ -439,6 +427,7 @@ begin
 				-- Image 1 pixel data for four pixels in 36-bit RGB format
 				if (read_done_a='1') then
 					read_done_img1_delayed <= '1';
+					read_data_dark <= unsigned(read_data);
 				else
 				end if;
 
