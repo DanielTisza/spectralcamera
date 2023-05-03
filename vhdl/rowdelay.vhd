@@ -55,13 +55,7 @@ entity rowdelay is
 
 		respix4r : out unsigned(11 downto 0);
 		respix4g : out unsigned(11 downto 0);
-		respix4b : out unsigned(11 downto 0);
-
-		-- Writing channel signals
-		write_ready : in std_logic;
-		write_ena : out std_logic;
-		write_addr : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-		write_data : out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0)
+		respix4b : out unsigned(11 downto 0)
 
 	);
 
@@ -144,18 +138,7 @@ architecture rtl of rowdelay is
 	signal src2B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal src3B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
-	-- Computations
-	signal result2 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal result3 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-
-	-- Destination data to DDR memory
-	signal write_addr_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
-	signal write_data_int : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal write_ena_int : std_logic;
-
 	signal pipelinedelay : std_logic_vector(3 downto 0);
-	signal dstoffset : unsigned(23 downto 0);
-
 
 	-- Delay RAM definition
 
@@ -327,18 +310,8 @@ begin
 			src1B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			src2B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			src3B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			
-			-- Computations
-			result2 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			result3 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
 			pipelinedelay <= (others => '0');
-			dstoffset <= to_unsigned(0, 24);
-
-			-- Writing channel signals
-			write_addr_int <= to_unsigned(0, C_M_AXI_ADDR_WIDTH);
-			write_data_int <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			write_ena_int <= '0';
 
 			firstrowhandled <= '0';
 			readrowodd <= '0';
@@ -407,17 +380,7 @@ begin
 				src2B <= src2B;
 				src3B <= src3B;
 
-				-- Computations
-				result2 <= src2A + src2B;
-				result3 <= src3A + src3B;
-
-				-- Destination data to DDR memory
-				write_addr_int <= write_addr_int;
-				write_data_int <= result2 + result3;
-				write_ena_int <= '0';
-
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
-				dstoffset <= dstoffset;
 
 				firstrowhandled <= firstrowhandled;
 				readrowodd <= readrowodd;
@@ -545,56 +508,7 @@ begin
 				res1pix4g <= img1pix4g - img2pix4g;
 				res1pix4b <= img1pix4b - img2pix4b;
 
-				-- Need to write
-				-- 4 * 3 * 12-bits = 144 bits (18 bytes)
-				-- Can write 64-bits at a time
-				-- (4*3*12) / 64 = 2.25 transfers needed to write back processed pixel data in 36-bit RGB format
-				-- 8 bytes, 8 bytes, 2 bytes
-
-				--------------------------------------
-				-- Wait for pipeline data to become available
-				--------------------------------------
-				if (pipelinedelay(pipelinedelay'length-1)='1') then
-
-					-- Capture the result from pipeline
-					-- Request write1
-					-- Request write2
-					-- Request write3
-
-					-- Make 144 bits shift register where highest 64-bits connected
-					-- to write port
-
-					-- Wait for write interface to be available
-					if (write_ready='1') then
-
-						-- Set address and request write
-						write_addr_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH) + dstoffset; --X"3EB3FB00"
-						write_ena_int <= '1';
-
-						-- Calculate offset for next write address
-						dstoffset <= dstoffset + to_unsigned(8, 4);
-
-						-- Detect when all data has been written
-						if (dstoffset=to_unsigned(10059552, 24)) then  --X"997F20"
-							dstoffset <= to_unsigned(0, 24);
-						else
-						end if;
-
-					else
-
-						-- This is fatal error, if pipeline data has arrived
-						-- but writing is not available.
-					end if;
-					
-				else
-				end if;
-
-				--if (write_req1='1') then
-				--else
-				--end if;
-
-
-			else		
+			else
 			end if;
 			
 		end if;
@@ -616,14 +530,9 @@ begin
 	respix3r <= res1pix3r;
 	respix3g <= res1pix3g;
 	respix3b <= res1pix3b;
-	
+
 	respix4r <= res1pix4r;
 	respix4g <= res1pix4g;
 	respix4b <= res1pix4b;
-
-	-- Write channel signals
-	write_addr <= std_logic_vector(write_addr_int);
-	write_data <= std_logic_vector(write_data_int);
-	write_ena <= write_ena_int;
 	
 end architecture;
