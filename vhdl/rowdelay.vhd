@@ -489,6 +489,7 @@ begin
 				else
 				end if;
 
+				-- Capture image 3
 				if (read_done_c='1') then
 					src3A <= unsigned(read_data);
 				else
