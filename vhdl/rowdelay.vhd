@@ -40,6 +40,23 @@ entity rowdelay is
 		hsync_ena : in std_logic;
 		vsync_ena : in std_logic;
 
+		-- Output data signals
+		respix1r : out unsigned(11 downto 0);
+		respix1g : out unsigned(11 downto 0);
+		respix1b : out unsigned(11 downto 0);
+
+		respix2r : out unsigned(11 downto 0);
+		respix2g : out unsigned(11 downto 0);
+		respix2b : out unsigned(11 downto 0);
+
+		respix3r : out unsigned(11 downto 0);
+		respix3g : out unsigned(11 downto 0);
+		respix3b : out unsigned(11 downto 0);
+
+		respix4r : out unsigned(11 downto 0);
+		respix4g : out unsigned(11 downto 0);
+		respix4b : out unsigned(11 downto 0);
+
 		-- Writing channel signals
 		write_ready : in std_logic;
 		write_ena : out std_logic;
@@ -587,6 +604,22 @@ begin
 	--
 	-- Continuous connections
 	--
+
+	respix1r <= res1pix1r;
+	respix1g <= res1pix1g;
+	respix1b <= res1pix1b;
+
+	respix2r <= res1pix2r;
+	respix2g <= res1pix2g;
+	respix2b <= res1pix2b;
+
+	respix3r <= res1pix3r;
+	respix3g <= res1pix3g;
+	respix3b <= res1pix3b;
+	
+	respix4r <= res1pix4r;
+	respix4g <= res1pix4g;
+	respix4b <= res1pix4b;
 
 	-- Write channel signals
 	write_addr <= std_logic_vector(write_addr_int);
