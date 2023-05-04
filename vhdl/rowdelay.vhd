@@ -131,6 +131,7 @@ architecture rtl of rowdelay is
 
 	-- Direct read
 	signal read_data_dark : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal read_data_target : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 	signal src3A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
@@ -300,6 +301,7 @@ begin
 
 			-- Direct read
 			read_data_dark <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			read_data_target <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
 			src3A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
@@ -365,6 +367,7 @@ begin
 
 				-- Direct read
 				read_data_dark <= read_data_dark;
+				read_data_target <= read_data_target;
 
 				src3A <= src3A;
 
@@ -453,6 +456,7 @@ begin
 				-- Image 2 pixel data for four pixels in 36-bit RGB format
 				if (read_done_b='1') then
 					read_done_img2_delayed <= '1';
+					read_data_target <= unsigned(read_data);
 				else
 				end if;
 
@@ -483,6 +487,13 @@ begin
 					src3A <= unsigned(read_data);
 				else
 				end if;
+
+				-- Subtract dark from target
+				
+
+				-- Subtract dark from white
+
+				-- read_data(59 downto 48) & read_data(43 downto 32) & read_data(27 downto 16) & read_data(11 downto 0);
 
 				-- Step 1 calculation result
 				res1pix1r <= img1pix1r - img2pix1r;
