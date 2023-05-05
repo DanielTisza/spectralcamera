@@ -132,8 +132,7 @@ architecture rtl of rowdelay is
 	-- Direct read
 	signal read_data_dark : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal read_data_target : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-
-	signal src3A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal read_data_white : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 	signal pipelinedelay : std_logic_vector(3 downto 0);
 
@@ -158,6 +157,12 @@ architecture rtl of rowdelay is
 	signal ram1_rd_data : ram_word_type;
 	signal ram1_wr_data : ram_word_type;
 	signal ram1_wr : std_logic;
+
+	-- RAM2 signals
+	signal ram2_addr : ram_addr_type;
+	signal ram2_rd_data : ram_word_type;
+	signal ram2_wr_data : ram_word_type;
+	signal ram2_wr : std_logic;
 
 	signal firstrowhandled : std_logic;
 	signal readrowodd : std_logic;
@@ -233,6 +238,17 @@ architecture rtl of rowdelay is
 	signal res1pix4g : unsigned(11 downto 0);
 	signal res1pix4b : unsigned(11 downto 0);
 	
+	-- Subtract dark from target
+	signal targetsub1 : unsigned(11 downto 0);
+	signal targetsub2 : unsigned(11 downto 0);
+	signal targetsub3 : unsigned(11 downto 0);
+	signal targetsub4 : unsigned(11 downto 0);
+
+	-- Subtract dark from white
+	signal whitesub1 : unsigned(11 downto 0);
+	signal whitesub2 : unsigned(11 downto 0);
+	signal whitesub3 : unsigned(11 downto 0);
+	signal whitesub4 : unsigned(11 downto 0);
 
 begin
 
@@ -245,14 +261,40 @@ begin
 		clk => clk,
 	
 		-- RAM signals
-		wr => read_done_a,
+		wr => read_done_b,
 		addr => std_logic_vector(ram1_addr),
 		wr_data => ram1_wr_data,
 		rd_data => ram1_rd_data
 	);
 	
-	ram1_wr_data <= read_data(59 downto 48) & read_data(43 downto 32) & read_data(27 downto 16) & read_data(11 downto 0);
-	ram1_wr <= read_done_a;
+	ram1_wr_data <= std_logic_vector(targetsub1)
+				 &	std_logic_vector(targetsub2)
+				 &	std_logic_vector(targetsub3)
+				 &	std_logic_vector(targetsub4);
+
+	ram1_wr <= read_done_b;
+
+	------------------------------------------
+	-- rowdelayram2
+	------------------------------------------
+	rowdelayram2 : rowdelayram port map(
+
+		-- Clock and reset
+		clk => clk,
+	
+		-- RAM signals
+		wr => read_done_c,
+		addr => std_logic_vector(ram2_addr),
+		wr_data => ram2_wr_data,
+		rd_data => ram2_rd_data
+	);
+	
+	ram2_wr_data <= std_logic_vector(whitesub1)
+				 &	std_logic_vector(whitesub2)
+				 &	std_logic_vector(whitesub3)
+				 &	std_logic_vector(whitesub4);
+
+	ram2_wr <= read_done_c;
 
 	------------------------------------------
 	-- rowdelayram1
@@ -298,12 +340,24 @@ begin
 		if (resetn='0') then
 
 			ram1_addr <= to_unsigned(0,10);
+			ram2_addr <= to_unsigned(0,10);
 
 			-- Direct read
 			read_data_dark <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			read_data_target <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			read_data_white <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
-			src3A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
+			-- Subtract dark from target
+			targetsub1 <= to_unsigned(0, 12);
+			targetsub2 <= to_unsigned(0, 12);
+			targetsub3 <= to_unsigned(0, 12);
+			targetsub4 <= to_unsigned(0, 12);
+
+			-- Subtract dark from target
+			whitesub1 <= to_unsigned(0, 12);
+			whitesub2 <= to_unsigned(0, 12);
+			whitesub3 <= to_unsigned(0, 12);
+			whitesub4 <= to_unsigned(0, 12);
 
 			pipelinedelay <= (others => '0');
 
@@ -364,12 +418,12 @@ begin
 			if (clk'event and clk='1') then
 
 				ram1_addr <= ram1_addr;
+				ram2_addr <= ram2_addr;
 
 				-- Direct read
 				read_data_dark <= read_data_dark;
 				read_data_target <= read_data_target;
-
-				src3A <= src3A;
+				read_data_white <= read_data_white;
 
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
 
@@ -411,24 +465,10 @@ begin
 				-- Pipeline processing delay shift register trigger
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '0';
 
-				-- Capture image read data 
-				if (read_done_a='1' or read_done_b='1' or read_done_c='1') then
-
-					-- Increment row delay ram address
-					if (ram1_addr=to_unsigned(648,10)) then
-						ram1_addr <= to_unsigned(0,10);
-						firstrowhandled <= '1';
-						readrowodd <= not(readrowodd);
-					else
-						ram1_addr <= ram1_addr + to_unsigned(1,10);
-					end if;
-
-				else
-				end if;
-
 				-- Capture image 1
-				-- Image 1 pixel data for four pixels in 36-bit RGB format
+				-- This is dark reference image in BayerGB12 CFA format
 				if (read_done_a='1') then
+
 					read_done_img1_delayed <= '1';
 					read_data_dark <= unsigned(read_data);
 				else
@@ -453,10 +493,21 @@ begin
 				end if;
 
 				-- Capture image 2
-				-- Image 2 pixel data for four pixels in 36-bit RGB format
+				-- This is target image in BayerGB12 CFA format
 				if (read_done_b='1') then
+
 					read_done_img2_delayed <= '1';
 					read_data_target <= unsigned(read_data);
+
+					-- Increment row delay ram address
+					if (ram1_addr=to_unsigned(648,10)) then
+						ram1_addr <= to_unsigned(0,10);
+						firstrowhandled <= '1';
+						readrowodd <= not(readrowodd);
+					else
+						ram1_addr <= ram1_addr + to_unsigned(1,10);
+					end if;
+
 				else
 				end if;
 
@@ -483,17 +534,35 @@ begin
 				end if;
 
 				-- Capture image 3
+				-- This is white reference image in BayerGB12 CFA format
 				if (read_done_c='1') then
-					src3A <= unsigned(read_data);
+
+					read_data_white <= unsigned(read_data);
+
+					-- Increment row delay ram address
+					if (ram2_addr=to_unsigned(648,10)) then
+						ram2_addr <= to_unsigned(0,10);
+						-- firstrowhandled <= '1';
+						-- readrowodd <= not(readrowodd);
+					else
+						ram2_addr <= ram2_addr + to_unsigned(1,10);
+					end if;
+
 				else
 				end if;
 
 				-- Subtract dark from target
-				
+				targetsub1 <= read_data_target(59 downto 48) - read_data_dark(59 downto 48);
+				targetsub2 <= read_data_target(43 downto 32) - read_data_dark(43 downto 32);
+				targetsub3 <= read_data_target(27 downto 16) - read_data_dark(27 downto 16);
+				targetsub4 <= read_data_target(11 downto 0) - read_data_dark(11 downto 0);
 
 				-- Subtract dark from white
+				whitesub1 <= read_data_white(59 downto 48) - read_data_dark(59 downto 48);
+				whitesub2 <= read_data_white(43 downto 32) - read_data_dark(43 downto 32);
+				whitesub3 <= read_data_white(27 downto 16) - read_data_dark(27 downto 16);
+				whitesub4 <= read_data_white(11 downto 0) - read_data_dark(11 downto 0);
 
-				-- read_data(59 downto 48) & read_data(43 downto 32) & read_data(27 downto 16) & read_data(11 downto 0);
 
 				-- Step 1 calculation result
 				res1pix1r <= img1pix1r - img2pix1r;
