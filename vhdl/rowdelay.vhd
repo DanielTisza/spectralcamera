@@ -250,6 +250,9 @@ architecture rtl of rowdelay is
 	signal whitesub3 : unsigned(11 downto 0);
 	signal whitesub4 : unsigned(11 downto 0);
 
+
+	signal targetsubvec : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+
 begin
 
 	------------------------------------------
@@ -308,7 +311,8 @@ begin
 		-- Input data signals
 		readrowodd => readrowodd,
 		ram1_rd_data => ram1_rd_data,
-		read_data => read_data,
+
+		read_data => targetsubvec,
 
 		-- Output data signals
 		pix1r => pix1r,
@@ -588,6 +592,11 @@ begin
 	--
 	-- Continuous connections
 	--
+
+	targetsubvec <=	std_logic_vector(targetsub1)
+				&	std_logic_vector(targetsub2)
+				&	std_logic_vector(targetsub3)
+				&	std_logic_vector(targetsub4);
 
 	respix1r <= res1pix1r;
 	respix1g <= res1pix1g;
