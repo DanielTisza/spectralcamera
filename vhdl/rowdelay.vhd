@@ -152,13 +152,13 @@ architecture rtl of rowdelay is
 	subtype ram_word_type is std_logic_vector(47 downto 0);
 	subtype ram_addr_type is unsigned(9 downto 0);
 	
-	-- RAM1 signals
+	-- RAM1 signals for target image
 	signal ram1_addr : ram_addr_type;
 	signal ram1_rd_data : ram_word_type;
 	signal ram1_wr_data : ram_word_type;
 	signal ram1_wr : std_logic;
 
-	-- RAM2 signals
+	-- RAM2 signals for white image
 	signal ram2_addr : ram_addr_type;
 	signal ram2_rd_data : ram_word_type;
 	signal ram2_wr_data : ram_word_type;
@@ -166,22 +166,6 @@ architecture rtl of rowdelay is
 
 	signal firstrowhandled : std_logic;
 	signal readrowodd : std_logic;
-
-	signal pix1r : unsigned(11 downto 0);
-	signal pix1g : unsigned(11 downto 0);
-	signal pix1b : unsigned(11 downto 0);
-
-	signal pix2r : unsigned(11 downto 0);
-	signal pix2g : unsigned(11 downto 0);
-	signal pix2b : unsigned(11 downto 0);
-
-	signal pix3r : unsigned(11 downto 0);
-	signal pix3g : unsigned(11 downto 0);
-	signal pix3b : unsigned(11 downto 0);
-
-	signal pix4r : unsigned(11 downto 0);
-	signal pix4g : unsigned(11 downto 0);
-	signal pix4b : unsigned(11 downto 0);
 
 	-- Image 1 pixel data for four pixels in 36-bit RGB format
 	signal read_done_img1_delayed : std_logic;
@@ -244,14 +228,49 @@ architecture rtl of rowdelay is
 	signal targetsub3 : unsigned(11 downto 0);
 	signal targetsub4 : unsigned(11 downto 0);
 
+	signal targetsubvec : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+
 	-- Subtract dark from white
 	signal whitesub1 : unsigned(11 downto 0);
 	signal whitesub2 : unsigned(11 downto 0);
 	signal whitesub3 : unsigned(11 downto 0);
 	signal whitesub4 : unsigned(11 downto 0);
 
+	signal whitesubvec : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
 
-	signal targetsubvec : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+	-- Demosaic for target image
+	signal targetdmpix1r : unsigned(11 downto 0);
+	signal targetdmpix1g : unsigned(11 downto 0);
+	signal targetdmpix1b : unsigned(11 downto 0);
+
+	signal targetdmpix2r : unsigned(11 downto 0);
+	signal targetdmpix2g : unsigned(11 downto 0);
+	signal targetdmpix2b : unsigned(11 downto 0);
+
+	signal targetdmpix3r : unsigned(11 downto 0);
+	signal targetdmpix3g : unsigned(11 downto 0);
+	signal targetdmpix3b : unsigned(11 downto 0);
+
+	signal targetdmpix4r : unsigned(11 downto 0);
+	signal targetdmpix4g : unsigned(11 downto 0);
+	signal targetdmpix4b : unsigned(11 downto 0);
+
+	-- Demosaic for white image
+	signal whitedmpix1r : unsigned(11 downto 0);
+	signal whitedmpix1g : unsigned(11 downto 0);
+	signal whitedmpix1b : unsigned(11 downto 0);
+
+	signal whitedmpix2r : unsigned(11 downto 0);
+	signal whitedmpix2g : unsigned(11 downto 0);
+	signal whitedmpix2b : unsigned(11 downto 0);
+
+	signal whitedmpix3r : unsigned(11 downto 0);
+	signal whitedmpix3g : unsigned(11 downto 0);
+	signal whitedmpix3b : unsigned(11 downto 0);
+
+	signal whitedmpix4r : unsigned(11 downto 0);
+	signal whitedmpix4g : unsigned(11 downto 0);
+	signal whitedmpix4b : unsigned(11 downto 0);
 
 begin
 
@@ -300,7 +319,7 @@ begin
 	ram2_wr <= read_done_c;
 
 	------------------------------------------
-	-- rowdelayram1
+	-- cfarows2rgb1
 	------------------------------------------
 	cfarows2rgb1 : cfarows2rgb port map(
 	
@@ -315,21 +334,54 @@ begin
 		read_data => targetsubvec,
 
 		-- Output data signals
-		pix1r => pix1r,
-		pix1g => pix1g,
-		pix1b => pix1b,
+		pix1r => targetdmpix1r,
+		pix1g => targetdmpix1g,
+		pix1b => targetdmpix1b,
 
-		pix2r => pix2r,
-		pix2g => pix2g,
-		pix2b => pix2b,
+		pix2r => targetdmpix2r,
+		pix2g => targetdmpix2g,
+		pix2b => targetdmpix2b,
 
-		pix3r => pix3r,
-		pix3g => pix3g,
-		pix3b => pix3b,
+		pix3r => targetdmpix3r,
+		pix3g => targetdmpix3g,
+		pix3b => targetdmpix3b,
 
-		pix4r => pix4r,
-		pix4g => pix4g,
-		pix4b => pix4b
+		pix4r => targetdmpix4r,
+		pix4g => targetdmpix4g,
+		pix4b => targetdmpix4b
+ 	);
+
+	------------------------------------------
+	-- cfarows2rgb2
+	------------------------------------------
+	cfarows2rgb2 : cfarows2rgb port map(
+	
+		-- Clock and reset
+		clk => clk,
+		resetn => resetn,
+
+		-- Input data signals
+		readrowodd => readrowodd,
+		ram1_rd_data => ram2_rd_data,
+
+		read_data => whitesubvec,
+
+		-- Output data signals
+		pix1r => whitedmpix1r,
+		pix1g => whitedmpix1g,
+		pix1b => whitedmpix1b,
+
+		pix2r => whitedmpix2r,
+		pix2g => whitedmpix2g,
+		pix2b => whitedmpix2b,
+
+		pix3r => whitedmpix3r,
+		pix3g => whitedmpix3g,
+		pix3b => whitedmpix3b,
+
+		pix4r => whitedmpix4r,
+		pix4g => whitedmpix4g,
+		pix4b => whitedmpix4b
  	);
 
 	------------------------------------------
@@ -480,18 +532,18 @@ begin
 
 				if (read_done_img1_delayed='1') then
 
-					img1pix1r <= pix1r;
-					img1pix1g <= pix1g;
-					img1pix1b <= pix1b;
-					img1pix2r <= pix2r;
-					img1pix2g <= pix2g;
-					img1pix2b <= pix2b;
-					img1pix3r <= pix3r;
-					img1pix3g <= pix3g;
-					img1pix3b <= pix3b;
-					img1pix4r <= pix4r;
-					img1pix4g <= pix4g;
-					img1pix4b <= pix4b;
+					img1pix1r <= targetdmpix1r;
+					img1pix1g <= targetdmpix1g;
+					img1pix1b <= targetdmpix1b;
+					img1pix2r <= targetdmpix2r;
+					img1pix2g <= targetdmpix2g;
+					img1pix2b <= targetdmpix2b;
+					img1pix3r <= targetdmpix3r;
+					img1pix3g <= targetdmpix3g;
+					img1pix3b <= targetdmpix3b;
+					img1pix4r <= targetdmpix4r;
+					img1pix4g <= targetdmpix4g;
+					img1pix4b <= targetdmpix4b;
 
 				else
 				end if;
@@ -517,18 +569,18 @@ begin
 
 				if (read_done_img2_delayed='1') then
 
-					img2pix1r <= pix1r;
-					img2pix1g <= pix1g;
-					img2pix1b <= pix1b;
-					img2pix2r <= pix2r;
-					img2pix2g <= pix2g;
-					img2pix2b <= pix2b;
-					img2pix3r <= pix3r;
-					img2pix3g <= pix3g;
-					img2pix3b <= pix3b;
-					img2pix4r <= pix4r;
-					img2pix4g <= pix4g;
-					img2pix4b <= pix4b;
+					img2pix1r <= whitedmpix1r;
+					img2pix1g <= whitedmpix1g;
+					img2pix1b <= whitedmpix1b;
+					img2pix2r <= whitedmpix2r;
+					img2pix2g <= whitedmpix2g;
+					img2pix2b <= whitedmpix2b;
+					img2pix3r <= whitedmpix3r;
+					img2pix3g <= whitedmpix3g;
+					img2pix3b <= whitedmpix3b;
+					img2pix4r <= whitedmpix4r;
+					img2pix4g <= whitedmpix4g;
+					img2pix4b <= whitedmpix4b;
 
 					-- Last data read for pipeline processing
 					-- Trigger writing after pipeline delay
@@ -569,6 +621,8 @@ begin
 
 
 				-- Step 1 calculation result
+				-- Change this, should not be between images,
+				-- but point-wise multiplication with coefficients
 				res1pix1r <= img1pix1r - img2pix1r;
 				res1pix1g <= img1pix1g - img2pix1g;
 				res1pix1b <= img1pix1b - img2pix1b;
@@ -597,6 +651,11 @@ begin
 				&	std_logic_vector(targetsub2)
 				&	std_logic_vector(targetsub3)
 				&	std_logic_vector(targetsub4);
+
+	whitesubvec <=	std_logic_vector(whitesub1)
+				&	std_logic_vector(whitesub2)
+				&	std_logic_vector(whitesub3)
+				&	std_logic_vector(whitesub4);
 
 	respix1r <= res1pix1r;
 	respix1g <= res1pix1g;
