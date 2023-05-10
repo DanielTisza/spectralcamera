@@ -316,6 +316,39 @@ architecture rtl of rowdelay is
 	signal whitesinvpix4g : unsigned(11 downto 0);
 	signal whitesinvpix4b : unsigned(11 downto 0);
 
+	-- Radiance target image
+	signal targetradpix1r : unsigned(11 downto 0);
+	signal targetradpix1g : unsigned(11 downto 0);
+	signal targetradpix1b : unsigned(11 downto 0);
+
+	signal targetradpix2r : unsigned(11 downto 0);
+	signal targetradpix2g : unsigned(11 downto 0);
+	signal targetradpix2b : unsigned(11 downto 0);
+
+	signal targetradpix3r : unsigned(11 downto 0);
+	signal targetradpix3g : unsigned(11 downto 0);
+	signal targetradpix3b : unsigned(11 downto 0);
+
+	signal targetradpix4r : unsigned(11 downto 0);
+	signal targetradpix4g : unsigned(11 downto 0);
+	signal targetradpix4b : unsigned(11 downto 0);
+
+	-- Radiance white image
+	signal whiteradpix1r : unsigned(11 downto 0);
+	signal whiteradpix1g : unsigned(11 downto 0);
+	signal whiteradpix1b : unsigned(11 downto 0);
+
+	signal whiteradpix2r : unsigned(11 downto 0);
+	signal whiteradpix2g : unsigned(11 downto 0);
+	signal whiteradpix2b : unsigned(11 downto 0);
+
+	signal whiteradpix3r : unsigned(11 downto 0);
+	signal whiteradpix3g : unsigned(11 downto 0);
+	signal whiteradpix3b : unsigned(11 downto 0);
+
+	signal whiteradpix4r : unsigned(11 downto 0);
+	signal whiteradpix4g : unsigned(11 downto 0);
+	signal whiteradpix4b : unsigned(11 downto 0);
 
 begin
 
@@ -495,6 +528,34 @@ begin
 			whitesinvpix4r <= to_unsigned(0, 12);
 			whitesinvpix4g <= to_unsigned(0, 12);
 			whitesinvpix4b <= to_unsigned(0, 12);
+
+			-- Radiance target image
+			targetradpix1r <= to_unsigned(0, 12);
+			targetradpix1g <= to_unsigned(0, 12);
+			targetradpix1b <= to_unsigned(0, 12);
+			targetradpix2r <= to_unsigned(0, 12);
+			targetradpix2g <= to_unsigned(0, 12);
+			targetradpix2b <= to_unsigned(0, 12);
+			targetradpix3r <= to_unsigned(0, 12);
+			targetradpix3g <= to_unsigned(0, 12);
+			targetradpix3b <= to_unsigned(0, 12);
+			targetradpix4r <= to_unsigned(0, 12);
+			targetradpix4g <= to_unsigned(0, 12);
+			targetradpix4b <= to_unsigned(0, 12);
+
+			-- Radiance white image
+			whiteradpix1r <= to_unsigned(0, 12);
+			whiteradpix1g <= to_unsigned(0, 12);
+			whiteradpix1b <= to_unsigned(0, 12);
+			whiteradpix2r <= to_unsigned(0, 12);
+			whiteradpix2g <= to_unsigned(0, 12);
+			whiteradpix2b <= to_unsigned(0, 12);
+			whiteradpix3r <= to_unsigned(0, 12);
+			whiteradpix3g <= to_unsigned(0, 12);
+			whiteradpix3b <= to_unsigned(0, 12);
+			whiteradpix4r <= to_unsigned(0, 12);
+			whiteradpix4g <= to_unsigned(0, 12);
+			whiteradpix4b <= to_unsigned(0, 12);
 
 
 			pipelinedelay <= (others => '0');
@@ -697,6 +758,7 @@ begin
 				else
 				end if;
 
+
 				-- Subtract dark from target
 				targetsub1 <= read_data_target(59 downto 48) - read_data_dark(59 downto 48);
 				targetsub2 <= read_data_target(43 downto 32) - read_data_dark(43 downto 32);
@@ -709,10 +771,6 @@ begin
 				whitesub3 <= read_data_white(27 downto 16) - read_data_dark(27 downto 16);
 				whitesub4 <= read_data_white(11 downto 0) - read_data_dark(11 downto 0);
 
-
-				-- Step 1 calculation result
-				-- Change this, should not be between images,
-				-- but point-wise multiplication with coefficients
 
 				-- S-inversion for target image
 				targetsinvpix1r <= img1pix1r * sinvr;
@@ -729,19 +787,50 @@ begin
 				targetsinvpix4b <= img1pix4b * sinvb;
 
 				-- S-inversion for white image
-				whitesinvpix1r <= img1pix1r * sinvr;
-				whitesinvpix1g <= img1pix1g * sinvg;
-				whitesinvpix1b <= img1pix1b * sinvb;
-				whitesinvpix2r <= img1pix2r * sinvr;
-				whitesinvpix2g <= img1pix2g * sinvg;
-				whitesinvpix2b <= img1pix2b * sinvb;
-				whitesinvpix3r <= img1pix3r * sinvr;
-				whitesinvpix3g <= img1pix3g * sinvg;
-				whitesinvpix3b <= img1pix3b * sinvb;
-				whitesinvpix4r <= img1pix4r * sinvr;
-				whitesinvpix4g <= img1pix4g * sinvg;
-				whitesinvpix4b <= img1pix4b * sinvb;
+				whitesinvpix1r <= img2pix1r * sinvr;
+				whitesinvpix1g <= img2pix1g * sinvg;
+				whitesinvpix1b <= img2pix1b * sinvb;
+				whitesinvpix2r <= img2pix2r * sinvr;
+				whitesinvpix2g <= img2pix2g * sinvg;
+				whitesinvpix2b <= img2pix2b * sinvb;
+				whitesinvpix3r <= img2pix3r * sinvr;
+				whitesinvpix3g <= img2pix3g * sinvg;
+				whitesinvpix3b <= img2pix3b * sinvb;
+				whitesinvpix4r <= img2pix4r * sinvr;
+				whitesinvpix4g <= img2pix4g * sinvg;
+				whitesinvpix4b <= img2pix4b * sinvb;
 
+
+				-- Radiance target image
+				targetradpix1r <= targetsinvpix1r * exposureinv;
+				targetradpix1g <= targetsinvpix1g * exposureinv;
+				targetradpix1b <= targetsinvpix1b * exposureinv;
+				targetradpix2r <= targetsinvpix2r * exposureinv;
+				targetradpix2g <= targetsinvpix2g * exposureinv;
+				targetradpix2b <= targetsinvpix2b * exposureinv;
+				targetradpix3r <= targetsinvpix3r * exposureinv;
+				targetradpix3g <= targetsinvpix3g * exposureinv;
+				targetradpix3b <= targetsinvpix3b * exposureinv;
+				targetradpix4r <= targetsinvpix4r * exposureinv;
+				targetradpix4g <= targetsinvpix4g * exposureinv;
+				targetradpix4b <= targetsinvpix4b * exposureinv;
+
+				-- Radiance white image
+				whiteradpix1r <= whitesinvpix1r * exposureinv;
+				whiteradpix1g <= whitesinvpix1g * exposureinv;
+				whiteradpix1b <= whitesinvpix1b * exposureinv;
+				whiteradpix2r <= whitesinvpix2r * exposureinv;
+				whiteradpix2g <= whitesinvpix2g * exposureinv;
+				whiteradpix2b <= whitesinvpix2b * exposureinv;
+				whiteradpix3r <= whitesinvpix3r * exposureinv;
+				whiteradpix3g <= whitesinvpix3g * exposureinv;
+				whiteradpix3b <= whitesinvpix3b * exposureinv;
+				whiteradpix4r <= whitesinvpix4r * exposureinv;
+				whiteradpix4g <= whitesinvpix4g * exposureinv;
+				whiteradpix4b <= whitesinvpix4b * exposureinv;
+
+
+				-- Reflectance image
 
 
 			else
@@ -765,20 +854,20 @@ begin
 				&	std_logic_vector(whitesub3)
 				&	std_logic_vector(whitesub4);
 
-	respix1r <= res1pix1r;
-	respix1g <= res1pix1g;
-	respix1b <= res1pix1b;
+	respix1r <= targetradpix1r;
+	respix1g <= targetradpix1g;
+	respix1b <= targetradpix1b;
 
-	respix2r <= res1pix2r;
-	respix2g <= res1pix2g;
-	respix2b <= res1pix2b;
+	respix2r <= targetradpix2r;
+	respix2g <= targetradpix2g;
+	respix2b <= targetradpix2b;
 
-	respix3r <= res1pix3r;
-	respix3g <= res1pix3g;
-	respix3b <= res1pix3b;
+	respix3r <= targetradpix3r;
+	respix3g <= targetradpix3g;
+	respix3b <= targetradpix3b;
 
-	respix4r <= res1pix4r;
-	respix4g <= res1pix4g;
-	respix4b <= res1pix4b;
+	respix4r <= targetradpix4r;
+	respix4g <= targetradpix4g;
+	respix4b <= targetradpix4b;
 	
 end architecture;
