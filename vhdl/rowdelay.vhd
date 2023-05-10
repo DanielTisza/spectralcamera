@@ -350,6 +350,23 @@ architecture rtl of rowdelay is
 	signal whiteradpix4g : unsigned(11 downto 0);
 	signal whiteradpix4b : unsigned(11 downto 0);
 
+	-- Reflectance image
+	signal reflpix1r : unsigned(11 downto 0);
+	signal reflpix1g : unsigned(11 downto 0);
+	signal reflpix1b : unsigned(11 downto 0);
+
+	signal reflpix2r : unsigned(11 downto 0);
+	signal reflpix2g : unsigned(11 downto 0);
+	signal reflpix2b : unsigned(11 downto 0);
+
+	signal reflpix3r : unsigned(11 downto 0);
+	signal reflpix3g : unsigned(11 downto 0);
+	signal reflpix3b : unsigned(11 downto 0);
+
+	signal reflpix4r : unsigned(11 downto 0);
+	signal reflpix4g : unsigned(11 downto 0);
+	signal reflpix4b : unsigned(11 downto 0);
+
 begin
 
 	------------------------------------------
@@ -556,6 +573,20 @@ begin
 			whiteradpix4r <= to_unsigned(0, 12);
 			whiteradpix4g <= to_unsigned(0, 12);
 			whiteradpix4b <= to_unsigned(0, 12);
+
+			-- Reflectance image
+			reflpix1r <= to_unsigned(0, 12);
+			reflpix1g <= to_unsigned(0, 12);
+			reflpix1b <= to_unsigned(0, 12);
+			reflpix2r <= to_unsigned(0, 12);
+			reflpix2g <= to_unsigned(0, 12);
+			reflpix2b <= to_unsigned(0, 12);
+			reflpix3r <= to_unsigned(0, 12);
+			reflpix3g <= to_unsigned(0, 12);
+			reflpix3b <= to_unsigned(0, 12);
+			reflpix4r <= to_unsigned(0, 12);
+			reflpix4g <= to_unsigned(0, 12);
+			reflpix4b <= to_unsigned(0, 12);
 
 
 			pipelinedelay <= (others => '0');
@@ -831,7 +862,19 @@ begin
 
 
 				-- Reflectance image
-
+				-- This needs to be changed to division
+				reflpix1r <= targetradpix1r * whiteradpix1r;
+				reflpix1g <= targetradpix1g * whiteradpix1g;
+				reflpix1b <= targetradpix1b * whiteradpix1b;
+				reflpix2r <= targetradpix2r * whiteradpix2r;
+				reflpix2g <= targetradpix2g * whiteradpix2g;
+				reflpix2b <= targetradpix2b * whiteradpix2b;
+				reflpix3r <= targetradpix3r * whiteradpix3r;
+				reflpix3g <= targetradpix3g * whiteradpix3g;
+				reflpix3b <= targetradpix3b * whiteradpix3b;
+				reflpix4r <= targetradpix4r * whiteradpix4r;
+				reflpix4g <= targetradpix4g * whiteradpix4g;
+				reflpix4b <= targetradpix4b * whiteradpix4b;
 
 			else
 			end if;
@@ -854,20 +897,20 @@ begin
 				&	std_logic_vector(whitesub3)
 				&	std_logic_vector(whitesub4);
 
-	respix1r <= targetradpix1r;
-	respix1g <= targetradpix1g;
-	respix1b <= targetradpix1b;
+	respix1r <= reflpix1r;
+	respix1g <= reflpix1g;
+	respix1b <= reflpix1b;
 
-	respix2r <= targetradpix2r;
-	respix2g <= targetradpix2g;
-	respix2b <= targetradpix2b;
+	respix2r <= reflpix2r;
+	respix2g <= reflpix2g;
+	respix2b <= reflpix2b;
 
-	respix3r <= targetradpix3r;
-	respix3g <= targetradpix3g;
-	respix3b <= targetradpix3b;
+	respix3r <= reflpix3r;
+	respix3g <= reflpix3g;
+	respix3b <= reflpix3b;
 
-	respix4r <= targetradpix4r;
-	respix4g <= targetradpix4g;
-	respix4b <= targetradpix4b;
+	respix4r <= reflpix4r;
+	respix4g <= reflpix4g;
+	respix4b <= reflpix4b;
 	
 end architecture;
