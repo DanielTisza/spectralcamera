@@ -275,7 +275,7 @@ architecture rtl of rowdelay is
 begin
 
 	------------------------------------------
-	-- rowdelayram1
+	-- rowdelayram1 for target image
 	------------------------------------------
 	rowdelayram1 : rowdelayram port map(
 
@@ -297,7 +297,7 @@ begin
 	ram1_wr <= read_done_b;
 
 	------------------------------------------
-	-- rowdelayram2
+	-- rowdelayram2 for white image
 	------------------------------------------
 	rowdelayram2 : rowdelayram port map(
 
@@ -319,7 +319,7 @@ begin
 	ram2_wr <= read_done_c;
 
 	------------------------------------------
-	-- cfarows2rgb1
+	-- cfarows2rgb1 for target image
 	------------------------------------------
 	cfarows2rgb1 : cfarows2rgb port map(
 	
@@ -352,7 +352,7 @@ begin
  	);
 
 	------------------------------------------
-	-- cfarows2rgb2
+	-- cfarows2rgb2 for white image
 	------------------------------------------
 	cfarows2rgb2 : cfarows2rgb port map(
 	
