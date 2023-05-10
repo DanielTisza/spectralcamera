@@ -272,6 +272,51 @@ architecture rtl of rowdelay is
 	signal whitedmpix4g : unsigned(11 downto 0);
 	signal whitedmpix4b : unsigned(11 downto 0);
 
+	-- Inversion coefficients
+	-- These will be fixed-point fractional values
+	signal sinvr : unsigned(11 downto 0);
+	signal sinvg : unsigned(11 downto 0);
+	signal sinvb : unsigned(11 downto 0);
+
+	-- Inverse of exposure time
+	-- This is a fixed-point fractional value
+	signal exposureinv : unsigned(11 downto 0);
+
+	-- S-inversion for target image
+	signal targetsinvpix1r : unsigned(11 downto 0);
+	signal targetsinvpix1g : unsigned(11 downto 0);
+	signal targetsinvpix1b : unsigned(11 downto 0);
+
+	signal targetsinvpix2r : unsigned(11 downto 0);
+	signal targetsinvpix2g : unsigned(11 downto 0);
+	signal targetsinvpix2b : unsigned(11 downto 0);
+
+	signal targetsinvpix3r : unsigned(11 downto 0);
+	signal targetsinvpix3g : unsigned(11 downto 0);
+	signal targetsinvpix3b : unsigned(11 downto 0);
+
+	signal targetsinvpix4r : unsigned(11 downto 0);
+	signal targetsinvpix4g : unsigned(11 downto 0);
+	signal targetsinvpix4b : unsigned(11 downto 0);
+
+	-- S-inversion for white image
+	signal whitesinvpix1r : unsigned(11 downto 0);
+	signal whitesinvpix1g : unsigned(11 downto 0);
+	signal whitesinvpix1b : unsigned(11 downto 0);
+
+	signal whitesinvpix2r : unsigned(11 downto 0);
+	signal whitesinvpix2g : unsigned(11 downto 0);
+	signal whitesinvpix2b : unsigned(11 downto 0);
+
+	signal whitesinvpix3r : unsigned(11 downto 0);
+	signal whitesinvpix3g : unsigned(11 downto 0);
+	signal whitesinvpix3b : unsigned(11 downto 0);
+
+	signal whitesinvpix4r : unsigned(11 downto 0);
+	signal whitesinvpix4g : unsigned(11 downto 0);
+	signal whitesinvpix4b : unsigned(11 downto 0);
+
+
 begin
 
 	------------------------------------------
@@ -415,6 +460,43 @@ begin
 			whitesub3 <= to_unsigned(0, 12);
 			whitesub4 <= to_unsigned(0, 12);
 
+			-- Inversion coefficients
+			sinvr <= to_unsigned(1, 12);
+			sinvg <= to_unsigned(2, 12);
+			sinvb <= to_unsigned(3, 12);
+
+			-- Inverse of exposure time
+			exposureinv <= to_unsigned(4, 12);
+
+			-- S-inversion for target image
+			targetsinvpix1r <= to_unsigned(0, 12);
+			targetsinvpix1g <= to_unsigned(0, 12);
+			targetsinvpix1b <= to_unsigned(0, 12);
+			targetsinvpix2r <= to_unsigned(0, 12);
+			targetsinvpix2g <= to_unsigned(0, 12);
+			targetsinvpix2b <= to_unsigned(0, 12);
+			targetsinvpix3r <= to_unsigned(0, 12);
+			targetsinvpix3g <= to_unsigned(0, 12);
+			targetsinvpix3b <= to_unsigned(0, 12);
+			targetsinvpix4r <= to_unsigned(0, 12);
+			targetsinvpix4g <= to_unsigned(0, 12);
+			targetsinvpix4b <= to_unsigned(0, 12);
+
+			-- S-inversion for white image
+			whitesinvpix1r <= to_unsigned(0, 12);
+			whitesinvpix1g <= to_unsigned(0, 12);
+			whitesinvpix1b <= to_unsigned(0, 12);
+			whitesinvpix2r <= to_unsigned(0, 12);
+			whitesinvpix2g <= to_unsigned(0, 12);
+			whitesinvpix2b <= to_unsigned(0, 12);
+			whitesinvpix3r <= to_unsigned(0, 12);
+			whitesinvpix3g <= to_unsigned(0, 12);
+			whitesinvpix3b <= to_unsigned(0, 12);
+			whitesinvpix4r <= to_unsigned(0, 12);
+			whitesinvpix4g <= to_unsigned(0, 12);
+			whitesinvpix4b <= to_unsigned(0, 12);
+
+
 			pipelinedelay <= (others => '0');
 
 			firstrowhandled <= '0';
@@ -485,6 +567,14 @@ begin
 
 				firstrowhandled <= firstrowhandled;
 				readrowodd <= readrowodd;
+
+				-- Inversion coefficients
+				sinvr <= sinvr;
+				sinvg <= sinvg;
+				sinvb <= sinvb;
+
+				-- Inverse of exposure time
+				exposureinv <= exposureinv;
 
 				-- Image 1 pixel data for four pixels in 36-bit RGB format
 				read_done_img1_delayed <= '0';
@@ -623,18 +713,36 @@ begin
 				-- Step 1 calculation result
 				-- Change this, should not be between images,
 				-- but point-wise multiplication with coefficients
-				res1pix1r <= img1pix1r - img2pix1r;
-				res1pix1g <= img1pix1g - img2pix1g;
-				res1pix1b <= img1pix1b - img2pix1b;
-				res1pix2r <= img1pix2r - img2pix2r;
-				res1pix2g <= img1pix2g - img2pix2g;
-				res1pix2b <= img1pix2b - img2pix2b;
-				res1pix3r <= img1pix3r - img2pix3r;
-				res1pix3g <= img1pix3g - img2pix3g;
-				res1pix3b <= img1pix3b - img2pix3b;
-				res1pix4r <= img1pix4r - img2pix4r;
-				res1pix4g <= img1pix4g - img2pix4g;
-				res1pix4b <= img1pix4b - img2pix4b;
+
+				-- S-inversion for target image
+				targetsinvpix1r <= img1pix1r * sinvr;
+				targetsinvpix1g <= img1pix1g * sinvg;
+				targetsinvpix1b <= img1pix1b * sinvb;
+				targetsinvpix2r <= img1pix2r * sinvr;
+				targetsinvpix2g <= img1pix2g * sinvg;
+				targetsinvpix2b <= img1pix2b * sinvb;
+				targetsinvpix3r <= img1pix3r * sinvr;
+				targetsinvpix3g <= img1pix3g * sinvg;
+				targetsinvpix3b <= img1pix3b * sinvb;
+				targetsinvpix4r <= img1pix4r * sinvr;
+				targetsinvpix4g <= img1pix4g * sinvg;
+				targetsinvpix4b <= img1pix4b * sinvb;
+
+				-- S-inversion for white image
+				whitesinvpix1r <= img1pix1r * sinvr;
+				whitesinvpix1g <= img1pix1g * sinvg;
+				whitesinvpix1b <= img1pix1b * sinvb;
+				whitesinvpix2r <= img1pix2r * sinvr;
+				whitesinvpix2g <= img1pix2g * sinvg;
+				whitesinvpix2b <= img1pix2b * sinvb;
+				whitesinvpix3r <= img1pix3r * sinvr;
+				whitesinvpix3g <= img1pix3g * sinvg;
+				whitesinvpix3b <= img1pix3b * sinvb;
+				whitesinvpix4r <= img1pix4r * sinvr;
+				whitesinvpix4g <= img1pix4g * sinvg;
+				whitesinvpix4b <= img1pix4b * sinvb;
+
+
 
 			else
 			end if;
