@@ -164,11 +164,14 @@ architecture rtl of rowdelay is
 	signal ram2_wr_data : ram_word_type;
 	signal ram2_wr : std_logic;
 
-	signal firstrowhandled : std_logic;
-	signal readrowodd : std_logic;
+	signal targetfirstrowhandled : std_logic;
+	signal targetreadrowodd : std_logic;
+
+	signal whitefirstrowhandled : std_logic;
+	signal whitereadrowodd : std_logic;
 
 	-- Image 1 pixel data for four pixels in 36-bit RGB format
-	signal read_done_img1_delayed : std_logic;
+	signal read_done_target_delayed : std_logic;
 
 	signal img1pix1r : unsigned(11 downto 0);
 	signal img1pix1g : unsigned(11 downto 0);
@@ -187,7 +190,7 @@ architecture rtl of rowdelay is
 	signal img1pix4b : unsigned(11 downto 0);
 
 	-- Image 2 pixel data for four pixels in 36-bit RGB format
-	signal read_done_img2_delayed : std_logic;
+	signal read_done_white_delayed : std_logic;
 	
 	signal img2pix1r : unsigned(11 downto 0);
 	signal img2pix1g : unsigned(11 downto 0);
@@ -406,7 +409,7 @@ begin
 		resetn => resetn,
 
 		-- Input data signals
-		readrowodd => readrowodd,
+		readrowodd => targetreadrowodd,
 		ram1_rd_data => ram1_rd_data,
 
 		read_data => targetsubvec,
@@ -439,7 +442,7 @@ begin
 		resetn => resetn,
 
 		-- Input data signals
-		readrowodd => readrowodd,
+		readrowodd => whitereadrowodd,
 		ram1_rd_data => ram2_rd_data,
 
 		read_data => whitesubvec,
@@ -574,11 +577,14 @@ begin
 
 			pipelinedelay <= (others => '0');
 
-			firstrowhandled <= '0';
-			readrowodd <= '0';
+			targetfirstrowhandled <= '0';
+			targetreadrowodd <= '0';
+
+			whitefirstrowhandled <= '0';
+			whitereadrowodd <= '0';
 
 			-- Image 1 pixel data for four pixels in 36-bit RGB format
-			read_done_img1_delayed <= '0';
+			read_done_target_delayed <= '0';
 
 			img1pix1r <= to_unsigned(0, 12);
 			img1pix1g <= to_unsigned(0, 12);
@@ -594,7 +600,7 @@ begin
 			img1pix4b <= to_unsigned(0, 12);
 
 			-- Image 2 pixel data for four pixels in 36-bit RGB format
-			read_done_img2_delayed <= '0';
+			read_done_white_delayed <= '0';
 
 			img2pix1r <= to_unsigned(0, 12);
 			img2pix1g <= to_unsigned(0, 12);
@@ -626,8 +632,11 @@ begin
 
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
 
-				firstrowhandled <= firstrowhandled;
-				readrowodd <= readrowodd;
+				targetfirstrowhandled <= targetfirstrowhandled;
+				targetreadrowodd <= targetreadrowodd;
+
+				whitefirstrowhandled <= whitefirstrowhandled;
+				whitereadrowodd <= whitereadrowodd;
 
 				-- Inversion coefficients
 				sinvr <= sinvr;
@@ -638,7 +647,7 @@ begin
 				exposureinv <= exposureinv;
 
 				-- Image 1 pixel data for four pixels in 36-bit RGB format
-				read_done_img1_delayed <= '0';
+				read_done_target_delayed <= '0';
 
 				img1pix1r <= img1pix1r;
 				img1pix1g <= img1pix1g;
@@ -654,7 +663,7 @@ begin
 				img1pix4b <= img1pix4b;
 
 				-- Image 2 pixel data for four pixels in 36-bit RGB format
-				read_done_img2_delayed <= '0';
+				read_done_white_delayed <= '0';
 
 				img2pix1r <= img1pix1r;
 				img2pix1g <= img1pix1g;
@@ -687,13 +696,13 @@ begin
 				if (read_done_b='1') then
 
 					read_data_target <= unsigned(read_data);
-					read_done_img1_delayed <= '1';
+					read_done_target_delayed <= '1';
 
 					-- Increment row delay ram address
 					if (ram1_addr=to_unsigned(648,10)) then
 						ram1_addr <= to_unsigned(0,10);
-						firstrowhandled <= '1';
-						readrowodd <= not(readrowodd);
+						targetfirstrowhandled <= '1';
+						targetreadrowodd <= not(targetreadrowodd);
 					else
 						ram1_addr <= ram1_addr + to_unsigned(1,10);
 					end if;
@@ -706,13 +715,13 @@ begin
 				if (read_done_c='1') then
 
 					read_data_white <= unsigned(read_data);
-					read_done_img2_delayed <= '1';
+					read_done_white_delayed <= '1';
 
 					-- Increment row delay ram address
 					if (ram2_addr=to_unsigned(648,10)) then
 						ram2_addr <= to_unsigned(0,10);
-						-- firstrowhandled <= '1';
-						-- readrowodd <= not(readrowodd);
+						whitefirstrowhandled <= '1';
+						whitereadrowodd <= not(whitereadrowodd);
 					else
 						ram2_addr <= ram2_addr + to_unsigned(1,10);
 					end if;
@@ -741,7 +750,7 @@ begin
 				----------------------------
 
 				-- Target image capture RGB pixels after demosaic
-				if (read_done_img1_delayed='1') then
+				if (read_done_target_delayed='1') then
 
 					img1pix1r <= targetdmpix1r;
 					img1pix1g <= targetdmpix1g;
@@ -760,7 +769,7 @@ begin
 				end if;
 
 				-- White image capture RGB pixels after demosaic
-				if (read_done_img2_delayed='1') then
+				if (read_done_white_delayed='1') then
 
 					img2pix1r <= whitedmpix1r;
 					img2pix1g <= whitedmpix1g;
