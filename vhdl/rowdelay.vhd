@@ -204,23 +204,6 @@ architecture rtl of rowdelay is
 	signal img2pix4r : unsigned(11 downto 0);
 	signal img2pix4g : unsigned(11 downto 0);
 	signal img2pix4b : unsigned(11 downto 0);
-
-	-- Step 1 calculation result
-	signal res1pix1r : unsigned(11 downto 0);
-	signal res1pix1g : unsigned(11 downto 0);
-	signal res1pix1b : unsigned(11 downto 0);
-
-	signal res1pix2r : unsigned(11 downto 0);
-	signal res1pix2g : unsigned(11 downto 0);
-	signal res1pix2b : unsigned(11 downto 0);
-
-	signal res1pix3r : unsigned(11 downto 0);
-	signal res1pix3g : unsigned(11 downto 0);
-	signal res1pix3b : unsigned(11 downto 0);
-
-	signal res1pix4r : unsigned(11 downto 0);
-	signal res1pix4g : unsigned(11 downto 0);
-	signal res1pix4b : unsigned(11 downto 0);
 	
 	-- Subtract dark from target
 	signal targetsub1 : unsigned(11 downto 0);
@@ -626,20 +609,6 @@ begin
 			img2pix4g <= to_unsigned(0, 12);
 			img2pix4b <= to_unsigned(0, 12);
 
-			-- Step 1 calculation result
-			res1pix1r <= to_unsigned(0, 12);
-			res1pix1g <= to_unsigned(0, 12);
-			res1pix1b <= to_unsigned(0, 12);
-			res1pix2r <= to_unsigned(0, 12);
-			res1pix2g <= to_unsigned(0, 12);
-			res1pix2b <= to_unsigned(0, 12);
-			res1pix3r <= to_unsigned(0, 12);
-			res1pix3g <= to_unsigned(0, 12);
-			res1pix3b <= to_unsigned(0, 12);
-			res1pix4r <= to_unsigned(0, 12);
-			res1pix4g <= to_unsigned(0, 12);
-			res1pix4b <= to_unsigned(0, 12);
-
 			-- Pipeline processing delay shift register trigger
 			pipelinedelay <= (others => '0');
 
@@ -703,15 +672,75 @@ begin
 				-- Pipeline processing delay shift register trigger
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '0';
 
+
 				-- Capture image 1
 				-- This is dark reference image in BayerGB12 CFA format
 				if (read_done_a='1') then
 
-					read_done_img1_delayed <= '1';
 					read_data_dark <= unsigned(read_data);
+					
 				else
 				end if;
 
+				-- Capture image 2
+				-- This is target image in BayerGB12 CFA format
+				if (read_done_b='1') then
+
+					read_data_target <= unsigned(read_data);
+					read_done_img1_delayed <= '1';
+
+					-- Increment row delay ram address
+					if (ram1_addr=to_unsigned(648,10)) then
+						ram1_addr <= to_unsigned(0,10);
+						firstrowhandled <= '1';
+						readrowodd <= not(readrowodd);
+					else
+						ram1_addr <= ram1_addr + to_unsigned(1,10);
+					end if;
+
+				else
+				end if;
+
+				-- Capture image 3
+				-- This is white reference image in BayerGB12 CFA format
+				if (read_done_c='1') then
+
+					read_data_white <= unsigned(read_data);
+					read_done_img2_delayed <= '1';
+
+					-- Increment row delay ram address
+					if (ram2_addr=to_unsigned(648,10)) then
+						ram2_addr <= to_unsigned(0,10);
+						-- firstrowhandled <= '1';
+						-- readrowodd <= not(readrowodd);
+					else
+						ram2_addr <= ram2_addr + to_unsigned(1,10);
+					end if;
+
+				else
+				end if;
+
+				----------------------------
+				-- Subtract dark image in BayerGB12 CFA format
+				----------------------------
+
+				-- Target image after subtracting dark image
+				targetsub1 <= read_data_target(59 downto 48) - read_data_dark(59 downto 48);
+				targetsub2 <= read_data_target(43 downto 32) - read_data_dark(43 downto 32);
+				targetsub3 <= read_data_target(27 downto 16) - read_data_dark(27 downto 16);
+				targetsub4 <= read_data_target(11 downto 0) - read_data_dark(11 downto 0);
+
+				-- White image after subtracting dark image
+				whitesub1 <= read_data_white(59 downto 48) - read_data_dark(59 downto 48);
+				whitesub2 <= read_data_white(43 downto 32) - read_data_dark(43 downto 32);
+				whitesub3 <= read_data_white(27 downto 16) - read_data_dark(27 downto 16);
+				whitesub4 <= read_data_white(11 downto 0) - read_data_dark(11 downto 0);
+				
+				----------------------------
+				-- Image after demosaic in 36-bit RGB format
+				----------------------------
+
+				-- Target image capture RGB pixels after demosaic
 				if (read_done_img1_delayed='1') then
 
 					img1pix1r <= targetdmpix1r;
@@ -730,25 +759,7 @@ begin
 				else
 				end if;
 
-				-- Capture image 2
-				-- This is target image in BayerGB12 CFA format
-				if (read_done_b='1') then
-
-					read_done_img2_delayed <= '1';
-					read_data_target <= unsigned(read_data);
-
-					-- Increment row delay ram address
-					if (ram1_addr=to_unsigned(648,10)) then
-						ram1_addr <= to_unsigned(0,10);
-						firstrowhandled <= '1';
-						readrowodd <= not(readrowodd);
-					else
-						ram1_addr <= ram1_addr + to_unsigned(1,10);
-					end if;
-
-				else
-				end if;
-
+				-- White image capture RGB pixels after demosaic
 				if (read_done_img2_delayed='1') then
 
 					img2pix1r <= whitedmpix1r;
@@ -771,37 +782,9 @@ begin
 				else
 				end if;
 
-				-- Capture image 3
-				-- This is white reference image in BayerGB12 CFA format
-				if (read_done_c='1') then
-
-					read_data_white <= unsigned(read_data);
-
-					-- Increment row delay ram address
-					if (ram2_addr=to_unsigned(648,10)) then
-						ram2_addr <= to_unsigned(0,10);
-						-- firstrowhandled <= '1';
-						-- readrowodd <= not(readrowodd);
-					else
-						ram2_addr <= ram2_addr + to_unsigned(1,10);
-					end if;
-
-				else
-				end if;
-
-
-				-- Subtract dark from target
-				targetsub1 <= read_data_target(59 downto 48) - read_data_dark(59 downto 48);
-				targetsub2 <= read_data_target(43 downto 32) - read_data_dark(43 downto 32);
-				targetsub3 <= read_data_target(27 downto 16) - read_data_dark(27 downto 16);
-				targetsub4 <= read_data_target(11 downto 0) - read_data_dark(11 downto 0);
-
-				-- Subtract dark from white
-				whitesub1 <= read_data_white(59 downto 48) - read_data_dark(59 downto 48);
-				whitesub2 <= read_data_white(43 downto 32) - read_data_dark(43 downto 32);
-				whitesub3 <= read_data_white(27 downto 16) - read_data_dark(27 downto 16);
-				whitesub4 <= read_data_white(11 downto 0) - read_data_dark(11 downto 0);
-
+				----------------------------
+				-- S-inversion
+				----------------------------
 
 				-- S-inversion for target image
 				targetsinvpix1r <= img1pix1r * sinvr;
@@ -831,6 +814,9 @@ begin
 				whitesinvpix4g <= img2pix4g * sinvg;
 				whitesinvpix4b <= img2pix4b * sinvb;
 
+				----------------------------
+				-- Radiance image
+				----------------------------
 
 				-- Radiance target image
 				targetradpix1r <= targetsinvpix1r * exposureinv;
@@ -860,6 +846,9 @@ begin
 				whiteradpix4g <= whitesinvpix4g * exposureinv;
 				whiteradpix4b <= whitesinvpix4b * exposureinv;
 
+				----------------------------
+				-- Reflectance image
+				----------------------------
 
 				-- Reflectance image
 				-- This needs to be changed to division
