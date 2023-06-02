@@ -64,6 +64,48 @@ end rowdelay;
 -- Describe the contents of this "chip"
 architecture rtl of rowdelay is
 
+	component base_zynq_floating_point_0_0 is
+	port (
+		aclk : in STD_LOGIC;
+		s_axis_a_tvalid : in STD_LOGIC;
+		s_axis_a_tready : out STD_LOGIC;
+		s_axis_a_tdata : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		m_axis_result_tvalid : out STD_LOGIC;
+		m_axis_result_tready : in STD_LOGIC;
+		m_axis_result_tdata : out STD_LOGIC_VECTOR ( 63 downto 0 )
+	);
+	end component base_zynq_floating_point_0_0;
+
+	component base_zynq_floating_point_1_0 is
+	port (
+		aclk : in STD_LOGIC;
+		s_axis_a_tvalid : in STD_LOGIC;
+		s_axis_a_tready : out STD_LOGIC;
+		s_axis_a_tdata : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		s_axis_b_tvalid : in STD_LOGIC;
+		s_axis_b_tready : out STD_LOGIC;
+		s_axis_b_tdata : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		m_axis_result_tvalid : out STD_LOGIC;
+		m_axis_result_tready : in STD_LOGIC;
+		m_axis_result_tdata : out STD_LOGIC_VECTOR ( 63 downto 0 )
+	);
+	end component base_zynq_floating_point_1_0;
+	
+	component base_zynq_floating_point_2_0 is
+	port (
+		aclk : in STD_LOGIC;
+		s_axis_a_tvalid : in STD_LOGIC;
+		s_axis_a_tready : out STD_LOGIC;
+		s_axis_a_tdata : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		s_axis_b_tvalid : in STD_LOGIC;
+		s_axis_b_tready : out STD_LOGIC;
+		s_axis_b_tdata : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		m_axis_result_tvalid : out STD_LOGIC;
+		m_axis_result_tready : in STD_LOGIC;
+		m_axis_result_tdata : out STD_LOGIC_VECTOR ( 63 downto 0 )
+	);
+	end component base_zynq_floating_point_2_0;
+
 	------------------------------------------
 	-- rowdelayram
 	------------------------------------------
