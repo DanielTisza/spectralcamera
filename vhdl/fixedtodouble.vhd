@@ -83,40 +83,104 @@ end fixedtodouble;
 -- Describe the contents of this "chip"
 architecture rtl of fixedtodouble is
 
-	------------------------------------------
-	-- xfixedtofloat
-	---
-	-- This component is implemented externally by a customized IP:
-	--
-	-- Xilinx Vivado Design Suite
-	-- LogiCORE IP
-	-- Floating-Point Operator v7.1
-	--
-	-- It is customized to perform conversion from
-	-- 12-bit fixed integer value to double-precision floating point
-	------------------------------------------
-	component xfixedtofloat is
+	component rgbfixedtodouble is
 	port (
-		aclk : IN STD_LOGIC;
-		s_axis_a_tvalid : IN STD_LOGIC;
-		s_axis_a_tdata : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-		m_axis_result_tvalid : OUT STD_LOGIC;
-		m_axis_result_tdata : OUT STD_LOGIC_VECTOR(63 DOWNTO 0)
-  	);
-	end component xfixedtofloat; 
+		clk : in std_logic;
+		pixrfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		pixgfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		pixbfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		pixr : out STD_LOGIC_VECTOR ( 63 downto 0 );
+		pixg : out STD_LOGIC_VECTOR ( 63 downto 0 );
+		pixb : out STD_LOGIC_VECTOR ( 63 downto 0 )
+	);
+	end component rgbfixedtodouble;
 
 begin
 
 	------------------------------------------
-	-- xfixedtofloat for target image
+	-- Convert target image pixels
 	------------------------------------------
-	imgpix1rfd : xfixedtofloat port map(
-		aclk => clk,
-		s_axis_a_tvalid => '1',
-		s_axis_a_tdata => img1pix1rfixed,
-		m_axis_result_tdata => img1pix1r
+	img1pix1fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img1pix1rfixed,
+		pixgfixed => img1pix1gfixed,
+		pixbfixed => img1pix1bfixed,
+		pixr => img1pix1r,
+		pixg => img1pix1g,
+		pixb => img1pix1b
 	);
 
+	img1pix2fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img1pix2rfixed,
+		pixgfixed => img1pix2gfixed,
+		pixbfixed => img1pix2bfixed,
+		pixr => img1pix2r,
+		pixg => img1pix2g,
+		pixb => img1pix2b
+	);
 
-	
+	img1pix3fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img1pix3rfixed,
+		pixgfixed => img1pix3gfixed,
+		pixbfixed => img1pix3bfixed,
+		pixr => img1pix3r,
+		pixg => img1pix3g,
+		pixb => img1pix3b
+	);
+
+	img1pix4fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img1pix4rfixed,
+		pixgfixed => img1pix4gfixed,
+		pixbfixed => img1pix4bfixed,
+		pixr => img1pix4r,
+		pixg => img1pix4g,
+		pixb => img1pix4b
+	);
+
+	------------------------------------------
+	-- Convert white image pixels
+	------------------------------------------
+	img2pix1fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img2pix1rfixed,
+		pixgfixed => img2pix1gfixed,
+		pixbfixed => img2pix1bfixed,
+		pixr => img2pix1r,
+		pixg => img2pix1g,
+		pixb => img2pix1b
+	);
+
+	img2pix2fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img2pix2rfixed,
+		pixgfixed => img2pix2gfixed,
+		pixbfixed => img2pix2bfixed,
+		pixr => img2pix2r,
+		pixg => img2pix2g,
+		pixb => img2pix2b
+	);
+
+	img2pix3fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img2pix3rfixed,
+		pixgfixed => img2pix3gfixed,
+		pixbfixed => img2pix3bfixed,
+		pixr => img2pix3r,
+		pixg => img2pix3g,
+		pixb => img1pix3b
+	);
+
+	img2pix4fd : rgbfixedtodouble port map(
+		clk => clk,
+		pixrfixed => img2pix4rfixed,
+		pixgfixed => img2pix4gfixed,
+		pixbfixed => img2pix4bfixed,
+		pixr => img2pix4r,
+		pixg => img2pix4g,
+		pixb => img2pix4b
+	);
+
 end architecture;
