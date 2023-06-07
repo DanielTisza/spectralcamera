@@ -22,11 +22,8 @@ entity fixedtodouble is
 
 		-- Clock and reset
 		clk : in std_logic;
-		resetn	: in std_logic;
 
 		-- Input data signals
-		s_axis_a_tvalid : in STD_LOGIC;
-
 		img1pix1rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
 		img1pix1gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
 		img1pix1bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
@@ -54,8 +51,6 @@ entity fixedtodouble is
 		img2pix4bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
 		
 		-- Output data signals
-		m_axis_result_tvalid : out STD_LOGIC;
-
 		img1pix1r : out STD_LOGIC_VECTOR ( 63 downto 0 );
 		img1pix1g : out STD_LOGIC_VECTOR ( 63 downto 0 );
 		img1pix1b : out STD_LOGIC_VECTOR ( 63 downto 0 );
@@ -110,8 +105,6 @@ architecture rtl of fixedtodouble is
   	);
 	end component xfixedtofloat; 
 
-	signal img1pix1rvalid : std_logic;
-
 begin
 
 	------------------------------------------
@@ -121,7 +114,6 @@ begin
 		aclk => clk,
 		s_axis_a_tvalid => '1',
 		s_axis_a_tdata => img1pix1rfixed,
-		m_axis_result_tvalid => img1pix1rvalid,
 		m_axis_result_tdata => img1pix1r
 	);
 
