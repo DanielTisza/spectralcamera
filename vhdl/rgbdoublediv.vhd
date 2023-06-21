@@ -1,13 +1,13 @@
 -----------------------------------------------------------
--- rgbfixedtodouble.vhd
+-- rgbdoublediv.vhd
 --
--- Rgbfixedtodouble
+-- Rgbdoublediv
 --
 -- Copyright: Daniel Tisza, 2023, GPLv3 or later
 --
--- ghdl -a -v rgbfixedtodouble.vhd
--- ghdl -e -v rgbfixedtodouble
--- ghdl -r rgbfixedtodouble --vcd=out.vcd
+-- ghdl -a -v rgbdoublediv.vhd
+-- ghdl -e -v rgbdoublediv
+-- ghdl -r rgbdoublediv --vcd=out.vcd
 -- gtkwave
 --
 -----------------------------------------------------------
@@ -16,7 +16,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 -- Describe the I/O of this "chip"
-entity rgbfixedtodouble is
+entity rgbdoublediv is
 
 	port (
 
@@ -24,9 +24,13 @@ entity rgbfixedtodouble is
 		clk : in std_logic;
 
 		-- Input data signals
-		pixrfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		pixgfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		pixbfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		pixr1 : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		pixg1 : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		pixb1 : in STD_LOGIC_VECTOR ( 63 downto 0 );
+
+		pixr2 : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		pixg2 : in STD_LOGIC_VECTOR ( 63 downto 0 );
+		pixb2 : in STD_LOGIC_VECTOR ( 63 downto 0 );
 		
 		-- Output data signals
 		pixr : out STD_LOGIC_VECTOR ( 63 downto 0 );
@@ -34,13 +38,13 @@ entity rgbfixedtodouble is
 		pixb : out STD_LOGIC_VECTOR ( 63 downto 0 )
 	);
 
-end rgbfixedtodouble;
+end rgbdoublediv;
 
 -- Describe the contents of this "chip"
-architecture rtl of rgbfixedtodouble is
+architecture rtl of rgbdoublediv is
 
 	------------------------------------------
-	-- xfixedtodouble
+	-- xdoublediv
 	---
 	-- This component is implemented externally by a customized IP:
 	--
@@ -48,43 +52,51 @@ architecture rtl of rgbfixedtodouble is
 	-- LogiCORE IP
 	-- Floating-Point Operator v7.1
 	--
-	-- It is customized to perform conversion from
-	-- 12-bit fixed integer value to double-precision floating point
+	-- It is customized to divide two double-precision floating point
+	-- values and give the result as double-precision floating point value.
+	--
 	------------------------------------------
-	component xfixedtodouble is
+	component xdoublediv
 	port (
 		aclk : IN STD_LOGIC;
 		s_axis_a_tvalid : IN STD_LOGIC;
-		s_axis_a_tdata : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+		s_axis_a_tdata : IN STD_LOGIC_VECTOR(63 DOWNTO 0);
+		s_axis_b_tvalid : IN STD_LOGIC;
+		s_axis_b_tdata : IN STD_LOGIC_VECTOR(63 DOWNTO 0);
 		m_axis_result_tvalid : OUT STD_LOGIC;
 		m_axis_result_tdata : OUT STD_LOGIC_VECTOR(63 DOWNTO 0)
-  	);
-	end component; 
+	);
+	end component;
 
 begin
 
 	------------------------------------------
-	-- Convert RGB pixel from 12-bit fixed integer
-    -- to double-precision floating point value
+	-- Divide RGB pixel
 	------------------------------------------
-	pixrfd : xfixedtodouble port map(
+	pixrfd : xdoublediv port map(
 		aclk => clk,
 		s_axis_a_tvalid => '1',
-		s_axis_a_tdata => pixrfixed,
+		s_axis_a_tdata => pixr1,
+		s_axis_b_tvalid => '1',
+		s_axis_b_tdata => pixr2,
 		m_axis_result_tdata => pixr
 	);
 
-	pixgfd : xfixedtodouble port map(
+	pixgfd : xdoublediv port map(
 		aclk => clk,
 		s_axis_a_tvalid => '1',
-		s_axis_a_tdata => pixgfixed,
+		s_axis_a_tdata => pixg1,
+		s_axis_b_tvalid => '1',
+		s_axis_b_tdata => pixg2,
 		m_axis_result_tdata => pixg
 	);
 
-	pixbfd : xfixedtodouble port map(
+	pixbfd : xdoublediv port map(
 		aclk => clk,
 		s_axis_a_tvalid => '1',
-		s_axis_a_tdata => pixbfixed,
+		s_axis_a_tdata => pixb1,
+		s_axis_b_tvalid => '1',
+		s_axis_b_tdata => pixb2,
 		m_axis_result_tdata => pixb
 	);	
 
