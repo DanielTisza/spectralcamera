@@ -166,7 +166,7 @@ begin
 	);
 
 	------------------------------------------
-	-- Convert white image pixels
+	-- Multiply white image pixels
 	------------------------------------------
 	img2pix1mul : rgbdoublemul port map(
 		clk => clk,
