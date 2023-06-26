@@ -93,7 +93,7 @@ architecture rtl of fixedtodouble is
 		pixg : out STD_LOGIC_VECTOR ( 63 downto 0 );
 		pixb : out STD_LOGIC_VECTOR ( 63 downto 0 )
 	);
-	end component rgbfixedtodouble;
+	end component;
 
 begin
 
