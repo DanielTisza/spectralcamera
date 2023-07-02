@@ -117,7 +117,7 @@ architecture rtl of rowdelay is
 			-- Input data signals
 			readrowodd : in std_logic;
 			ram1_rd_data : in std_logic_vector(47 downto 0);
-			read_data : in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+			read_data : in std_logic_vector(47 downto 0);
 	
 			-- Output data signals
 			pix1r : out unsigned(11 downto 0);
@@ -224,7 +224,7 @@ architecture rtl of rowdelay is
 	signal targetsub3 : unsigned(11 downto 0);
 	signal targetsub4 : unsigned(11 downto 0);
 
-	signal targetsubvec : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal targetsubvec : std_logic_vector(47 downto 0);
 
 	-- Subtract dark from white
 	signal whitesub1 : unsigned(11 downto 0);
@@ -232,7 +232,7 @@ architecture rtl of rowdelay is
 	signal whitesub3 : unsigned(11 downto 0);
 	signal whitesub4 : unsigned(11 downto 0);
 
-	signal whitesubvec : std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+	signal whitesubvec : std_logic_vector(47 downto 0);
 
 	-- Demosaic for target image
 	signal targetdmpix1r : unsigned(11 downto 0);

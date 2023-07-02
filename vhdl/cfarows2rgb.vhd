@@ -32,7 +32,7 @@ entity cfarows2rgb is
 		-- Input data signals
 		readrowodd : in std_logic;
 		ram1_rd_data : in std_logic_vector(47 downto 0);
-		read_data : in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+		read_data : in std_logic_vector(47 downto 0);
 
 		-- Output data signals
 		pix1r : out unsigned(11 downto 0);
@@ -122,22 +122,25 @@ begin
 				img1pix4r <= img1pix4r;
 				img1pix4g <= img1pix4g;
 
+				-- Demosaic so that pick the first appearing green value
+				-- to first pixel first
+				
 				if (readrowodd='1') then
 
 					img1pix1g <= unsigned(ram1_rd_data(47 downto 36));		-- delayed
 					img1pix1b <= unsigned(ram1_rd_data(35 downto 24));		-- delayed
-					img1pix1r <= unsigned(read_data(59 downto 48));		-- direct
+					img1pix1r <= unsigned(read_data(47 downto 36));		-- direct
 
 					img1pix2b <= unsigned(ram1_rd_data(35 downto 24));		-- delayed
-					img1pix2r <= unsigned(read_data(59 downto 48));		-- direct
-					img1pix2g <= unsigned(read_data(43 downto 32));		-- direct
-
+					img1pix2r <= unsigned(read_data(47 downto 36));		-- direct
+					img1pix2g <= unsigned(read_data(35 downto 24));		-- direct
+										
 					img1pix3g <= unsigned(ram1_rd_data(23 downto 12));		-- delayed
 					img1pix3b <= unsigned(ram1_rd_data(11 downto 0));		-- delayed
-					img1pix3r <= unsigned(read_data(27 downto 16));		-- direct
+					img1pix3r <= unsigned(read_data(23 downto 12));		-- direct
 
 					img1pix4b <= unsigned(ram1_rd_data(11 downto 0));		-- delayed
-					img1pix4r <= unsigned(read_data(27 downto 16));		-- direct
+					img1pix4r <= unsigned(read_data(23 downto 12));		-- direct
 					img1pix4g <= unsigned(read_data(11 downto 0));		-- direct
 
 				else
@@ -147,21 +150,21 @@ begin
 					-- 23 downto 12
 					-- 11 downto 0
 
-					img1pix1g <= unsigned(read_data(59 downto 48));		-- direct
-					img1pix1b <= unsigned(read_data(43 downto 32));		-- direct
 					img1pix1r <= unsigned(ram1_rd_data(47 downto 36));	-- delayed
-
-					img1pix2b <= unsigned(read_data(43 downto 32));		-- direct
+					img1pix1g <= unsigned(read_data(47 downto 36));		-- direct
+					img1pix1b <= unsigned(read_data(35 downto 24));		-- direct
+					
 					img1pix2r <= unsigned(ram1_rd_data(47 downto 36));	-- delayed
 					img1pix2g <= unsigned(ram1_rd_data(35 downto 24));	-- delayed
-
-					img1pix3g <= unsigned(read_data(27 downto 16));		-- direct
-					img1pix3b <= unsigned(read_data(11 downto 0));		-- direct
+					img1pix2b <= unsigned(read_data(35 downto 24));		-- direct
+					
 					img1pix3r <= unsigned(ram1_rd_data(23 downto 12));	-- delayed
+					img1pix3g <= unsigned(read_data(23 downto 12));		-- direct
+					img1pix3b <= unsigned(read_data(11 downto 0));		-- direct
 
-					img1pix4b <= unsigned(read_data(11 downto 0));		-- direct
 					img1pix4r <= unsigned(ram1_rd_data(23 downto 12));	-- delayed
 					img1pix4g <= unsigned(ram1_rd_data(11 downto 0));	-- delayed
+					img1pix4b <= unsigned(read_data(11 downto 0));		-- direct
 
 				end if;
 
