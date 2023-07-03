@@ -84,6 +84,19 @@ architecture rtl of rgbwrite is
 	signal firstrowhandled : std_logic;
 	signal readrowodd : std_logic;
 
+	signal pix1r : unsigned(63 downto 0);
+	signal pix1g : unsigned(63 downto 0);
+	signal pix1b : unsigned(63 downto 0);
+	signal pix2r : unsigned(63 downto 0);
+	signal pix2g : unsigned(63 downto 0);
+	signal pix2b : unsigned(63 downto 0);
+	signal pix3r : unsigned(63 downto 0);
+	signal pix3g : unsigned(63 downto 0);
+	signal pix3b : unsigned(63 downto 0);
+	signal pix4r : unsigned(63 downto 0);
+	signal pix4g : unsigned(63 downto 0);
+	signal pix4b : unsigned(63 downto 0);
+
 begin
     
 	------------------------------------------
@@ -124,6 +137,19 @@ begin
 			-- Pipeline processing delay shift register trigger
 			pipelinedelay <= (others => '0');
 
+			pix1r <= to_unsigned(0, 64);
+			pix1g <= to_unsigned(0, 64);
+			pix1b <= to_unsigned(0, 64);
+			pix2r <= to_unsigned(0, 64);
+			pix2g <= to_unsigned(0, 64);
+			pix2b <= to_unsigned(0, 64);
+			pix3r <= to_unsigned(0, 64);
+			pix3g <= to_unsigned(0, 64);
+			pix3b <= to_unsigned(0, 64);
+			pix4r <= to_unsigned(0, 64);
+			pix4g <= to_unsigned(0, 64);
+			pix4b <= to_unsigned(0, 64);
+
 		else
 
 			if (clk'event and clk='1') then
@@ -154,6 +180,19 @@ begin
 
 				-- Pipeline processing delay shift register trigger
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '0';
+
+				pix1r <= pix1r;
+				pix1g <= pix1g;
+				pix1b <= pix1b;
+				pix2r <= pix2r;
+				pix2g <= pix2g;
+				pix2b <= pix2b;
+				pix3r <= pix3r;
+				pix3g <= pix3g;
+				pix3b <= pix3b;
+				pix4r <= pix4r;
+				pix4g <= pix4g;
+				pix4b <= pix4b;
 
 				-- if (read_done_img2_delayed='1') then
 
