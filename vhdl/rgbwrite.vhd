@@ -40,22 +40,19 @@ entity rgbwrite is
 		write_addr : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
 		write_data : out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
 
-        -- Step 1 calculation result
-        res1pix1r : in unsigned(11 downto 0);
-        res1pix1g : in unsigned(11 downto 0);
-        res1pix1b : in unsigned(11 downto 0);
-
-        res1pix2r : in unsigned(11 downto 0);
-        res1pix2g : in unsigned(11 downto 0);
-        res1pix2b : in unsigned(11 downto 0);
-
-        res1pix3r : in unsigned(11 downto 0);
-        res1pix3g : in unsigned(11 downto 0);
-        res1pix3b : in unsigned(11 downto 0);
-
-        res1pix4r : in unsigned(11 downto 0);
-        res1pix4g : in unsigned(11 downto 0);
-        res1pix4b : in unsigned(11 downto 0)
+		-- Step 1 calculation result
+		res1pix1r : in unsigned(63 downto 0);
+		res1pix1g : in unsigned(63 downto 0);
+		res1pix1b : in unsigned(63 downto 0);
+		res1pix2r : in unsigned(63 downto 0);
+		res1pix2g : in unsigned(63 downto 0);
+		res1pix2b : in unsigned(63 downto 0);
+		res1pix3r : in unsigned(63 downto 0);
+		res1pix3g : in unsigned(63 downto 0);
+		res1pix3b : in unsigned(63 downto 0);
+		res1pix4r : in unsigned(63 downto 0);
+		res1pix4g : in unsigned(63 downto 0);
+		res1pix4b : in unsigned(63 downto 0)
 	);
 
 end rgbwrite;
@@ -167,12 +164,13 @@ begin
 				-- else
 				-- end if;
 
-
 				-- Need to write
-				-- 4 * 3 * 12-bits = 144 bits (18 bytes)
+				-- 4 * 3 * 64-bits = 144 bits (96 bytes)
+				--
 				-- Can write 64-bits at a time
-				-- (4*3*12) / 64 = 2.25 transfers needed to write back processed pixel data in 36-bit RGB format
-				-- 8 bytes, 8 bytes, 2 bytes
+				-- (4*3*64-bits) / 64-bits = 12
+				-- So 12 transfers are needed to write back processed pixel data
+				-- in double-precision floating point format
 
 				--------------------------------------
 				-- Wait for pipeline data to become available
