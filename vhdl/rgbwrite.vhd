@@ -60,19 +60,6 @@ end rgbwrite;
 -- Describe the contents of this "chip"
 architecture rtl of rgbwrite is
 
-	-- Direct read
-	signal src2A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal src3A : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-
-	-- Delayed signals
-	signal src1B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal src2B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal src3B : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-
-	-- Computations
-	signal result2 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal result3 : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-
 	-- Destination data to DDR memory
 	signal write_addr_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
 	signal write_data_int : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
@@ -97,6 +84,9 @@ architecture rtl of rgbwrite is
 	signal pix4g : unsigned(63 downto 0);
 	signal pix4b : unsigned(63 downto 0);
 
+	signal rowIdx : unsigned(10 downto 0);
+	signal colIdx : unsigned(11 downto 0);
+
 begin
     
 	------------------------------------------
@@ -109,19 +99,6 @@ begin
 	begin
 
 		if (resetn='0') then
-
-			-- Direct read
-			src2A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			src3A <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-
-			-- Delayed signals
-			src1B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			src2B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			src3B <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			
-			-- Computations
-			result2 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			result3 <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
 			pipelinedelay <= (others => '0');
 			dstoffset <= to_unsigned(0, 24);
@@ -150,26 +127,15 @@ begin
 			pix4g <= to_unsigned(0, 64);
 			pix4b <= to_unsigned(0, 64);
 
+			rowIdx <= to_unsigned(0,11);
+			colIdx <= to_unsigned(0,12);
+
 		else
 
 			if (clk'event and clk='1') then
 
-				-- Direct read
-				src2A <= src2A;
-				src3A <= src3A;
-
-				-- Delayed signals
-				src1B <= src1B;
-				src2B <= src2B;
-				src3B <= src3B;
-
-				-- Computations
-				result2 <= src2A + src2B;
-				result3 <= src3A + src3B;
-
 				-- Destination data to DDR memory
 				write_addr_int <= write_addr_int;
-				write_data_int <= result2 + result3;
 				write_ena_int <= '0';
 
 				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
@@ -193,6 +159,9 @@ begin
 				pix4r <= pix4r;
 				pix4g <= pix4g;
 				pix4b <= pix4b;
+
+				rowIdx <= rowIdx;
+				colIdx <= colIdx;
 
 				-- if (read_done_img2_delayed='1') then
 
@@ -242,6 +211,9 @@ begin
 									+ 	rowIdx * to_unsigned(20720, 15)
 									+	colIdx * to_unsigned(8, 4);
 
+				-- Select data to write
+				write_data_int <= pix1r;
+
 				--------------------------------------
 				-- Wait for pipeline data to become available
 				--------------------------------------
@@ -259,7 +231,6 @@ begin
 					if (write_ready='1') then
 
 						-- Set address and request write
-						write_addr_int <= to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH) + dstoffset; --X"3EB3FB00"
 						write_ena_int <= '1';
 
 						-- Calculate offset for next write address
@@ -280,12 +251,7 @@ begin
 				else
 				end if;
 
-				--if (write_req1='1') then
-				--else
-				--end if;
-
-
-			else		
+			else
 			end if;
 			
 		end if;
