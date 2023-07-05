@@ -203,13 +203,44 @@ begin
 				-- else
 				-- end if;
 
-				-- Need to write
+				-- Result image RGB pixels with double-precision floating point
+				-- has 64-bit pixels (8 bytes)
+				--
+				-- For 4 pixels need to write
 				-- 4 * 3 * 64-bits = 144 bits (96 bytes)
 				--
 				-- Can write 64-bits at a time
 				-- (4*3*64-bits) / 64-bits = 12
 				-- So 12 transfers are needed to write back processed pixel data
 				-- in double-precision floating point format
+				--
+				-- Spectral camera module resolution
+				-- 2592 x 1944				
+				-- 2592 pixels * 8 bytes = 20736 (0x5100)
+				-- 2592 * 1944 * 8 bytes = 40310784 bytes
+
+				-- Boxed camera module resolution
+				-- 2590 x 1942
+				-- 2590 pixels * 8 bytes = 20720 (0x50F0)
+				-- 2590 * 1942 * 8 bytes = 40238240 bytes
+
+				-- Result image
+				-- 3EB3FB00		first row
+
+				-- Write address is:
+				--		3EB3FB00 + (rowIdx * rowBytes) + (colIdx * 8 bytes)
+				--
+				-- where
+				--		imgBase		= 1006632960 = 0x3C000000	(32 bits)
+				--		imgIdx 		= 0...2						(2 bits)
+				--		imgSize 	= 15116544 bytes = 0xE6A900
+				--		rowIdx 		= 0...1941					(11 bits)
+				--		rowBytes	= 20720 bytes = 0x50F0
+				--		colIdx		= 0...2589					(12 bits)
+
+				write_addr_int <= 		to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH)	--X"3EB3FB00"
+									+ 	rowIdx * to_unsigned(20720, 15)
+									+	colIdx * to_unsigned(8, 4);
 
 				--------------------------------------
 				-- Wait for pipeline data to become available
