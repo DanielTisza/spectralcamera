@@ -62,7 +62,6 @@ architecture rtl of rgbwrite is
 
 	-- Destination data to DDR memory
 	signal write_addr_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
-	signal write_data_int : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal write_ena_int : std_logic;
 
 	signal pipelinedelay : std_logic_vector(3 downto 0);
@@ -87,6 +86,8 @@ architecture rtl of rgbwrite is
 	signal rowIdx : unsigned(10 downto 0);
 	signal colIdx : unsigned(11 downto 0);
 
+	signal data_shift_ena : std_logic;
+
 begin
     
 	------------------------------------------
@@ -105,7 +106,6 @@ begin
 
 			-- Writing channel signals
 			write_addr_int <= to_unsigned(0, C_M_AXI_ADDR_WIDTH);
-			write_data_int <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			write_ena_int <= '0';
 
 			firstrowhandled <= '0';
@@ -129,6 +129,8 @@ begin
 
 			rowIdx <= to_unsigned(0,11);
 			colIdx <= to_unsigned(0,12);
+
+			data_shift_ena <= '0';
 
 		else
 
@@ -163,14 +165,7 @@ begin
 				rowIdx <= rowIdx;
 				colIdx <= colIdx;
 
-				-- if (read_done_img2_delayed='1') then
-
-					-- Last data read for pipeline processing
-					-- Trigger writing after pipeline delay
-					-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
-
-				-- else
-				-- end if;
+				data_shift_ena <= data_shift_ena;
 
 				-- Result image RGB pixels with double-precision floating point
 				-- has 64-bit pixels (8 bytes)
@@ -193,6 +188,37 @@ begin
 				-- 2590 pixels * 8 bytes = 20720 (0x50F0)
 				-- 2590 * 1942 * 8 bytes = 40238240 bytes
 
+
+				-- Select data to write
+				-- Make 144 bits shift register where highest 64-bits connected
+				-- to write port
+				if (data_shift_ena='1') then
+
+					pix1r <= pix1g;
+					pix1g <= pix1b;
+					pix1b <= pix2r;
+					pix2r <= pix2g;
+					pix2g <= pix2b;
+					pix2b <= pix3r;
+					pix3r <= pix3g;
+					pix3g <= pix3b;
+					pix3b <= pix4r;
+					pix4r <= pix4g;
+					pix4g <= pix4b;
+					-- pix4b <= pix4b;
+
+				else
+				end if;
+
+				-- if (read_done_img2_delayed='1') then
+
+					-- Last data read for pipeline processing
+					-- Trigger writing after pipeline delay
+					-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
+
+				-- else
+				-- end if;
+
 				-- Result image
 				-- 3EB3FB00		first row
 
@@ -210,9 +236,6 @@ begin
 				write_addr_int <= 		to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH)	--X"3EB3FB00"
 									+ 	rowIdx * to_unsigned(20720, 15)
 									+	colIdx * to_unsigned(8, 4);
-
-				-- Select data to write
-				write_data_int <= pix1r;
 
 				--------------------------------------
 				-- Wait for pipeline data to become available
@@ -264,7 +287,7 @@ begin
 
 	-- Write channel signals
 	write_addr <= std_logic_vector(write_addr_int);
-	write_data <= std_logic_vector(write_data_int);
+	write_data <= std_logic_vector(pix1r);
 	write_ena <= write_ena_int;
 	
 end architecture;
