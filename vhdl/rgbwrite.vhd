@@ -210,15 +210,6 @@ begin
 				else
 				end if;
 
-				-- if (read_done_img2_delayed='1') then
-
-					-- Last data read for pipeline processing
-					-- Trigger writing after pipeline delay
-					-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
-
-				-- else
-				-- end if;
-
 				-- Result image
 				-- 3EB3FB00		first row
 
@@ -237,6 +228,15 @@ begin
 									+ 	rowIdx * to_unsigned(20720, 15)
 									+	colIdx * to_unsigned(8, 4);
 
+				-- if (read_done_img2_delayed='1') then
+
+					-- Last data read for pipeline processing
+					-- Trigger writing after pipeline delay
+					-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
+
+				-- else
+				-- end if;
+				
 				--------------------------------------
 				-- Wait for pipeline data to become available
 				--------------------------------------
