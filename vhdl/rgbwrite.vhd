@@ -88,6 +88,14 @@ architecture rtl of rgbwrite is
 
 	signal data_shift_ena : std_logic;
 
+	-- Sequence
+	signal writeseqstatebits : std_logic_vector(7 downto 0);
+	signal writeseq_done_int : std_logic;
+
+	-- Single write
+	signal writestatebits : std_logic_vector(7 downto 0);
+	signal write_done_int : std_logic;
+
 begin
     
 	------------------------------------------
@@ -132,6 +140,12 @@ begin
 
 			data_shift_ena <= '0';
 
+			writeseqstatebits <= "00000001";
+			writeseq_done_int <= '0';
+
+			writestatebits <= "00000001";
+			write_done_int <= '0';
+
 		else
 
 			if (clk'event and clk='1') then
@@ -166,6 +180,12 @@ begin
 				colIdx <= colIdx;
 
 				data_shift_ena <= data_shift_ena;
+
+				writeseqstatebits <= writeseqstatebits;
+				writeseq_done_int <= '0';
+
+				writestatebits <= writestatebits;
+				write_done_int <= '0';
 
 				-- Result image RGB pixels with double-precision floating point
 				-- has 64-bit pixels (8 bytes)
@@ -228,15 +248,48 @@ begin
 									+ 	rowIdx * to_unsigned(20720, 15)
 									+	colIdx * to_unsigned(8, 4);
 
-				-- if (read_done_img2_delayed='1') then
 
-					-- Last data read for pipeline processing
-					-- Trigger writing after pipeline delay
-					-- pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
+				--------------------------------------
+				-- Sequence
+				--------------------------------------
+				case writeseqstatebits is
 
-				-- else
-				-- end if;
+					when "00000001" =>
+
+						-- Initial state
+
+						writeseqstatebits <= "00000010";
+
+					when "00000010" =>
+
+						writeseqstatebits <= "00000001";
+
+					when others =>
+						null;
+
+				end case;
+
+				--------------------------------------
+				-- Single write to memory
+				--------------------------------------
+				case writestatebits is
+
+					when "00000001" =>
+
+						-- Initial state
+
+						writestatebits <= "00000010";
+
+					when "00000010" =>
+
+						writestatebits <= "00000001";
+
+					when others =>
+						null;
+
+				end case;
 				
+
 				--------------------------------------
 				-- Wait for pipeline data to become available
 				--------------------------------------
