@@ -138,6 +138,7 @@ architecture rtl of pixelio2 is
 
 	-- Write channel signals
 	signal statebits : std_logic_vector(7 downto 0);
+	signal write_ready_int : std_logic;
 
 begin
 	
@@ -179,6 +180,7 @@ begin
 
 			-- Write channel signals
 			statebits <= "00000001";
+			write_ready_int <= '0';
 
 		else
 
@@ -211,6 +213,7 @@ begin
 
 				-- Write channel signals
 				statebits <= statebits;
+				write_ready_int <= write_ready_int;
 				
 				--------------------------------------
 				-- Read from DDR memory
@@ -295,6 +298,8 @@ begin
 						-- Waiting for write request
 						-- Indicate to write address channel that 
 						-- write address is valid
+						
+						write_ready_int <= '1';
 
 						if (write_ena='1') then
 
@@ -302,7 +307,8 @@ begin
 							AXI_WDATA_int <= write_data;
 							AXI_AWVALID_int <= '1';
 							statebits <= "00000010";
-						else
+							write_ready_int <= '0';
+						else	
 						end if;
 
 					when "00000010" =>
@@ -433,5 +439,6 @@ begin
 	-- Other signals
 	read_done <= read_done_int;
 	read_data <= AXI_RDATA_int;
+	write_ready <= write_ready_int;
 	
 end architecture;

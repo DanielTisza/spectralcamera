@@ -91,10 +91,11 @@ architecture rtl of rgbwrite is
 	-- Sequence
 	signal writeseqstatebits : std_logic_vector(7 downto 0);
 	signal writeseq_done_int : std_logic;
+	signal writenext_ena : std_logic;
 
 	-- Single write
 	signal writestatebits : std_logic_vector(7 downto 0);
-	signal write_done_int : std_logic;
+	signal writenext_done : std_logic;
 
 begin
     
@@ -142,9 +143,10 @@ begin
 
 			writeseqstatebits <= "00000001";
 			writeseq_done_int <= '0';
+			writenext_ena <= '0';
 
 			writestatebits <= "00000001";
-			write_done_int <= '0';
+			writenext_done <= '0';
 
 		else
 
@@ -183,9 +185,10 @@ begin
 
 				writeseqstatebits <= writeseqstatebits;
 				writeseq_done_int <= '0';
+				writenext_ena <= '0';
 
 				writestatebits <= writestatebits;
-				write_done_int <= '0';
+				writenext_done <= '0';
 
 				-- Result image RGB pixels with double-precision floating point
 				-- has 64-bit pixels (8 bytes)
@@ -257,11 +260,14 @@ begin
 					when "00000001" =>
 
 						-- Initial state
+						-- Waiting for data to arrive from pipeline
+						-- Start first write
 
 						writeseqstatebits <= "00000010";
 
 					when "00000010" =>
 
+						
 						writeseqstatebits <= "00000001";
 
 					when others =>
@@ -277,55 +283,35 @@ begin
 					when "00000001" =>
 
 						-- Initial state
-
-						writestatebits <= "00000010";
+						-- Waiting for trigger to write next data
+						if (writenext_ena='1') then
+							writestatebits <= "00000010";
+						else
+						end if;
 
 					when "00000010" =>
 
-						writestatebits <= "00000001";
+						-- Request write
+						if (write_ready='1') then
+							write_ena_int <= '1';
+							writestatebits <= "00000100";
+						else
+						end if;
+
+					when "00000100" =>
+
+						-- Write started
+						if (write_ready='0') then
+							writenext_done <= '1';
+							writestatebits <= "00000001";
+						else
+						end if;
 
 					when others =>
 						null;
 
 				end case;
 				
-
-				--------------------------------------
-				-- Wait for pipeline data to become available
-				--------------------------------------
-				if (pipelinedelay(pipelinedelay'length-1)='1') then
-
-					-- Capture the result from pipeline
-					-- Request write1
-					-- Request write2
-					-- Request write3
-
-					-- Make 144 bits shift register where highest 64-bits connected
-					-- to write port
-
-					-- Wait for write interface to be available
-					if (write_ready='1') then
-
-						-- Set address and request write
-						write_ena_int <= '1';
-
-						-- Calculate offset for next write address
-						dstoffset <= dstoffset + to_unsigned(8, 4);
-
-						-- Detect when all data has been written
-						if (dstoffset=to_unsigned(10059552, 24)) then  --X"997F20"
-							dstoffset <= to_unsigned(0, 24);
-						else
-						end if;
-
-					else
-
-						-- This is fatal error, if pipeline data has arrived
-						-- but writing is not available.
-					end if;
-					
-				else
-				end if;
 
 			else
 			end if;
