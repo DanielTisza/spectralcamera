@@ -92,6 +92,7 @@ architecture rtl of rgbwrite is
 	signal writeseqstatebits : std_logic_vector(7 downto 0);
 	signal writeseq_done_int : std_logic;
 	signal writenext_ena : std_logic;
+	signal writecounter : unsigned(3 downto 0);
 
 	-- Single write
 	signal writestatebits : std_logic_vector(7 downto 0);
@@ -144,6 +145,7 @@ begin
 			writeseqstatebits <= "00000001";
 			writeseq_done_int <= '0';
 			writenext_ena <= '0';
+			writecounter <= to_unsigned(0, 4);
 
 			writestatebits <= "00000001";
 			writenext_done <= '0';
@@ -186,6 +188,7 @@ begin
 				writeseqstatebits <= writeseqstatebits;
 				writeseq_done_int <= '0';
 				writenext_ena <= '0';
+				writecounter <= writecounter;
 
 				writestatebits <= writestatebits;
 				writenext_done <= '0';
@@ -260,15 +263,29 @@ begin
 					when "00000001" =>
 
 						-- Initial state
+						-- Prepare to write 12 times
 						-- Waiting for data to arrive from pipeline
-						-- Start first write
 
+						writecounter <= to_unsigned(12, 4);
 						writeseqstatebits <= "00000010";
 
 					when "00000010" =>
 
-						
-						writeseqstatebits <= "00000001";
+						-- Start writing if there are data left to write
+						-- Otherwise stop writing
+						if (writenext_done='1') then
+							writeseqstatebits <= "00000001";
+						else
+						end if;
+
+					when "00000100" =>
+
+						-- Waiting for writing
+						if (writenext_done='1') then
+							writeseqstatebits <= "00000010";
+							writecounter <= writecounter - to_unsigned(1, 4);
+						else
+						end if;
 
 					when others =>
 						null;
