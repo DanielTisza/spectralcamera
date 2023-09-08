@@ -60,14 +60,12 @@ end rgbwrite;
 -- Describe the contents of this "chip"
 architecture rtl of rgbwrite is
 
+	signal pipelinedelay : unsigned(9 downto 0);
+	signal capture_ena : std_logic;
+
 	-- Destination data to DDR memory
 	signal write_addr_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
 	signal write_ena_int : std_logic;
-
-	signal pipelinedelay : unsigned(9 downto 0);
-
-	signal firstrowhandled : std_logic;
-	signal readrowodd : std_logic;
 
 	signal pix1r : unsigned(63 downto 0);
 	signal pix1g : unsigned(63 downto 0);
@@ -83,7 +81,7 @@ architecture rtl of rgbwrite is
 	signal pix4b : unsigned(63 downto 0);
 
 	signal rowIdx : unsigned(10 downto 0);
-	signal colIdx : unsigned(11 downto 0);
+	signal colIdx : unsigned(12 downto 0);
 	signal hsync_ena : std_logic;
 	signal vsync_ena : std_logic;
 
@@ -96,8 +94,6 @@ architecture rtl of rgbwrite is
 	-- Single write
 	signal writestatebits : std_logic_vector(7 downto 0);
 	signal writenext_done : std_logic;
-
-	signal capture_ena : std_logic;
 
 begin
     
@@ -113,13 +109,11 @@ begin
 		if (resetn='0') then
 
 			pipelinedelay <= to_unsigned(0, 10);
+			capture_ena <= '0';
 
 			-- Writing channel signals
 			write_addr_int <= to_unsigned(0, C_M_AXI_ADDR_WIDTH);
 			write_ena_int <= '0';
-
-			firstrowhandled <= '0';
-			readrowodd <= '0';
 
 			pix1r <= to_unsigned(0, 64);
 			pix1g <= to_unsigned(0, 64);
@@ -135,7 +129,7 @@ begin
 			pix4b <= to_unsigned(0, 64);
 
 			rowIdx <= to_unsigned(0,11);
-			colIdx <= to_unsigned(0,12);
+			colIdx <= to_unsigned(0,13);
 			hsync_ena <= '0';
 			vsync_ena <= '0';
 
@@ -147,18 +141,16 @@ begin
 			writestatebits <= "00000001";
 			writenext_done <= '0';
 
-			capture_ena <= '0';
-
 		else
 
 			if (clk'event and clk='1') then
 
+				pipelinedelay <= pipelinedelay;
+				capture_ena <= '0';
+
 				-- Destination data to DDR memory
 				write_addr_int <= write_addr_int;
 				write_ena_int <= '0';
-
-				firstrowhandled <= firstrowhandled;
-				readrowodd <= readrowodd;
 
 				pix1r <= pix1r;
 				pix1g <= pix1g;
@@ -184,10 +176,7 @@ begin
 				writecounter <= writecounter;
 
 				writestatebits <= writestatebits;
-				writenext_done <= '0';
-
-				pipelinedelay <= pipelinedelay;
-				capture_ena <= '0';
+				writenext_done <= '0';			
 
 				--------------------------------------
 				-- Pipeline delay counter
@@ -239,6 +228,12 @@ begin
 				
 				-- Result image
 				-- 3EB3FB00		first row
+				---
+				-- 2592 pixels * 3 colors * 8 bytes per pixel = 62208 bytes per row
+				-- 2590 pixels * 3 colors * 8 bytes per pixel = 62160 bytes per row
+				-- 
+				-- 648 transfers * 12 bytes per transfer * 8 bytes data per transfer = 62208 bytes per row
+				-- Output colIdx limit at 648 * 12 = 7776
 
 				-- Write address is:
 				--		3EB3FB00 + (rowIdx * rowBytes) + (colIdx * 8 bytes)
@@ -371,13 +366,27 @@ begin
 				-- reset column index when maximum reached
 				if (writenext_done='1') then
 
+					-- Pipeline input read data
 					-- 2590 pixels / 4 pixels per 64 bits transfer
-					-- 2590/4 = 647.5 = 648
-					if (colIdx=to_unsigned(648,12)) then
-						colIdx <= to_unsigned(0,12);
+					-- 2590/4 = 647.5 = 648 transfer (64-bits each, containing 4 pixels)
+					-- 
+					-- Pipeline calculation result
+					-- 4 RGB pixels with double precision floating point values
+					-- 12 * 64-bit data
+					--
+					-- Here when writing pipeline result, colIdx is incremented
+					-- at each 64-bit data written and writing needs to be
+					-- done 12 times.
+					-- 
+					-- Multiply read transfers count by 12 to get output
+					-- transfers count:
+					-- 	648 * 12 = 7776
+					--
+					if (colIdx=to_unsigned(7776,13)) then
+						colIdx <= to_unsigned(0,13);
 						hsync_ena <= '1';
 					else
-						colIdx <= colIdx + to_unsigned(1,12);
+						colIdx <= colIdx + to_unsigned(1,13);
 					end if;
 
 				else
