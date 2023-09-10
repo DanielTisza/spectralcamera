@@ -85,14 +85,14 @@ architecture rtl of rgbwrite is
 	signal hsync_ena : std_logic;
 	signal vsync_ena : std_logic;
 
-	-- Sequence
-	signal writeseqstatebits : std_logic_vector(7 downto 0);
+	-- Sequence of 12 writes
+	signal writeseqstatebits : std_logic_vector(2 downto 0);
 	signal writeseq_done_int : std_logic;
 	signal writenext_ena : std_logic;
 	signal writecounter : unsigned(3 downto 0);
 
 	-- Single write
-	signal writestatebits : std_logic_vector(7 downto 0);
+	signal writestatebits : std_logic_vector(2 downto 0);
 	signal writenext_done : std_logic;
 
 begin
@@ -133,12 +133,12 @@ begin
 			hsync_ena <= '0';
 			vsync_ena <= '0';
 
-			writeseqstatebits <= "00000001";
+			writeseqstatebits <= "001";
 			writeseq_done_int <= '0';
 			writenext_ena <= '0';
 			writecounter <= to_unsigned(0, 4);
 
-			writestatebits <= "00000001";
+			writestatebits <= "001";
 			writenext_done <= '0';
 
 		else
@@ -176,7 +176,7 @@ begin
 				writecounter <= writecounter;
 
 				writestatebits <= writestatebits;
-				writenext_done <= '0';			
+				writenext_done <= '0';
 
 				--------------------------------------
 				-- Pipeline delay counter
@@ -255,7 +255,7 @@ begin
 				--------------------------------------
 				case writeseqstatebits is
 
-					when "00000001" =>
+					when "001" =>
 
 						-- Initial state
 						-- Prepare to write 12 times
@@ -265,29 +265,29 @@ begin
 
 						if (capture_ena='1') then
 							writenext_ena <= '1';
-							writeseqstatebits <= "00000010";
+							writeseqstatebits <= "010";
 						else
 						end if;
 
-					when "00000010" =>
+					when "010" =>
 
 						-- Write is in progress,
 						-- waiting for writing to complete
 						if (writenext_done='1') then
 							writecounter <= writecounter - to_unsigned(1, 4);
-							writeseqstatebits <= "00000100";
+							writeseqstatebits <= "100";
 						else
 						end if;
 
-					when "00000100" =>
+					when "100" =>
 
 						-- Check if need to write more
 						-- or stop writing
 						if (writecounter = to_unsigned(0,4)) then
-							writeseqstatebits <= "00000001";
+							writeseqstatebits <= "001";
 						else
 							writenext_ena <= '1';
-							writeseqstatebits <= "00000010";
+							writeseqstatebits <= "010";
 						end if;
 
 					when others =>
@@ -300,30 +300,30 @@ begin
 				--------------------------------------
 				case writestatebits is
 
-					when "00000001" =>
+					when "001" =>
 
 						-- Initial state
 						-- Waiting for trigger to write next data
 						if (writenext_ena='1') then
-							writestatebits <= "00000010";
+							writestatebits <= "010";
 						else
 						end if;
 
-					when "00000010" =>
+					when "010" =>
 
 						-- Request write
 						if (write_ready='1') then
 							write_ena_int <= '1';
-							writestatebits <= "00000100";
+							writestatebits <= "100";
 						else
 						end if;
 
-					when "00000100" =>
+					when "100" =>
 
 						-- Write started
 						if (write_ready='0') then
 							writenext_done <= '1';
-							writestatebits <= "00000001";
+							writestatebits <= "001";
 						else
 						end if;
 
@@ -332,13 +332,28 @@ begin
 
 				end case;
 
-
 				--------------------------------------
 				-- Prepare data to write
 				--------------------------------------
 
-				-- Make 144 bits shift register where 
+				-- Make 12 * 64 bits shift register where 
 				-- highest 64-bits connected to write port
+
+				if (capture_ena='1') then
+					pix1r <= res1pix1r;
+					pix1g <= res1pix1g;
+					pix1b <= res1pix1b;
+					pix2r <= res1pix2r;
+					pix2g <= res1pix2g;
+					pix2b <= res1pix2b;
+					pix3r <= res1pix3r;
+					pix3g <= res1pix3g;
+					pix3b <= res1pix3b;
+					pix4r <= res1pix4r;
+					pix4g <= res1pix4g;
+					pix4b <= res1pix4b;
+				else
+				end if;
 
 				if (writenext_done='1') then
 
@@ -356,7 +371,6 @@ begin
 					-- pix4b <= pix4b;
 				else
 				end if;
-
 
 				--------------------------------------
 				-- Column index and row index for write address
