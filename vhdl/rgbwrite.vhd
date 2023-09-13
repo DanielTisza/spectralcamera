@@ -60,13 +60,21 @@ end rgbwrite;
 -- Describe the contents of this "chip"
 architecture rtl of rgbwrite is
 
+	-- Pipeline output timing
 	signal pipelinedelay : unsigned(9 downto 0);
 	signal capture_ena : std_logic;
 
-	-- Destination data to DDR memory
-	signal write_addr_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
-	signal write_ena_int : std_logic;
+	-- State machine for 12 write sequence
+	signal writecounter : unsigned(3 downto 0);
+	signal writeseqstatebits : std_logic_vector(2 downto 0);
+	signal writeseq_done_int : std_logic;
+	signal writenext_ena : std_logic;
 
+	-- State machine for single write
+	signal writestatebits : std_logic_vector(2 downto 0);
+	signal writenext_done : std_logic;
+
+	-- Write data
 	signal pix1r : unsigned(63 downto 0);
 	signal pix1g : unsigned(63 downto 0);
 	signal pix1b : unsigned(63 downto 0);
@@ -80,21 +88,14 @@ architecture rtl of rgbwrite is
 	signal pix4g : unsigned(63 downto 0);
 	signal pix4b : unsigned(63 downto 0);
 
-	-- 
+	-- Write address calculation 
+	-- for destination data in DDR memory
 	signal rowIdx : unsigned(10 downto 0);
 	signal colIdx : unsigned(12 downto 0);
 	signal hsync_ena : std_logic;
 	signal vsync_ena : std_logic;
-
-	-- Sequence of 12 writes
-	signal writeseqstatebits : std_logic_vector(2 downto 0);
-	signal writeseq_done_int : std_logic;
-	signal writenext_ena : std_logic;
-	signal writecounter : unsigned(3 downto 0);
-
-	-- Single write
-	signal writestatebits : std_logic_vector(2 downto 0);
-	signal writenext_done : std_logic;
+	signal write_addr_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
+	signal write_ena_int : std_logic;
 
 begin
     
@@ -109,13 +110,21 @@ begin
 
 		if (resetn='0') then
 
+			-- Pipeline output timing
 			pipelinedelay <= to_unsigned(0, 10);
 			capture_ena <= '0';
 
-			-- Writing channel signals
-			write_addr_int <= to_unsigned(0, C_M_AXI_ADDR_WIDTH);
-			write_ena_int <= '0';
+			-- State machine for 12 write sequence
+			writecounter <= to_unsigned(0, 4);
+			writeseqstatebits <= "001";
+			writeseq_done_int <= '0';
+			writenext_ena <= '0';
 
+			-- State machine for single write
+			writestatebits <= "001";
+			writenext_done <= '0';
+
+			-- Write data
 			pix1r <= to_unsigned(0, 64);
 			pix1g <= to_unsigned(0, 64);
 			pix1b <= to_unsigned(0, 64);
@@ -129,29 +138,30 @@ begin
 			pix4g <= to_unsigned(0, 64);
 			pix4b <= to_unsigned(0, 64);
 
+			-- Write address calculation 
+			-- for destination data in DDR memory
 			rowIdx <= to_unsigned(0,11);
 			colIdx <= to_unsigned(0,13);
 			hsync_ena <= '0';
 			vsync_ena <= '0';
-
-			writeseqstatebits <= "001";
-			writeseq_done_int <= '0';
-			writenext_ena <= '0';
-			writecounter <= to_unsigned(0, 4);
-
-			writestatebits <= "001";
-			writenext_done <= '0';
+			write_addr_int <= to_unsigned(0, C_M_AXI_ADDR_WIDTH);
+			write_ena_int <= '0';
 
 		else
 
 			if (clk'event and clk='1') then
 
+				-- Defaults
 				pipelinedelay <= pipelinedelay;
 				capture_ena <= '0';
 
-				-- Destination data to DDR memory
-				write_addr_int <= write_addr_int;
-				write_ena_int <= '0';
+				writecounter <= writecounter;
+				writeseqstatebits <= writeseqstatebits;
+				writeseq_done_int <= '0';
+				writenext_ena <= '0';
+
+				writestatebits <= writestatebits;
+				writenext_done <= '0';
 
 				pix1r <= pix1r;
 				pix1g <= pix1g;
@@ -170,14 +180,8 @@ begin
 				colIdx <= colIdx;
 				hsync_ena <= '0';
 				vsync_ena <= '0';
-
-				writeseqstatebits <= writeseqstatebits;
-				writeseq_done_int <= '0';
-				writenext_ena <= '0';
-				writecounter <= writecounter;
-
-				writestatebits <= writestatebits;
-				writenext_done <= '0';
+				write_addr_int <= write_addr_int;
+				write_ena_int <= '0';
 
 				--------------------------------------
 				-- Pipeline delay counter
