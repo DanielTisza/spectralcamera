@@ -80,6 +80,7 @@ architecture rtl of rgbwrite is
 	signal pix4g : unsigned(63 downto 0);
 	signal pix4b : unsigned(63 downto 0);
 
+	-- 
 	signal rowIdx : unsigned(10 downto 0);
 	signal colIdx : unsigned(12 downto 0);
 	signal hsync_ena : std_logic;
@@ -205,51 +206,6 @@ begin
 				else
 				end if;
 
-				-- Result image RGB pixels with double-precision floating point
-				-- has 64-bit pixels (8 bytes)
-				--
-				-- For 4 pixels need to write
-				-- 4 * 3 * 64-bits = 144 bits (96 bytes)
-				--
-				-- Can write 64-bits at a time
-				-- (4*3*64-bits) / 64-bits = 12
-				-- So 12 transfers are needed to write back processed pixel data
-				-- in double-precision floating point format
-				--
-				-- Spectral camera module resolution
-				-- 2592 x 1944				
-				-- 2592 pixels * 8 bytes = 20736 (0x5100)
-				-- 2592 * 1944 * 8 bytes = 40310784 bytes
-
-				-- Boxed camera module resolution
-				-- 2590 x 1942
-				-- 2590 pixels * 8 bytes = 20720 (0x50F0)
-				-- 2590 * 1942 * 8 bytes = 40238240 bytes
-				
-				-- Result image
-				-- 3EB3FB00		first row
-				---
-				-- 2592 pixels * 3 colors * 8 bytes per pixel = 62208 bytes per row
-				-- 2590 pixels * 3 colors * 8 bytes per pixel = 62160 bytes per row
-				-- 
-				-- 648 transfers * 12 bytes per transfer * 8 bytes data per transfer = 62208 bytes per row
-				-- Output colIdx limit at 648 * 12 = 7776
-
-				-- Write address is:
-				--		3EB3FB00 + (rowIdx * rowBytes) + (colIdx * 8 bytes)
-				--
-				-- where
-				--		imgBase		= 1006632960 = 0x3C000000	(32 bits)
-				--		imgIdx 		= 0...2						(2 bits)
-				--		imgSize 	= 15116544 bytes = 0xE6A900
-				--		rowIdx 		= 0...1941					(11 bits)
-				--		rowBytes	= 20720 bytes = 0x50F0
-				--		colIdx		= 0...2589					(12 bits)
-
-				write_addr_int <= 		to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH)	--X"3EB3FB00"
-									+ 	rowIdx * to_unsigned(20720, 15)
-									+	colIdx * to_unsigned(8, 4);
-
 				--------------------------------------
 				-- Write sequence for 12 writes
 				--------------------------------------
@@ -258,11 +214,11 @@ begin
 					when "001" =>
 
 						-- Initial state
-						-- Prepare to write 12 times
-						-- Waiting for data to arrive from pipeline
 
+						-- Prepare to write 12 times
 						writecounter <= to_unsigned(12, 4);
 
+						-- Waiting for data to arrive from pipeline
 						if (capture_ena='1') then
 							writenext_ena <= '1';
 							writeseqstatebits <= "010";
@@ -271,8 +227,8 @@ begin
 
 					when "010" =>
 
-						-- Write is in progress,
-						-- waiting for writing to complete
+						-- Single write is in progress,
+						-- waiting for it to complete
 						if (writenext_done='1') then
 							writecounter <= writecounter - to_unsigned(1, 4);
 							writeseqstatebits <= "100";
@@ -396,7 +352,7 @@ begin
 					-- transfers count:
 					-- 	648 * 12 = 7776
 					--
-					if (colIdx=to_unsigned(7776,13)) then
+					if (colIdx=to_unsigned(7775,13)) then
 						colIdx <= to_unsigned(0,13);
 						hsync_ena <= '1';
 					else
@@ -419,6 +375,51 @@ begin
 					
 				else 
 				end if;
+
+				-- Result image RGB pixels with double-precision floating point
+				-- has 64-bit pixels (8 bytes)
+				--
+				-- For 4 pixels need to write
+				-- 4 * 3 * 64-bits = 144 bits (96 bytes)
+				--
+				-- Can write 64-bits at a time
+				-- (4*3*64-bits) / 64-bits = 12
+				-- So 12 transfers are needed to write back processed pixel data
+				-- in double-precision floating point format
+				--
+				-- Spectral camera module resolution
+				-- 2592 x 1944				
+				-- 2592 pixels * 8 bytes = 20736 (0x5100)
+				-- 2592 * 1944 * 8 bytes = 40310784 bytes
+
+				-- Boxed camera module resolution
+				-- 2590 x 1942
+				-- 2590 pixels * 8 bytes = 20720 (0x50F0)
+				-- 2590 * 1942 * 8 bytes = 40238240 bytes
+				
+				-- Result image
+				-- 3EB3FB00		first row
+				---
+				-- 2592 pixels * 3 colors * 8 bytes per pixel = 62208 bytes per row
+				-- 2590 pixels * 3 colors * 8 bytes per pixel = 62160 bytes per row
+				-- 
+				-- 648 transfers * 12 bytes per transfer * 8 bytes data per transfer = 62208 bytes per row
+				-- Output colIdx limit at 648 * 12 = 7776 (0...7775)
+
+				-- Write address is:
+				--		3EB3FB00 + (rowIdx * rowBytes) + (colIdx * 8 bytes)
+				--
+				-- where
+				--		imgBase		= 1006632960 = 0x3C000000	(32 bits)
+				--		imgIdx 		= 0...2						(2 bits)
+				--		imgSize 	= 15116544 bytes = 0xE6A900
+				--		rowIdx 		= 0...1941					(11 bits)
+				--		rowBytes	= 20720 bytes = 0x50F0
+				--		colIdx		= 0...7775					(12 bits)
+
+				write_addr_int <= 		to_unsigned(1051982592, C_M_AXI_ADDR_WIDTH)	--X"3EB3FB00"
+									+ 	rowIdx * to_unsigned(62208, 16)
+									+	colIdx * to_unsigned(8, 4);
 
 			else
 			end if;
