@@ -170,7 +170,7 @@ begin
 		pixbfixed => img2pix3bfixed,
 		pixr => img2pix3r,
 		pixg => img2pix3g,
-		pixb => img1pix3b
+		pixb => img2pix3b
 	);
 
 	img2pix4fd : rgbfixedtodouble port map(
