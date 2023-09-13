@@ -295,6 +295,7 @@ begin
 	--
 
 	-- Read channel signals
+	read_req <= read_req_int;
 	read_req_addr <= std_logic_vector(AXI_ARADDR_int);
 	read_data_out <= read_data_in;
 
