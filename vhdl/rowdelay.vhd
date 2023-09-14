@@ -144,8 +144,6 @@ architecture rtl of rowdelay is
 	signal read_data_target : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 	signal read_data_white : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
 
-	signal pipelinedelay : std_logic_vector(3 downto 0);
-
 	-- Delay RAM definition
 
 	-- RAM definitions
@@ -411,8 +409,6 @@ begin
 			whitesub3 <= to_unsigned(0, 12);
 			whitesub4 <= to_unsigned(0, 12);
 
-			pipelinedelay <= (others => '0');
-
 			targetfirstrowhandled <= '0';
 			targetreadrowodd <= '0';
 
@@ -451,9 +447,6 @@ begin
 			img2pix4g <= to_unsigned(0, 12);
 			img2pix4b <= to_unsigned(0, 12);
 
-			-- Pipeline processing delay shift register trigger
-			pipelinedelay <= (others => '0');
-
 		else
 
 			if (clk'event and clk='1') then
@@ -465,8 +458,6 @@ begin
 				read_data_dark <= read_data_dark;
 				read_data_target <= read_data_target;
 				read_data_white <= read_data_white;
-
-				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & pipelinedelay(pipelinedelay'length-1);
 
 				targetfirstrowhandled <= targetfirstrowhandled;
 				targetreadrowodd <= targetreadrowodd;
@@ -505,10 +496,6 @@ begin
 				img2pix4r <= img1pix4r;
 				img2pix4g <= img1pix4g;
 				img2pix4b <= img1pix4b;
-
-				-- Pipeline processing delay shift register trigger
-				pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '0';
-
 
 				-- Capture image 1
 				-- This is dark reference image in BayerGB12 CFA format
@@ -611,11 +598,6 @@ begin
 					img2pix4r <= whitedmpix4r;
 					img2pix4g <= whitedmpix4g;
 					img2pix4b <= whitedmpix4b;
-
-					-- Last data read for pipeline processing
-					-- Trigger writing after pipeline delay
-					pipelinedelay <= pipelinedelay(pipelinedelay'length-2 downto 0) & '1';
-
 				else
 				end if;
 

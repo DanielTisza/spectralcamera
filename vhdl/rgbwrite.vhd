@@ -67,7 +67,6 @@ architecture rtl of rgbwrite is
 	-- State machine for 12 write sequence
 	signal writecounter : unsigned(3 downto 0);
 	signal writeseqstatebits : std_logic_vector(2 downto 0);
-	signal writeseq_done_int : std_logic;
 	signal writenext_ena : std_logic;
 
 	-- State machine for single write
@@ -117,7 +116,6 @@ begin
 			-- State machine for 12 write sequence
 			writecounter <= to_unsigned(0, 4);
 			writeseqstatebits <= "001";
-			writeseq_done_int <= '0';
 			writenext_ena <= '0';
 
 			-- State machine for single write
@@ -157,7 +155,6 @@ begin
 
 				writecounter <= writecounter;
 				writeseqstatebits <= writeseqstatebits;
-				writeseq_done_int <= '0';
 				writenext_ena <= '0';
 
 				writestatebits <= writestatebits;
