@@ -24,31 +24,31 @@ entity fixedtodouble is
 		clk : in std_logic;
 
 		-- Input data signals
-		img1pix1rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix1gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix1bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix2rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix2gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix2bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix3rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix3gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix3bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix4rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix4gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		img1pix4bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		img1pix1rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix1gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix1bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix2rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix2gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix2bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix3rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix3gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix3bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix4rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix4gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		img1pix4bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
  
-		img2pix1rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix1gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix1bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix2rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix2gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix2bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix3rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix3gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix3bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix4rfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix4gfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
-		img2pix4bfixed : in STD_LOGIC_VECTOR ( 15 downto 0 ); 
+		img2pix1rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix1gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix1bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix2rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix2gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix2bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix3rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix3gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix3bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix4rfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix4gfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
+		img2pix4bfixed : in STD_LOGIC_VECTOR ( 11 downto 0 ); 
 		
 		-- Output data signals
 		img1pix1r : out STD_LOGIC_VECTOR ( 63 downto 0 );
@@ -86,9 +86,9 @@ architecture rtl of fixedtodouble is
 	component rgbfixedtodouble is
 	port (
 		clk : in std_logic;
-		pixrfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		pixgfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		pixbfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		pixrfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		pixgfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		pixbfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
 		pixr : out STD_LOGIC_VECTOR ( 63 downto 0 );
 		pixg : out STD_LOGIC_VECTOR ( 63 downto 0 );
 		pixb : out STD_LOGIC_VECTOR ( 63 downto 0 )

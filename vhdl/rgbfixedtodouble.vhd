@@ -24,9 +24,9 @@ entity rgbfixedtodouble is
 		clk : in std_logic;
 
 		-- Input data signals
-		pixrfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		pixgfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
-		pixbfixed : in STD_LOGIC_VECTOR ( 15 downto 0 );
+		pixrfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		pixgfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
+		pixbfixed : in STD_LOGIC_VECTOR ( 11 downto 0 );
 		
 		-- Output data signals
 		pixr : out STD_LOGIC_VECTOR ( 63 downto 0 );
@@ -61,7 +61,16 @@ architecture rtl of rgbfixedtodouble is
   	);
 	end component; 
 
+	signal pixrfixed15 : STD_LOGIC_VECTOR(15 DOWNTO 0);
+	signal pixgfixed15 : STD_LOGIC_VECTOR(15 DOWNTO 0);
+	signal pixbfixed15 : STD_LOGIC_VECTOR(15 DOWNTO 0);
+
 begin
+
+	-- Expand from 12 bits to 16 bits for xfixedtodouble
+	pixrfixed15 <= "0000" & pixrfixed;
+	pixgfixed15 <= "0000" & pixgfixed;
+	pixbfixed15 <= "0000" & pixbfixed;
 
 	------------------------------------------
 	-- Convert RGB pixel from 12-bit fixed integer
@@ -70,21 +79,21 @@ begin
 	pixrfd : xfixedtodouble port map(
 		aclk => clk,
 		s_axis_a_tvalid => '1',
-		s_axis_a_tdata => pixrfixed,
+		s_axis_a_tdata => pixrfixed15,
 		m_axis_result_tdata => pixr
 	);
 
 	pixgfd : xfixedtodouble port map(
 		aclk => clk,
 		s_axis_a_tvalid => '1',
-		s_axis_a_tdata => pixgfixed,
+		s_axis_a_tdata => pixgfixed15,
 		m_axis_result_tdata => pixg
 	);
 
 	pixbfd : xfixedtodouble port map(
 		aclk => clk,
 		s_axis_a_tvalid => '1',
-		s_axis_a_tdata => pixbfixed,
+		s_axis_a_tdata => pixbfixed15,
 		m_axis_result_tdata => pixb
 	);	
 
