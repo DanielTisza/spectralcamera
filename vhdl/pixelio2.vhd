@@ -24,7 +24,9 @@ entity pixelio2 is
 	generic(
 		C_M_AXI_ADDR_WIDTH	: integer	:= 32;
 		C_M_AXI_ID_WIDTH	: integer	:= 6;
-		C_M_AXI_DATA_WIDTH	: integer	:= 64
+		C_M_AXI_DATA_WIDTH	: integer	:= 64;
+		ARSIZE_AWSIZE_WIDTH : integer	:= 3;
+		ARSIZE_AWSIZE_VALUE : integer	:= 3
 	);
 
 	port (
@@ -48,7 +50,7 @@ entity pixelio2 is
 		AXI_ARCACHE	: out std_logic_vector(3 downto 0);
 		AXI_ARPROT	: out std_logic_vector(2 downto 0);
 		AXI_ARLEN	: out std_logic_vector(3 downto 0);
-		AXI_ARSIZE	: out std_logic_vector(1 downto 0);
+		AXI_ARSIZE	: out std_logic_vector(ARSIZE_AWSIZE_WIDTH-1 downto 0);
 		AXI_ARBURST	: out std_logic_vector(1 downto 0);
 		AXI_ARQOS	: out std_logic_vector(3 downto 0);
 
@@ -72,7 +74,7 @@ entity pixelio2 is
 		AXI_AWCACHE	: out std_logic_vector(3 downto 0);
 		AXI_AWPROT	: out std_logic_vector(2 downto 0);
 		AXI_AWLEN	: out std_logic_vector(3 downto 0);
-		AXI_AWSIZE	: out std_logic_vector(1 downto 0);
+		AXI_AWSIZE	: out std_logic_vector(ARSIZE_AWSIZE_WIDTH-1 downto 0);
 		AXI_AWBURST	: out std_logic_vector(1 downto 0);
 		AXI_AWQOS	: out std_logic_vector(3 downto 0);
 
@@ -380,11 +382,11 @@ begin
 
 	AXI_AWBURST <= "01"; 	-- Zynq 7000 supports incrementing burst
 	AXI_AWLEN <= X"0"; -- 1 transfer in the burst (1-16 data beats)
-	AXI_AWSIZE <= "11"; -- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+	AXI_AWSIZE <= std_logic_vector(to_unsigned(ARSIZE_AWSIZE_VALUE, ARSIZE_AWSIZE_WIDTH)); -- "11"; -- 8 octets/bytes per beat (would increment address by 8) (64 bits)
 
 	AXI_ARBURST <= "01";	-- Zynq 7000 supports incrementing burst
 	AXI_ARLEN <= X"0"; 		-- 1 transfer in the burst (1-16 data beats)
-	AXI_ARSIZE <= "11";	-- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+	AXI_ARSIZE <= std_logic_vector(to_unsigned(ARSIZE_AWSIZE_VALUE, ARSIZE_AWSIZE_WIDTH)); -- "11";	-- 8 octets/bytes per beat (would increment address by 8) (64 bits)
 
 
 	-- Zynq TRM p. 299
