@@ -40,6 +40,9 @@ entity rowdelay is
 		hsync_ena : in std_logic;
 		vsync_ena : in std_logic;
 
+		targetsubvec : in std_logic_vector(47 downto 0);
+		whitesubvec : in std_logic_vector(47 downto 0);
+
 		-- Output data signals
 		targetpix1r : out unsigned(11 downto 0);
 		targetpix1g : out unsigned(11 downto 0);
@@ -66,7 +69,6 @@ entity rowdelay is
 		whitepix4r : out unsigned(11 downto 0);
 		whitepix4g : out unsigned(11 downto 0);
 		whitepix4b : out unsigned(11 downto 0)
-
 	);
 
 end rowdelay;
@@ -139,11 +141,6 @@ architecture rtl of rowdelay is
 	
 	end component cfarows2rgb;
 
-	-- Direct read
-	signal read_data_dark : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal read_data_target : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-	signal read_data_white : unsigned(C_M_AXI_DATA_WIDTH-1 downto 0);
-
 	-- Delay RAM definition
 
 	-- RAM definitions
@@ -215,22 +212,6 @@ architecture rtl of rowdelay is
 	signal img2pix4r : unsigned(11 downto 0);
 	signal img2pix4g : unsigned(11 downto 0);
 	signal img2pix4b : unsigned(11 downto 0);
-	
-	-- Subtract dark from target
-	signal targetsub1 : unsigned(11 downto 0);
-	signal targetsub2 : unsigned(11 downto 0);
-	signal targetsub3 : unsigned(11 downto 0);
-	signal targetsub4 : unsigned(11 downto 0);
-
-	signal targetsubvec : std_logic_vector(47 downto 0);
-
-	-- Subtract dark from white
-	signal whitesub1 : unsigned(11 downto 0);
-	signal whitesub2 : unsigned(11 downto 0);
-	signal whitesub3 : unsigned(11 downto 0);
-	signal whitesub4 : unsigned(11 downto 0);
-
-	signal whitesubvec : std_logic_vector(47 downto 0);
 
 	-- Demosaic for target image
 	signal targetdmpix1r : unsigned(11 downto 0);
@@ -283,10 +264,7 @@ begin
 		rd_data => ram1_rd_data
 	);
 	
-	ram1_wr_data <= std_logic_vector(targetsub1)
-				 &	std_logic_vector(targetsub2)
-				 &	std_logic_vector(targetsub3)
-				 &	std_logic_vector(targetsub4);
+	ram1_wr_data <= targetsubvec;
 
 	ram1_wr <= read_done_b;
 
@@ -305,10 +283,7 @@ begin
 		rd_data => ram2_rd_data
 	);
 	
-	ram2_wr_data <= std_logic_vector(whitesub1)
-				 &	std_logic_vector(whitesub2)
-				 &	std_logic_vector(whitesub3)
-				 &	std_logic_vector(whitesub4);
+	ram2_wr_data <= whitesubvec;
 
 	ram2_wr <= read_done_c;
 
@@ -392,23 +367,6 @@ begin
 			ram1_addr <= to_unsigned(0,10);
 			ram2_addr <= to_unsigned(0,10);
 
-			-- Direct read
-			read_data_dark <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			read_data_target <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-			read_data_white <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
-
-			-- Subtract dark from target
-			targetsub1 <= to_unsigned(0, 12);
-			targetsub2 <= to_unsigned(0, 12);
-			targetsub3 <= to_unsigned(0, 12);
-			targetsub4 <= to_unsigned(0, 12);
-
-			-- Subtract dark from target
-			whitesub1 <= to_unsigned(0, 12);
-			whitesub2 <= to_unsigned(0, 12);
-			whitesub3 <= to_unsigned(0, 12);
-			whitesub4 <= to_unsigned(0, 12);
-
 			targetfirstrowhandled <= '0';
 			targetreadrowodd <= '0';
 
@@ -454,11 +412,6 @@ begin
 				ram1_addr <= ram1_addr;
 				ram2_addr <= ram2_addr;
 
-				-- Direct read
-				read_data_dark <= read_data_dark;
-				read_data_target <= read_data_target;
-				read_data_white <= read_data_white;
-
 				targetfirstrowhandled <= targetfirstrowhandled;
 				targetreadrowodd <= targetreadrowodd;
 
@@ -497,20 +450,10 @@ begin
 				img2pix4g <= img1pix4g;
 				img2pix4b <= img1pix4b;
 
-				-- Capture image 1
-				-- This is dark reference image in BayerGB12 CFA format
-				if (read_done_a='1') then
-
-					read_data_dark <= unsigned(read_data);
-					
-				else
-				end if;
-
 				-- Capture image 2
 				-- This is target image in BayerGB12 CFA format
 				if (read_done_b='1') then
 
-					read_data_target <= unsigned(read_data);
 					read_done_target_delayed <= '1';
 
 					-- Increment row delay ram address
@@ -529,7 +472,6 @@ begin
 				-- This is white reference image in BayerGB12 CFA format
 				if (read_done_c='1') then
 
-					read_data_white <= unsigned(read_data);
 					read_done_white_delayed <= '1';
 
 					-- Increment row delay ram address
@@ -543,22 +485,6 @@ begin
 
 				else
 				end if;
-
-				----------------------------
-				-- Subtract dark image in BayerGB12 CFA format
-				----------------------------
-
-				-- Target image after subtracting dark image
-				targetsub1 <= read_data_target(59 downto 48) - read_data_dark(59 downto 48);
-				targetsub2 <= read_data_target(43 downto 32) - read_data_dark(43 downto 32);
-				targetsub3 <= read_data_target(27 downto 16) - read_data_dark(27 downto 16);
-				targetsub4 <= read_data_target(11 downto 0) - read_data_dark(11 downto 0);
-
-				-- White image after subtracting dark image
-				whitesub1 <= read_data_white(59 downto 48) - read_data_dark(59 downto 48);
-				whitesub2 <= read_data_white(43 downto 32) - read_data_dark(43 downto 32);
-				whitesub3 <= read_data_white(27 downto 16) - read_data_dark(27 downto 16);
-				whitesub4 <= read_data_white(11 downto 0) - read_data_dark(11 downto 0);
 				
 				----------------------------
 				-- Image after demosaic in 36-bit RGB format
@@ -611,16 +537,6 @@ begin
 	--
 	-- Continuous connections
 	--
-
-	targetsubvec <=	std_logic_vector(targetsub1)
-				&	std_logic_vector(targetsub2)
-				&	std_logic_vector(targetsub3)
-				&	std_logic_vector(targetsub4);
-
-	whitesubvec <=	std_logic_vector(whitesub1)
-				&	std_logic_vector(whitesub2)
-				&	std_logic_vector(whitesub3)
-				&	std_logic_vector(whitesub4);
 	
 	targetpix1r <= img1pix1r;
 	targetpix1g <= img1pix1g;
