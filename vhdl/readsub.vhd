@@ -81,18 +81,6 @@ begin
 			read_data_target <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 			read_data_white <= to_unsigned(0, C_M_AXI_DATA_WIDTH);
 
-			-- Subtract dark from target
-			targetsub1 <= to_unsigned(0, 12);
-			targetsub2 <= to_unsigned(0, 12);
-			targetsub3 <= to_unsigned(0, 12);
-			targetsub4 <= to_unsigned(0, 12);
-
-			-- Subtract dark from target
-			whitesub1 <= to_unsigned(0, 12);
-			whitesub2 <= to_unsigned(0, 12);
-			whitesub3 <= to_unsigned(0, 12);
-			whitesub4 <= to_unsigned(0, 12);
-
 		else
 
 			if (clk'event and clk='1') then
@@ -123,22 +111,6 @@ begin
 				else
 				end if;
 
-				----------------------------
-				-- Subtract dark image in BayerGB12 CFA format
-				----------------------------
-
-				-- Target image after subtracting dark image
-				targetsub1 <= read_data_target(59 downto 48) - read_data_dark(59 downto 48);
-				targetsub2 <= read_data_target(43 downto 32) - read_data_dark(43 downto 32);
-				targetsub3 <= read_data_target(27 downto 16) - read_data_dark(27 downto 16);
-				targetsub4 <= read_data_target(11 downto 0) - read_data_dark(11 downto 0);
-
-				-- White image after subtracting dark image
-				whitesub1 <= read_data_white(59 downto 48) - read_data_dark(59 downto 48);
-				whitesub2 <= read_data_white(43 downto 32) - read_data_dark(43 downto 32);
-				whitesub3 <= read_data_white(27 downto 16) - read_data_dark(27 downto 16);
-				whitesub4 <= read_data_white(11 downto 0) - read_data_dark(11 downto 0);
-
 			else
 			end if;
 			
@@ -150,10 +122,26 @@ begin
 	-- Continuous connections
 	--
 
+	----------------------------
+	-- Subtract dark image in BayerGB12 CFA format
+	----------------------------
+
+	-- Target image after subtracting dark image
+	targetsub1 <= read_data_target(59 downto 48) - read_data_dark(59 downto 48);
+	targetsub2 <= read_data_target(43 downto 32) - read_data_dark(43 downto 32);
+	targetsub3 <= read_data_target(27 downto 16) - read_data_dark(27 downto 16);
+	targetsub4 <= read_data_target(11 downto 0) - read_data_dark(11 downto 0);
+
 	targetsubvec <=	std_logic_vector(targetsub1)
-				&	std_logic_vector(targetsub2)
-				&	std_logic_vector(targetsub3)
-				&	std_logic_vector(targetsub4);
+			&	std_logic_vector(targetsub2)
+			&	std_logic_vector(targetsub3)
+			&	std_logic_vector(targetsub4);
+
+	-- White image after subtracting dark image
+	whitesub1 <= read_data_white(59 downto 48) - read_data_dark(59 downto 48);
+	whitesub2 <= read_data_white(43 downto 32) - read_data_dark(43 downto 32);
+	whitesub3 <= read_data_white(27 downto 16) - read_data_dark(27 downto 16);
+	whitesub4 <= read_data_white(11 downto 0) - read_data_dark(11 downto 0);
 
 	whitesubvec <=	std_logic_vector(whitesub1)
 				&	std_logic_vector(whitesub2)
