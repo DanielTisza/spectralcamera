@@ -53,7 +53,7 @@ end demosaic;
 architecture rtl of demosaic is
 
 	-- Read channel signals 
-	signal readstatebits : std_logic_vector(7 downto 0);
+	signal readstatebits : std_logic_vector(2 downto 0);
 	signal read_req_int : std_logic;
 	signal read_next_addr_ena : std_logic;
 	signal AXI_ARADDR_int : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
@@ -83,7 +83,7 @@ begin
 		if (resetn='0') then
 
 			-- Reading channel signals
-			readstatebits <= "00000001";
+			readstatebits <= "001";
 			read_req_int <= '0';
 			AXI_ARADDR_int <= to_unsigned(0, C_M_AXI_ADDR_WIDTH);
 
@@ -155,21 +155,26 @@ begin
 
 				case readstatebits is
 
+					-- Init state
+					-- Give time to calculate first address
+					when "001" =>
+
+						readstatebits <= "010";
+
 					-- Set read address
-					when "00000001" =>
+					when "010" =>
 
 						AXI_ARADDR_int <= read_next_addr;
 						read_req_int <= '1';
 						read_next_addr_ena <= '1';
-						readstatebits <= "00000010";
+						readstatebits <= "100";
 
 					-- Waiting for read done indication
-					when "00000010" =>
+					when "100" =>
 
 						if (read_done='1') then
-
 							read_req_int <= '0';
-							readstatebits <= "00000001";
+							readstatebits <= "010";
 						else
 						end if;
 
