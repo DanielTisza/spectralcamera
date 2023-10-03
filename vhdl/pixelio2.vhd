@@ -38,62 +38,69 @@ entity pixelio2 is
 		----------------------------------------
 
 		-- Clock and reset
-		AXI_ACLK	: in std_logic;
-		AXI_ARESETN	: in std_logic;
+		ACLK	: in std_logic;
+		ARESETN	: in std_logic;
 
 		-- AXI master read address channel "AR"
-		AXI_ARADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-		AXI_ARVALID	: out std_logic;
-		AXI_ARREADY	: in std_logic;
-		AXI_ARID	: out std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
-		AXI_ARLOCK	: out std_logic_vector(1 downto 0);
-		AXI_ARCACHE	: out std_logic_vector(3 downto 0);
-		AXI_ARPROT	: out std_logic_vector(2 downto 0);
-		AXI_ARLEN	: out std_logic_vector(3 downto 0);
-		AXI_ARSIZE	: out std_logic_vector(ARSIZE_AWSIZE_WIDTH-1 downto 0);
-		AXI_ARBURST	: out std_logic_vector(1 downto 0);
-		AXI_ARQOS	: out std_logic_vector(3 downto 0);
+		ARADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+		ARVALID	: out std_logic;
+		ARREADY	: in std_logic;
+		ARID	: out std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
+		ARLOCK	: out std_logic_vector(1 downto 0);
+		ARCACHE	: out std_logic_vector(3 downto 0);
+		ARPROT	: out std_logic_vector(2 downto 0);
+		ARLEN	: out std_logic_vector(3 downto 0);
+		ARSIZE	: out std_logic_vector(ARSIZE_AWSIZE_WIDTH-1 downto 0);
+		ARBURST	: out std_logic_vector(1 downto 0);
+		ARQOS	: out std_logic_vector(3 downto 0);
+		-- ARREGION
+		-- ARUSER
 
 		-- AXI master read channel "R"
-		AXI_RDATA	: in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
-		AXI_RVALID	: in std_logic;
-		AXI_RREADY	: out std_logic;
-		AXI_RID	: in std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
-		AXI_RLAST	: in std_logic;
-		AXI_RRESP	: in std_logic_vector(1 downto 0);
-		AXI_RCOUNT	: in std_logic_vector(7 downto 0);
-		AXI_RACOUNT	: in std_logic_vector(2 downto 0);
-		AXI_RDISSUECAP1EN : out std_logic;
+		RDATA	: in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+		RVALID	: in std_logic;
+		RREADY	: out std_logic;
+		RID	: in std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
+		RLAST	: in std_logic;
+		RRESP	: in std_logic_vector(1 downto 0);
+		-- RCOUNT	: in std_logic_vector(7 downto 0);
+		-- RACOUNT	: in std_logic_vector(2 downto 0);
+		-- RDISSUECAP1EN : out std_logic;
+		-- RUSER
 
 		-- AXI master write address channel "AW"
-		AXI_AWADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-		AXI_AWVALID	: out std_logic;
-		AXI_AWREADY	: in std_logic;
-		AXI_AWID	: out std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
-		AXI_AWLOCK	: out std_logic;
-		AXI_AWCACHE	: out std_logic_vector(3 downto 0);
-		AXI_AWPROT	: out std_logic_vector(2 downto 0);
-		AXI_AWLEN	: out std_logic_vector(3 downto 0);
-		AXI_AWSIZE	: out std_logic_vector(ARSIZE_AWSIZE_WIDTH-1 downto 0);
-		AXI_AWBURST	: out std_logic_vector(1 downto 0);
-		AXI_AWQOS	: out std_logic_vector(3 downto 0);
+		AWADDR	: out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+		AWVALID	: out std_logic;
+		AWREADY	: in std_logic;
+		AWID	: out std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
+		AWLOCK	: out std_logic;
+		AWCACHE	: out std_logic_vector(3 downto 0);
+		AWPROT	: out std_logic_vector(2 downto 0);
+		AWLEN	: out std_logic_vector(3 downto 0);
+		AWSIZE	: out std_logic_vector(ARSIZE_AWSIZE_WIDTH-1 downto 0);
+		AWBURST	: out std_logic_vector(1 downto 0);
+		AWQOS	: out std_logic_vector(3 downto 0);
+		-- AWREGION
+		-- AWUSER
 
 		-- AXI master write data channel "W"
-		AXI_WDATA	: out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
-		AXI_WVALID	: out std_logic;
-		AXI_WREADY	: in std_logic;
-		AXI_WID	: out std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
-		AXI_WLAST	: out std_logic;
-		AXI_WSTRB	: out std_logic_vector(7 downto 0);
-		AXI_WCOUNT	: in std_logic_vector(7 downto 0);
-		AXI_WACOUNT	: in std_logic_vector(5 downto 0);
-		AXI_WRISSUECAP1EN : out std_logic;
+		WDATA	: out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+		WVALID	: out std_logic;
+		WREADY	: in std_logic;
+		WID	: out std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
+		WLAST	: out std_logic;
+		WSTRB	: out std_logic_vector(7 downto 0);
+		-- WCOUNT	: in std_logic_vector(7 downto 0);
+		-- WACOUNT	: in std_logic_vector(5 downto 0);
+		-- WRISSUECAP1EN : out std_logic;
+		-- WUSER
 
 		-- AXI master write response channel "B"
-		AXI_BVALID	: in std_logic;
-		AXI_BREADY	: out std_logic;
-		AXI_BID	: in std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
-		AXI_BRESP	: in std_logic_vector(1 downto 0);
+		BVALID	: in std_logic;
+		BREADY	: out std_logic;
+		BID	: in std_logic_vector(C_M_AXI_ID_WIDTH-1 downto 0);
+		BRESP	: in std_logic_vector(1 downto 0);
+		-- BUSER
 
 		-- Read channel signals
 		read_req : in std_logic;
@@ -145,15 +152,15 @@ architecture rtl of pixelio2 is
 begin
 	
 	io_proc : process(
-		AXI_ARESETN,
-		AXI_ACLK,
-		AXI_AWREADY,
-		AXI_WREADY,
-		AXI_BVALID
+		ARESETN,
+		ACLK,
+		AWREADY,
+		WREADY,
+		BVALID
 	)
 	begin
 
-		if (AXI_ARESETN='0') then
+		if (ARESETN='0') then
 
 			-- AXI master read address channel "AR"
 			AXI_ARVALID_int <= '0';
@@ -186,7 +193,7 @@ begin
 
 		else
 
-			if (AXI_ACLK'event and AXI_ACLK='1') then
+			if (ACLK'event and ACLK='1') then
 
 				-- AXI master read address channel "AR"
 				AXI_ARVALID_int <= AXI_ARVALID_int;
@@ -254,7 +261,7 @@ begin
 						-- Indicate to read data channel that we are ready to 
 						-- accept read data
 
-						if (AXI_ARREADY='1') then
+						if (ARREADY='1') then
 							AXI_ARVALID_int <= '0';
 							AXI_RREADY_int <= '1';
 							readstatebits <= "00001000";
@@ -270,9 +277,9 @@ begin
 
 						-- Indicate that the read has completed
 
-						if (AXI_RVALID='1' and AXI_RLAST='1') then
+						if (RVALID='1' and RLAST='1') then
 
-							AXI_RDATA_int <= AXI_RDATA;
+							AXI_RDATA_int <= RDATA;
 							read_done_int <= '1';
 							readstatebits <= "00000001";
 
@@ -322,7 +329,7 @@ begin
 						-- is valid and this is last write data in the
 						-- write burst
 
-						if (AXI_AWREADY='1') then
+						if (AWREADY='1') then
 
 							AXI_AWVALID_int <= '0';
 							AXI_WVALID_int <= '1';
@@ -340,7 +347,7 @@ begin
 						-- Turn off indications for write data channel that
 						-- write data valid and last write data in write burst
 
-						if (AXI_WREADY='1') then
+						if (WREADY='1') then
 
 							AXI_WVALID_int <= '0';
 							AXI_WLAST_int <= '0';
@@ -353,7 +360,7 @@ begin
 						-- Waiting for write response channel to indicate
 						-- valid write response
 
-						if (AXI_BVALID='1') then
+						if (BVALID='1') then
 
 							AXI_BREADY_int <= '1';
 							statebits <= "00010000";
@@ -380,13 +387,13 @@ begin
 
 	-- Default values
 
-	AXI_AWBURST <= "01"; 	-- Zynq 7000 supports incrementing burst
-	AXI_AWLEN <= X"0"; -- 1 transfer in the burst (1-16 data beats)
-	AXI_AWSIZE <= std_logic_vector(to_unsigned(ARSIZE_AWSIZE_VALUE, ARSIZE_AWSIZE_WIDTH)); -- "11"; -- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+	AWBURST <= "01"; 	-- Zynq 7000 supports incrementing burst
+	AWLEN <= X"0"; -- 1 transfer in the burst (1-16 data beats)
+	AWSIZE <= std_logic_vector(to_unsigned(ARSIZE_AWSIZE_VALUE, ARSIZE_AWSIZE_WIDTH)); -- "11"; -- 8 octets/bytes per beat (would increment address by 8) (64 bits)
 
-	AXI_ARBURST <= "01";	-- Zynq 7000 supports incrementing burst
-	AXI_ARLEN <= X"0"; 		-- 1 transfer in the burst (1-16 data beats)
-	AXI_ARSIZE <= std_logic_vector(to_unsigned(ARSIZE_AWSIZE_VALUE, ARSIZE_AWSIZE_WIDTH)); -- "11";	-- 8 octets/bytes per beat (would increment address by 8) (64 bits)
+	ARBURST <= "01";	-- Zynq 7000 supports incrementing burst
+	ARLEN <= X"0"; 		-- 1 transfer in the burst (1-16 data beats)
+	ARSIZE <= std_logic_vector(to_unsigned(ARSIZE_AWSIZE_VALUE, ARSIZE_AWSIZE_WIDTH)); -- "11";	-- 8 octets/bytes per beat (would increment address by 8) (64 bits)
 
 
 	-- Zynq TRM p. 299
@@ -397,46 +404,46 @@ begin
 	-- Zynq UltraScale MPSoC Cache Coherency
 	-- AxPROT[1] should be 1 for non-secure access for Linux
 	-- AXI_AWPROT <= "010";
-	AXI_AWPROT <= "000";
+	AWPROT <= "000";
 
-	AXI_ARPROT <= "000";
+	ARPROT <= "000";
 
 	-- Zynq TRM p. 299
 	-- 10.2.3 AXI Feature Support and Limitations (DDRI)
 	-- ARCACHE[3:0]/AWCACHE[3:0] (cache support) are ignored, and do not have any effect.
-	AXI_ARCACHE <= (others => '0');
-	AXI_AWCACHE <= (others => '0');
+	ARCACHE <= (others => '0');
+	AWCACHE <= (others => '0');
 
-	AXI_AWID <= (others => '0');
-	AXI_AWLOCK <= '0';
-	AXI_AWQOS <= (others => '0');
-	AXI_WID <= (others => '0');
+	AWID <= (others => '0');
+	AWLOCK <= '0';
+	AWQOS <= (others => '0');
+	WID <= (others => '0');
 
-	AXI_ARID <= (others => '0');
-	AXI_ARLOCK <= (others => '0');
-	AXI_ARQOS <= (others => '0');
+	ARID <= (others => '0');
+	ARLOCK <= (others => '0');
+	ARQOS <= (others => '0');
 
 	-- Connect internal signals to interface signals
 
 	-- AXI read address
-	AXI_ARVALID <= AXI_ARVALID_int;
-	AXI_ARADDR <= std_logic_vector(AXI_ARADDR_int);
+	ARVALID <= AXI_ARVALID_int;
+	ARADDR <= std_logic_vector(AXI_ARADDR_int);
 
 	-- AXI read
-	AXI_RREADY <= AXI_RREADY_int;
+	RREADY <= AXI_RREADY_int;
 
 	-- AXI write address
-	AXI_AWVALID <= AXI_AWVALID_int;
-	AXI_AWADDR <= AXI_AWADDR_int;
+	AWVALID <= AXI_AWVALID_int;
+	AWADDR <= AXI_AWADDR_int;
 
 	-- AXI write
-	AXI_WVALID <= AXI_WVALID_int;
-	AXI_WDATA <= AXI_WDATA_int;
-	AXI_WLAST <= AXI_WLAST_int;
-	AXI_WSTRB <= AXI_WSTRB_int;
+	WVALID <= AXI_WVALID_int;
+	WDATA <= AXI_WDATA_int;
+	WLAST <= AXI_WLAST_int;
+	WSTRB <= AXI_WSTRB_int;
 
 	-- AXI write result
-	AXI_BREADY <= AXI_BREADY_int;
+	BREADY <= AXI_BREADY_int;
 
 	-- Other signals
 	read_done <= read_done_int;
