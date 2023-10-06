@@ -55,7 +55,10 @@ entity imgreader is
 		hsync_ena : out std_logic;
 		vsync_ena : out std_logic;
 
-		read_data_out : out std_logic_vector(4*C_M_AXI_DATA_WIDTH-1 downto 0);
+		read_data_out0 : out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+		read_data_out1 : out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+		read_data_out2 : out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+		read_data_out3 : out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
 
 		read_done_a : out std_logic;
 		read_done_b : out std_logic;
@@ -403,10 +406,10 @@ begin
 	read_req2 <= read_req_int2;
 	read_req3 <= read_req_int3;
 
-	read_data_out <=	read_data_in3 
-					& 	read_data_in2
-					&	read_data_in1
-					&	read_data_in0;
+	read_data_out0 <= read_data_in0;
+	read_data_out1 <= read_data_in1;
+	read_data_out2 <= read_data_in2;
+	read_data_out3 <= read_data_in3;	
 
 	read_done_a <= read_done_a_int;
 	read_done_b <= read_done_b_int;
