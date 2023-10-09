@@ -30,8 +30,6 @@ entity rowdelay is
 		resetn	: in std_logic;
 
 		-- Input data signals
-		read_data : in std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
-
 		read_done_a : in std_logic;
 		read_done_b : in std_logic;
 		read_done_c : in std_logic;
